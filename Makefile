@@ -1,3 +1,8 @@
+CC = g++-4.9
+INCLUDE_PATHS = -I/usr/local/include -I/opt/X11/include
+LIBRARY_PATHS = -L/usr/local/lib -I/opt/X11/lib
+LINKER_FLAGS = -framework OpenGL -lglfw -lglew
+
 all: task_1 task_car
 
 task_1:
@@ -7,3 +12,6 @@ task_1:
 
 task_car: src/main_car.cpp
 	g++ src/main_car.cpp -o bin/main_car -lglfw -lGL -lGLEW
+
+main_mac:
+	 $(CC) src/main_car.cpp -o bin/main_car $(INCLUDE_PATHS) $(LIBRARY_PATHS) $(LINKER_FLAGS)
