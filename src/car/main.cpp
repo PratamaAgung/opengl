@@ -67,19 +67,19 @@ std::string loadShader(const char * file_path){
 
 void createTire(float* vertices, float x, float y, float r, int side, float* tire_color){
   float deg = 360/side;
-  for(int i=0; i<side*6; i+=6){
+  for(int i=0; i<(side+2)*6; i+=6){
     if(i == 0){
       vertices[i] = x;
       vertices[i+1] = y;
       vertices[i+2] = 1.0f;
     } else {
-      vertices[i] = x + (r * cos(i*deg*M_PI/180.0));
-      vertices[i+1] = y + (r * sin(i*deg*M_PI/180.0));
+      vertices[i] = x + (r * cos((i-1)*deg*M_PI/180.0));
+      vertices[i+1] = y + (r * sin((i-1)*deg*M_PI/180.0));
       vertices[i+2] = 1.0f;
     }
-    vertices[i+3] = tire_color[0];
-    vertices[i+4] = tire_color[1];
-    vertices[i+5] = tire_color[2];
+    vertices[i+3] = i/(side*6.0f);
+    vertices[i+4] = i/(side*6.0f);
+    vertices[i+5] = i/(side*6.0f);
   }
 }
 
@@ -152,9 +152,9 @@ int main(int argc, char** argv) {
       0.8677449999999999f, 0.05218999999999994f, 1.0f, 0.0f, 0.0f, 0.0f,
     };
 
-    int side = 360;
-    float tire_front_vertices[side*6];
-    float tire_back_vertices[side*6];
+    int side = 120;
+    float tire_front_vertices[(side+2)*6];
+    float tire_back_vertices[(side+2)*6];
     float tire_color[3];
     tire_color[0] = 1.0f;
     tire_color[1] = 0.5f;
@@ -183,9 +183,9 @@ int main(int argc, char** argv) {
         glBindVertexArray(vao);
         glDrawArrays(GL_TRIANGLE_FAN, 0, 19);
         glBindVertexArray(vao2);
-        glDrawArrays(GL_TRIANGLE_FAN, 0, 360);
+        glDrawArrays(GL_TRIANGLE_FAN, 0, side);
         glBindVertexArray(vao3);
-        glDrawArrays(GL_TRIANGLE_FAN, 0, 360);
+        glDrawArrays(GL_TRIANGLE_FAN, 0, side);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
