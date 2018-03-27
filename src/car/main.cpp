@@ -161,6 +161,13 @@ int main(int argc, char** argv) {
       0.8677449999999999f, 0.05218999999999994f, 1.0f, 0.0f, 0.0f, 0.0f,
     };
 
+    float window_vertices[] = {
+        0.34f, 0.06f, 1.0f, 1.0f, 1.0f, 1.0f,
+        0.34f, 0.19f, 1.0f, 1.0f, 1.0f, 1.0f,
+        0.06f, 0.19f, 1.0f, 1.0f, 1.0f, 1.0f,
+        -0.20f, 0.067f, 1.0f, 1.0f, 1.0f, 1.0f
+    };
+
     int side = 120;
     float tire_front_vertices[(side+2)*6];
     float tire_back_vertices[(side+2)*6];
@@ -176,9 +183,10 @@ int main(int argc, char** argv) {
 
     unsigned int shader_program = createShader(vertex_shader_source_code, fragment_shader_source_code);
 
-    unsigned int vbo, vbo2, vbo3;
-    unsigned int vao, vao2, vao3;
+    unsigned int vbo, vbo2, vbo3, vbo4;
+    unsigned int vao, vao2, vao3, vao4;
     createVAOVBO(car_vertices, sizeof(car_vertices),&vbo,&vao);
+    createVAOVBO(window_vertices, sizeof(window_vertices), &vbo4, &vao4);
     createVAOVBO(tire_front_vertices, sizeof(tire_front_vertices),&vbo2,&vao2);
     createVAOVBO(tire_back_vertices, sizeof(tire_back_vertices),&vbo3,&vao3);
     glUseProgram(shader_program);
@@ -193,6 +201,9 @@ int main(int argc, char** argv) {
         glUniformMatrix4fv(transform, 1, GL_FALSE, glm::value_ptr(glm::mat4()));
         glBindVertexArray(vao);
         glDrawArrays(GL_TRIANGLE_FAN, 0, 19);
+
+        glBindVertexArray(vao4);
+        glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
  
         rotate(transform, -0.4523350000000001f, -0.22941000000000004f, 0.0f);
         glBindVertexArray(vao2);
