@@ -50,9 +50,7 @@ int createShader(const std::string& vertexShader, const std::string& fragmentSha
   return program;
 }
 
-
-
-const char * loadShader(const char * file_path){
+std::string loadShader(const char * file_path){
   std::string shader_code;
 	std::ifstream shader_stream(file_path, std::ios::in);
 	if(shader_stream.is_open()){
@@ -64,7 +62,7 @@ const char * loadShader(const char * file_path){
 		printf("Failed to open %s\n", file_path);
 		return 0;
 	}
-  return shader_code.c_str();
+  return shader_code;
 }
 
 void createTire(float* vertices, float x, float y, float r, int side, float* tire_color){
@@ -161,11 +159,11 @@ int main(int argc, char** argv) {
     tire_color[0] = 1.0f;
     tire_color[1] = 0.5f;
     tire_color[2] = 0.0f;
-    createTire(tire_front_vertices, -0.4523350000000001f, -0.22941000000000004f, 0.17f, side, tire_color);
-    createTire(tire_back_vertices, 0.6348599999999999f, -0.22941000000000004f, 0.17f, side, tire_color);
+    createTire(tire_front_vertices, -0.4523350000000001f, -0.22941000000000004f, 0.15f, side, tire_color);
+    createTire(tire_back_vertices, 0.6348599999999999f, -0.22941000000000004f, 0.16f, side, tire_color);
 
-    const char* vertex_shader_source_code = loadShader("./src/car/CarVS.vs");
-    const char* fragment_shader_source_code = loadShader("./src/car/CarFS.fs");
+    std::string vertex_shader_source_code = loadShader("./src/car/CarVS.vs");
+    std::string fragment_shader_source_code = loadShader("./src/car/CarFS.fs");
 
     unsigned int shader_program = createShader(vertex_shader_source_code, fragment_shader_source_code);
 
