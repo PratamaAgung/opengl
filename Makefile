@@ -14,8 +14,5 @@ task_car: src/car/main.cpp
 	g++ src/car/main.cpp -o bin/main_car -lglfw -lGL -lGLEW
 	g++ src/car/main_opengl2.cpp -o bin/main_car_opengl2 -lglut -lGL -lGLU
 
-tutorial:
-	g++ src/tutorial_opengl2.cpp -o bin/tutorial -lglut -lGL -lGLU
-
 task_car_mac:
 	 $(CC) src/car/main.cpp -o bin/main_car $(INCLUDE_PATHS) $(LIBRARY_PATHS) $(LINKER_FLAGS)
