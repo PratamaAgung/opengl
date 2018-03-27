@@ -78,7 +78,7 @@ int main(int argc, char** argv) {
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     GLFWwindow* window;
-    window = glfwCreateWindow( 1024, 768, "Car", NULL, NULL);
+    window = glfwCreateWindow( 800, 600, "Car", NULL, NULL);
     if(!window){
         fprintf( stderr, "Failed to open GLFW window.\n" );
         glfwTerminate();
@@ -94,9 +94,25 @@ int main(int argc, char** argv) {
     }
 
     float vertices[] = {
-        -0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f,
-        0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f,
-        0.0f,  0.5f, 0.0f, 0.0f, 0.0f, 1.0f
+      // back
+      0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+      0.8677449999999999f, 0.05218999999999994f, 1.0f, 0.0f, 0.0f, 0.0f,
+      0.81141f, 0.07588999999999999f, 1.0f, 0.0f, 0.0f, 0.0f,
+      0.6579649999999999f, 0.10588999999999999f, 1.0f, 0.0f, 0.0f, 0.0f,
+      // top
+      0.3579649999999999f, 0.20361999999999994f, 1.0f, 0.0f, 0.0f, 0.0f,
+      0.0579649999999999f, 0.20361999999999994f, 1.0f, 0.0f, 0.0f, 0.0f,
+      -0.22641000000000006f, 0.06930999999999997f, 1.0f, 0.0f, 0.0f, 0.0f,
+      // front
+      -0.7323350000000001f, -0.036025000000000064f, 1.0f, 0.0f, 0.0f, 0.0f,
+      -0.7523350000000001f, -0.136025000000000064f, 1.0f, 0.0f, 0.0f, 0.0f,
+      -0.7323350000000001f, -0.29941000000000004f, 1.0f, 0.0f, 0.0f, 0.0f,
+      -0.6523350000000001f, -0.32941000000000004f, 1.0f, 0.0f, 0.0f, 0.0f,
+      // back
+      0.7348599999999999f, -0.32941000000000004f, 1.0f, 0.0f, 0.0f, 0.0f,
+      0.8577449999999999f, -0.22941000000000004f, 1.0f, 0.0f, 0.0f, 0.0f,
+      0.8777449999999999f, -0.10218999999999994f, 1.0f, 0.0f, 0.0f, 0.0f,
+      0.8677449999999999f, 0.05218999999999994f, 1.0f, 0.0f, 0.0f, 0.0f,
     };
 
     const char* vertex_shader_source_code = loadShader("./src/car/CarVS.vs");
@@ -125,7 +141,7 @@ int main(int argc, char** argv) {
         glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glDrawArrays(GL_TRIANGLE_FAN, 0, 28);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
