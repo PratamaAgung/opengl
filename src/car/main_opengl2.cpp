@@ -22,7 +22,7 @@ void reshape(GLsizei width, GLsizei height) {
    }
 }
 
-void createTire(GLdouble radius, GLuint slices, float x, float y, float * color1, float * color2) {
+void createTire(GLdouble radius, GLuint slices, float x, float y, float * color1, float * color2, float * colorBody) {
     GLuint i;
     glPushMatrix();
     glTranslatef(x, y, 0.0f);
@@ -31,26 +31,24 @@ void createTire(GLdouble radius, GLuint slices, float x, float y, float * color1
     glVertex3f(0.0f, 0.0f, 1.0f);
     for (i=0;i<slices;i++) {
         GLdouble angle = (GLdouble)i*M_PI*2. / (GLdouble)slices;
-        if((i / (slices/6) % 2) == 0) 
-            glColor3f(color1[0], color1[1], color1[2]);        
-        else 
-            glColor3f(color2[0], color2[1], color2[2]);        
+        // if((i / (slices/6) % 2) == 0) {
+        //     glColor3f(color1[0], color1[1], color1[2]);        
+        // } else { 
+        //     glColor3f(color2[0], color2[1], color2[2]);        
+        // }
+        glColor3f(1.0 - cos(angle), 1.0 - sin(angle), 1.0 - tan(angle));                
         glVertex3f(radius*cos(angle), radius*sin(angle), 1.0f);
     }
-    glColor3f(1.0f,1.0f,1.0f);
+    glColor3f(colorBody[0], colorBody[1], colorBody[2]);
     glEnd();
     glTranslatef(-x, -y, 0.0f);
     glPopMatrix();        
 }
-void display() {
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
-    glMatrixMode(GL_MODELVIEW);     // To operate on Model-View matrix
-    glLoadIdentity();
 
+void drawBody(float * color) {
     glPushMatrix();
     glBegin(GL_POLYGON);
-    glColor3f(1.0f, 1.0f, 1.0f);
+    glColor3f(color[0], color[1], color[2]);
     //back
     glVertex3f(0.0f, 0.0f, 0.0f);
     glVertex3f(0.8677449999999999f, 0.05218999999999994f, 1.0f);
@@ -72,11 +70,21 @@ void display() {
     glVertex3f(0.8677449999999999f, 0.05218999999999994f, 1.0f);
     glEnd();
     glPopMatrix();
+}
+
+void display() {
+    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glMatrixMode(GL_MODELVIEW);     // To operate on Model-View matrix
+    glLoadIdentity();
+
+    float color[3] = {0.0f, 0.0f, 0.0f};
+    drawBody(color);
 
     float color1[3] = {0.0f, 1.0f, 0.0f};
     float color2[3] = {0.0f, 0.0f, 1.0f};
-    createTire(0.15f, 180, -0.4523350000000001f, -0.22941000000000004f, color1, color2);
-    createTire(0.16f, 180, 0.6348599999999999f, -0.22941000000000004f, color1, color2);
+    createTire(0.15f, 360, -0.4523350000000001f, -0.22941000000000004f, color1, color2, color);
+    createTire(0.16f, 360, 0.6348599999999999f, -0.22941000000000004f, color1, color2, color);
 
     sudut += 0.8f;
 
