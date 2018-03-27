@@ -2,6 +2,8 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 using namespace glm;
 
@@ -102,6 +104,13 @@ void createVAOVBO(float* vertices, unsigned int size, unsigned int* vbo, unsigne
     *vao = vao2;
 }
 
+void rotate(GLuint transform, float x, float y, float z) {
+    glm::mat4 transformMatrix;
+    transformMatrix = glm::translate(transformMatrix, glm::vec3(x, y, z));
+    transformMatrix = glm::rotate(transformMatrix, (float) glfwGetTime() * 5.0f, glm::vec3(0.0f, 0.0f, 1.0f));
+    glUniformMatrix4fv(transform, 1, GL_FALSE, glm::value_ptr(transformMatrix));
+}
+
 int main(int argc, char** argv) {
     if (!glfwInit()) {
         fprintf(stderr, "failed to initialize glfw\n");
@@ -159,8 +168,8 @@ int main(int argc, char** argv) {
     tire_color[0] = 1.0f;
     tire_color[1] = 0.5f;
     tire_color[2] = 0.0f;
-    createTire(tire_front_vertices, -0.4523350000000001f, -0.22941000000000004f, 0.15f, side, tire_color);
-    createTire(tire_back_vertices, 0.6348599999999999f, -0.22941000000000004f, 0.16f, side, tire_color);
+    createTire(tire_front_vertices, 0.0f, 0.0f, 0.15f, side, tire_color);
+    createTire(tire_back_vertices, 0.0f, 0.0f, 0.16f, side, tire_color);
 
     std::string vertex_shader_source_code = loadShader("./src/car/CarVS.vs");
     std::string fragment_shader_source_code = loadShader("./src/car/CarFS.fs");
@@ -174,16 +183,22 @@ int main(int argc, char** argv) {
     createVAOVBO(tire_back_vertices, sizeof(tire_back_vertices),&vbo3,&vao3);
     glUseProgram(shader_program);
 
+    GLuint transform = glGetUniformLocation(shader_program, "transform");
     while(!glfwWindowShouldClose(window)) {
         processInput(window);
 
         glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
-
+        
+        glUniformMatrix4fv(transform, 1, GL_FALSE, glm::value_ptr(glm::mat4()));
         glBindVertexArray(vao);
         glDrawArrays(GL_TRIANGLE_FAN, 0, 19);
+ 
+        rotate(transform, -0.4523350000000001f, -0.22941000000000004f, 0.0f);
         glBindVertexArray(vao2);
         glDrawArrays(GL_TRIANGLE_FAN, 0, side);
+
+        rotate(transform,0.6348599999999999f, -0.22941000000000004f, 0.0f);
         glBindVertexArray(vao3);
         glDrawArrays(GL_TRIANGLE_FAN, 0, side);
 
