@@ -13,5 +13,5 @@ task_1:
 task_car: src/main_car.cpp
 	g++ src/main_car.cpp -o bin/main_car -lglfw -lGL -lGLEW
 
-main_mac:
-	 $(CC) src/main_car.cpp -o bin/main_car $(INCLUDE_PATHS) $(LIBRARY_PATHS) $(LINKER_FLAGS)
+task_car_mac:
+	 $(CC) src/car/main.cpp -o bin/main_car $(INCLUDE_PATHS) $(LIBRARY_PATHS) $(LINKER_FLAGS)
