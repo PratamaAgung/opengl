@@ -140,7 +140,7 @@ int main(int argc, char** argv) {
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     GLFWwindow* window;
-    window = glfwCreateWindow( 1000, 1000, "Car", NULL, NULL);
+    window = glfwCreateWindow( 800, 800, "Car", NULL, NULL);
     if(!window){
         fprintf( stderr, "Failed to open GLFW window.\n" );
         glfwTerminate();
