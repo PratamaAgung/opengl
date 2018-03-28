@@ -36,7 +36,7 @@ void createTire(GLdouble radius, GLuint slices, float x, float y, float * color1
         // } else { 
         //     glColor3f(color2[0], color2[1], color2[2]);        
         // }
-        glColor3f(1.0 - cos(angle), 1.0 - sin(angle), 1.0 - tan(angle));                
+        glColor3f(cos(angle), sin(angle), tan(angle));                
         glVertex3f(radius*cos(angle), radius*sin(angle), 1.0f);
     }
     glColor3f(colorBody[0], colorBody[1], colorBody[2]);
@@ -71,14 +71,66 @@ void drawBody(float * color) {
     glEnd();
     glPopMatrix();
 
+    // window shadow
+    glPushMatrix();
+    glBegin(GL_POLYGON);
+    glColor3f(0.62745098039f, 0.157f, 0.0f);
+    glVertex3f(0.0f, 0.1f, 1.0f);
+    glVertex3f(0.81141f, 0.07588999999999999f, 1.0f);
+    glVertex3f(0.6579649999999999f, 0.10588999999999999f, 1.0f);
+    glVertex3f(0.3579649999999999f, 0.20361999999999994f, 1.0f);
+    glVertex3f(0.0579649999999999f, 0.20361999999999994f, 1.0f);
+    glVertex3f(-0.22641000000000006f, 0.06930999999999997f, 1.0f);
+    glVertex3f(-0.7323350000000001f, -0.036025000000000064f, 1.0f);
+    glVertex3f(-0.10641000000000006f, -0.03030999999999997f, 1.0f);
+    glVertex3f(0.2579649999999999f, -0.03030999999999997f, 1.0f);
+    glVertex3f(0.2579649999999999, -0.02930999999999997f, 1.0f);
+    glVertex3f(0.6079649999999999f, 0.03588999999999999f, 1.0f);
+    glVertex3f(0.81141f, 0.07588999999999999f, 1.0f);
+    glEnd();
+    glPopMatrix();
+
+    // window
     glPushMatrix();
     glBegin(GL_POLYGON);
     glColor3f(1.0f, 1.0f, 1.0f);
-    glVertex3f(0.34f, 0.06f, 1.0f);
-    glVertex3f(0.34f, 0.19f, 1.0f);
-    glVertex3f(0.06f, 0.19f, 1.0f);
-    glColor3f(0.0f, 0.0f, 0.0f);
-    glVertex3f(-0.20f, 0.067f, 1.);
+    glVertex3f(0.0f, 0.1f, 1.0f);
+    glVertex3f(0.3579649999999999f, 0.01930999999999997f, 1.0f);
+    glVertex3f(0.3579649999999999f, 0.15361999999999994f, 1.0f);
+    glVertex3f(0.3279649999999999f, 0.18361999999999994f, 1.0f);
+    glVertex3f(0.0579649999999999f, 0.18361999999999994f, 1.0f);
+    glVertex3f(-0.18641000000000006f, 0.06930999999999997f, 1.0f);
+    glVertex3f(-0.20641000000000006f, 0.02930999999999997f, 1.0f);
+    glVertex3f(-0.10641000000000006f, 0.00030999999999997f, 1.0f);
+    glVertex3f(0.2579649999999999f, 0.00030999999999997f, 1.0f);
+    glVertex3f(0.3579649999999999f, 0.01930999999999997f, 1.0f);
+    glEnd();
+    glPopMatrix();
+    
+    // window
+    glPushMatrix();
+    glBegin(GL_POLYGON);
+    glColor3f(1.0f, 1.0f, 1.0f);
+    glVertex3f(0.4579649999999999f, 0.1f, 1.0f);
+    glVertex3f(0.6079649999999999f, 0.08888999999999999f, 1.0f);
+    glVertex3f(0.4079649999999999f, 0.15361999999999994f, 1.0f);
+    glVertex3f(0.3879649999999999f, 0.15361999999999994f, 1.0f);
+    glVertex3f(0.3879649999999999f, 0.01930999999999997f, 1.0f);
+    glVertex3f(0.6079649999999999f, 0.06588999999999999f, 1.0f);
+    glVertex3f(0.6079649999999999f, 0.08888999999999999f, 1.0f);
+    glEnd();
+    glPopMatrix();
+
+    //botom shadow
+    glPushMatrix();
+    glBegin(GL_POLYGON);
+    glColor3f(0.62745098039f, 0.157f, 0.0f);
+    glVertex3f(0.0f, -0.30941000000000004f, 1.0f);
+    glVertex3f(-0.3523350000000001f, -0.32941000000000004f, 1.0f);
+    glVertex3f(0.7348599999999999f, -0.32941000000000004f, 1.0f);
+    glVertex3f(0.7348599999999999f, -0.25941000000000004f, 1.0f);
+    glVertex3f(-0.3523350000000001f, -0.25941000000000004f, 1.0f);
+    glVertex3f(-0.3523350000000001f, -0.32941000000000004f, 1.0f);
     glEnd();
     glPopMatrix();
 }
@@ -89,7 +141,7 @@ void display() {
     glMatrixMode(GL_MODELVIEW);     // To operate on Model-View matrix
     glLoadIdentity();
 
-    float color[3] = {0.0f, 0.0f, 0.0f};
+    float color[3] = {1.0f, 0.157f, 0.0f,};
     drawBody(color);
 
     float color1[3] = {0.0f, 1.0f, 0.0f};
