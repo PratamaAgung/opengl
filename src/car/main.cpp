@@ -69,6 +69,7 @@ std::string loadShader(const char * file_path){
 
 void createTire(float* vertices, float x, float y, float r, int side, float* tire_color){
   float deg = 360/side;
+  float offset = 0.05f;
   for(int i=0; i<(side+2)*6; i+=6){
     if(i == 0){
       vertices[i] = x;
@@ -79,9 +80,24 @@ void createTire(float* vertices, float x, float y, float r, int side, float* tir
       vertices[i+1] = y + (r * sin((i-1)*deg*M_PI/180.0));
       vertices[i+2] = 1.0f;
     }
-    vertices[i+3] = i/((side + 2)*6.0f) * cos((i-1)*deg*M_PI/180.0);
-    vertices[i+4] = i/((side + 2)*6.0f) * sin((i-1)*deg*M_PI/180.0);
-    vertices[i+5] = i/((side + 2)*6.0f) * tan((i-1)*deg*M_PI/180.0);
+    vertices[i+3] = i/((side + 2)*6.0f) * sin((i-1)*deg*M_PI/90.0);
+    vertices[i+4] = i/((side + 2)*6.0f) * sin((i-1)*deg*M_PI/90.0);
+    vertices[i+5] = i/((side + 2)*6.0f) * sin((i-1)*deg*M_PI/90.0);
+  }
+
+  for(int i=(side+2)*6; i<2*((side+2)*6); i+=6){
+    if(i == (side+2)*6){
+      vertices[i] = x;
+      vertices[i+1] = y;
+      vertices[i+2] = 1.0f;
+    } else {
+      vertices[i] = x + ((r-offset) * cos((i-1)*deg*M_PI/180.0));
+      vertices[i+1] = y + ((r-offset) * sin((i-1)*deg*M_PI/180.0));
+      vertices[i+2] = 1.0f;
+    }
+    vertices[i+3] = tire_color[0];
+    vertices[i+4] = tire_color[1];
+    vertices[i+5] = tire_color[2];
   }
 }
 
@@ -142,7 +158,7 @@ int main(int argc, char** argv) {
     float car_vertices[] = {
       0.0f, 0.0f, 0.0f, 1.0f, 0.157f, 0.0f,
       // back
-      0.0f, -0.32941000000000004f, 1.0f, 1.0f, 0.157f, 0.0f,
+      0.0f, -0.32941000000000004f, 1.0f, 0.62745098039f, 0.157f, 0.0f,
       0.7348599999999999f, -0.32941000000000004f, 1.0f, 1.0f, 0.157f, 0.0f,
       0.8577449999999999f, -0.22941000000000004f, 1.0f, 1.0f, 0.157f, 0.0f,
       0.8777449999999999f, -0.10218999999999994f, 1.0f, 1.0f, 0.157f, 0.0f,
@@ -158,7 +174,7 @@ int main(int argc, char** argv) {
       -0.7523350000000001f, -0.136025000000000064f, 1.0f, 1.0f, 0.157f, 0.0f,
       -0.7323350000000001f, -0.29941000000000004f, 1.0f, 1.0f, 0.157f, 0.0f,
       -0.6523350000000001f, -0.32941000000000004f, 1.0f, 1.0f, 0.157f, 0.0f,
-      0.0f, -0.32941000000000004f, 1.0f, 1.0f, 0.157f, 0.0f,
+      0.0f, -0.32941000000000004f, 1.0f, 0.62745098039f, 0.157f, 0.0f,
 
       // window shadow
       0.0f, 0.1f, 1.0f, 0.62745098039f, 0.157f, 0.0f,
@@ -176,21 +192,21 @@ int main(int argc, char** argv) {
 
       // window
       0.0f, 0.1f, 1.0f, 1.0f, 1.0f, 1.0f,
-      0.3579649999999999f, 0.01930999999999997f, 1.0f, 1.0f, 1.0f, 1.0f,
-      0.3579649999999999f, 0.15361999999999994f, 1.0f, 1.0f, 1.0f, 1.0f,
+      0.3579649999999999f, 0.01930999999999997f, 1.0f, 0.5f, 0.5f, 0.5f,
+      0.3579649999999999f, 0.15361999999999994f, 1.0f, 0.8f, 0.8f, 0.8f,
       0.3279649999999999f, 0.18361999999999994f, 1.0f, 1.0f, 1.0f, 1.0f,
       0.0579649999999999f, 0.18361999999999994f, 1.0f, 1.0f, 1.0f, 1.0f,
       -0.18641000000000006f, 0.06930999999999997f, 1.0f, 1.0f, 1.0f, 1.0f,
-      -0.20641000000000006f, 0.02930999999999997f, 1.0f, 1.0f, 1.0f, 1.0f,
+      -0.20641000000000006f, 0.02930999999999997f, 1.0f, 0.8f, 0.8f, 0.8f,
       -0.10641000000000006f, 0.00030999999999997f, 1.0f, 1.0f, 1.0f, 1.0f,
-      0.2579649999999999f, 0.00030999999999997f, 1.0f, 1.0f, 1.0f, 1.0f,
-      0.3579649999999999f, 0.01930999999999997f, 1.0f, 1.0f, 1.0f, 1.0f,
+      0.2579649999999999f, 0.00030999999999997f, 1.0f, 0.8f, 0.8f, 0.8f,
+      0.3579649999999999f, 0.01930999999999997f, 1.0f, 0.5f, 0.5f, 0.5f,
 
       0.4579649999999999f, 0.1f, 1.0f, 1.0f, 1.0f, 1.0f,
       0.6079649999999999f, 0.08888999999999999f, 1.0f, 1.0f, 1.0f, 1.0f,
       0.4079649999999999f, 0.15361999999999994f, 1.0f, 1.0f, 1.0f, 1.0f,
       0.3879649999999999f, 0.15361999999999994f, 1.0f, 1.0f, 1.0f, 1.0f,
-      0.3879649999999999f, 0.01930999999999997f, 1.0f, 1.0f, 1.0f, 1.0f,
+      0.3879649999999999f, 0.01930999999999997f, 1.0f, 0.5f, 0.5f, 0.5f,
       0.6079649999999999f, 0.06588999999999999f, 1.0f, 1.0f, 1.0f, 1.0f,
       0.6079649999999999f, 0.08888999999999999f, 1.0f, 1.0f, 1.0f, 1.0f,
 
@@ -205,12 +221,12 @@ int main(int argc, char** argv) {
     };
 
     int side = 120;
-    float tire_front_vertices[(side+2)*6];
-    float tire_back_vertices[(side+2)*6];
+    float tire_front_vertices[((side+2)*6)*2];
+    float tire_back_vertices[((side+2)*6)*2];
     float tire_color[3];
-    tire_color[0] = 1.0f;
-    tire_color[1] = 0.5f;
-    tire_color[2] = 0.0f;
+    tire_color[0] = 0.9f;
+    tire_color[1] = 0.9f;
+    tire_color[2] = 0.9f;
     createTire(tire_front_vertices, 0.0f, 0.0f, 0.15f, side, tire_color);
     createTire(tire_back_vertices, 0.0f, 0.0f, 0.16f, side, tire_color);
 
@@ -243,11 +259,13 @@ int main(int argc, char** argv) {
 
         rotate(transform, -0.4523350000000001f, -0.22941000000000004f, 0.0f);
         glBindVertexArray(vao2);
-        glDrawArrays(GL_TRIANGLE_FAN, 0, side);
+        glDrawArrays(GL_TRIANGLE_FAN, 0, side+2);
+        glDrawArrays(GL_TRIANGLE_FAN, side+2, side*2+2);
 
         rotate(transform,0.6348599999999999f, -0.22941000000000004f, 0.0f);
         glBindVertexArray(vao3);
-        glDrawArrays(GL_TRIANGLE_FAN, 0, side);
+        glDrawArrays(GL_TRIANGLE_FAN, 0, side+2);
+        glDrawArrays(GL_TRIANGLE_FAN, side+2, side*2+2);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
