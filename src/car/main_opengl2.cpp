@@ -70,6 +70,17 @@ void drawBody(float * color) {
     glVertex3f(0.8677449999999999f, 0.05218999999999994f, 1.0f);
     glEnd();
     glPopMatrix();
+
+    glPushMatrix();
+    glBegin(GL_POLYGON);
+    glColor3f(1.0f, 1.0f, 1.0f);
+    glVertex3f(0.34f, 0.06f, 1.0f);
+    glVertex3f(0.34f, 0.19f, 1.0f);
+    glVertex3f(0.06f, 0.19f, 1.0f);
+    glColor3f(0.0f, 0.0f, 0.0f);
+    glVertex3f(-0.20f, 0.067f, 1.);
+    glEnd();
+    glPopMatrix();
 }
 
 void display() {
