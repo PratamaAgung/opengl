@@ -80,9 +80,9 @@ void createTire(float* vertices, float x, float y, float r, int side, float* tir
       vertices[i+1] = y + (r * sin((i-1)*deg*M_PI/180.0));
       vertices[i+2] = 1.0f;
     }
-    vertices[i+3] = i/((side + 2)*6.0f) * sin((i-1)*deg*M_PI/90.0);
-    vertices[i+4] = i/((side + 2)*6.0f) * sin((i-1)*deg*M_PI/90.0);
-    vertices[i+5] = i/((side + 2)*6.0f) * sin((i-1)*deg*M_PI/90.0);
+    vertices[i+3] = i/((side + 2)*6.0f*1.5f) * sin((i-1)*deg*M_PI/90.0);
+    vertices[i+4] = i/((side + 2)*6.0f*1.5f) * sin((i-1)*deg*M_PI/90.0);
+    vertices[i+5] = i/((side + 2)*6.0f*1.5f) * sin((i-1)*deg*M_PI/90.0);
   }
 
   for(int i=(side+2)*6; i<2*((side+2)*6); i+=6){
