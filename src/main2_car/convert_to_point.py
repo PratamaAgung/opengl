@@ -1,11 +1,14 @@
 from svgpathtools import svg2paths
 paths, attributes = svg2paths("image/car3.svg")
 
+
 def normalize(x):
-    return (x-150)/200
+    return (x - 150) / 200
+
 
 def printPoint(x, y):
-    print(str(normalize(x)) + "f, " + str(-1* normalize(y)) + "f, 1.0f, 0.0f, 0.0f, 0.0f,")
+    print(str(normalize(x)) + "f, " + str(-1 * normalize(y)) + "f, 1.0f, 0.0f, 0.0f, 0.0f,")
+
 
 curr_x = 0.0
 curr_y = 0.0
