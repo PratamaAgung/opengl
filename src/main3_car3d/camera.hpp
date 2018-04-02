@@ -51,11 +51,9 @@ class Camera{
             switch(direction){
                 case FORWARD: 
                     Position += Front * velocity;
-                    // glm::normalize(Position);
                     break;
                 case BACKWARD:
                     Position -= Front * velocity;
-                    // glm::normalize(Position);
                     break;
                 case RIGHT:
                     Position += Right * velocity;

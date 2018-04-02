@@ -4,6 +4,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <glm/ext.hpp>
 #include "camera.hpp"
 
 using namespace glm;
@@ -241,12 +242,12 @@ int main(int argc, char** argv) {
       0.6079649999999999f, 0.08888999999999999f, 0.0f, 1.0f, 1.0f, 1.0f,
 
       //botom shadow
-      0.0f, -0.30941000000000004f, 1.0f, 0.62745098039f, 0.157f, 0.0f,
-      -0.3523350000000001f, -0.32941000000000004f, 1.0f, 0.62745098039f, 0.157f, 0.0f,
-      0.7348599999999999f, -0.32941000000000004f, 1.0f, 0.62745098039f, 0.157f, 0.0f,
-      0.7348599999999999f, -0.25941000000000004f, 1.0f, 0.62745098039f, 0.157f, 0.0f,
-      -0.3523350000000001f, -0.25941000000000004f, 1.0f, 0.62745098039f, 0.157f, 0.0f,
-      -0.3523350000000001f, -0.32941000000000004f, 1.0f, 0.62745098039f, 0.157f, 0.0f,
+      0.0f, -0.30941000000000004f, 0.0f, 0.62745098039f, 0.157f, 0.0f,
+      -0.3523350000000001f, -0.32941000000000004f, 0.0f, 0.62745098039f, 0.157f, 0.0f,
+      0.7348599999999999f, -0.32941000000000004f, 0.0f, 0.62745098039f, 0.157f, 0.0f,
+      0.7348599999999999f, -0.25941000000000004f, 0.0f, 0.62745098039f, 0.157f, 0.0f,
+      -0.3523350000000001f, -0.25941000000000004f, 0.0f, 0.62745098039f, 0.157f, 0.0f,
+      -0.3523350000000001f, -0.32941000000000004f, 0.0f, 0.62745098039f, 0.157f, 0.0f,
 
     };
 
@@ -291,6 +292,7 @@ int main(int argc, char** argv) {
 
         processInput(window, deltaTime);
         glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(camera->GetViewMatrix()));
+        std::cout << glm::to_string(camera->Position) << std::endl;
 
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(glm::mat4()));
         glBindVertexArray(vao);
