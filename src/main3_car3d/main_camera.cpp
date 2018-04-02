@@ -4,16 +4,45 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <glm/ext.hpp>
+#include "camera.hpp"
 
 using namespace glm;
+bool firstMouse;
+float lastX, lastY;
+Camera* camera;
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
     glViewport(0, 0, width, height);
 }
 
-void processInput(GLFWwindow *window) {
+void processInput(GLFWwindow *window, float deltaTime) {
     if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
+    else if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+        camera->ProcessKeyboard(FORWARD,  deltaTime);
+    else if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+        camera->ProcessKeyboard(BACKWARD,  deltaTime);
+    else if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+        camera->ProcessKeyboard(LEFT,  deltaTime);
+    else if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+        camera->ProcessKeyboard(RIGHT,  deltaTime);
+}
+
+void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
+    if (firstMouse)
+    {
+        lastX = xpos;
+        lastY = ypos;
+        firstMouse = false;
+    }
+
+    float xoffset = xpos - lastX;
+    float yoffset = lastY - ypos;
+    lastX = xpos;
+    lastY = ypos;
+
+    camera->ProcessMouseMovement(xoffset, yoffset);
 }
 
 int compileShader(unsigned int type, const std::string& source){
@@ -133,6 +162,8 @@ int main(int argc, char** argv) {
         return -1;
     }
 
+    firstMouse = true;
+
     glfwWindowHint(GLFW_SAMPLES, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -158,65 +189,65 @@ int main(int argc, char** argv) {
     float car_vertices[] = {
       0.0f, 0.0f, 0.0f, 1.0f, 0.157f, 0.0f,
       // back
-      0.0f, -0.32941000000000004f, 1.0f, 0.62745098039f, 0.157f, 0.0f,
-      0.7348599999999999f, -0.32941000000000004f, 1.0f, 0.62745098039f, 0.157f, 0.0f,
-      0.8577449999999999f, -0.22941000000000004f, 1.0f, 0.62745098039f, 0.157f, 0.0f,
-      0.8777449999999999f, -0.10218999999999994f, 1.0f, 1.0f, 0.157f, 0.0f,
-      0.8677449999999999f, 0.05218999999999994f, 1.0f, 0.62745098039f, 0.157f, 0.0f,
-      0.81141f, 0.07588999999999999f, 1.0f, 0.62745098039f, 0.157f, 0.0f,
-      0.6579649999999999f, 0.10588999999999999f, 1.0f, 0.62745098039f, 0.157f, 0.0f,
+      0.0f, -0.32941000000000004f, 0.0f, 0.62745098039f, 0.157f, 0.0f,
+      0.7348599999999999f, -0.32941000000000004f, 0.0f, 0.62745098039f, 0.157f, 0.0f,
+      0.8577449999999999f, -0.22941000000000004f, 0.0f, 0.62745098039f, 0.157f, 0.0f,
+      0.8777449999999999f, -0.10218999999999994f, 0.0f, 1.0f, 0.157f, 0.0f,
+      0.8677449999999999f, 0.05218999999999994f, 0.0f, 0.62745098039f, 0.157f, 0.0f,
+      0.81141f, 0.07588999999999999f, 0.0f, 0.62745098039f, 0.157f, 0.0f,
+      0.6579649999999999f, 0.10588999999999999f, 0.0f, 0.62745098039f, 0.157f, 0.0f,
       // top
-      0.3579649999999999f, 0.20361999999999994f, 1.0f, 0.62745098039f, 0.157f, 0.0f,
-      0.0579649999999999f, 0.20361999999999994f, 1.0f, 0.62745098039f, 0.157f, 0.0f,
-      -0.22641000000000006f, 0.06930999999999997f, 1.0f, 0.62745098039f, 0.157f, 0.0f,
+      0.3579649999999999f, 0.20361999999999994f, 0.0f, 0.62745098039f, 0.157f, 0.0f,
+      0.0579649999999999f, 0.20361999999999994f, 0.0f, 0.62745098039f, 0.157f, 0.0f,
+      -0.22641000000000006f, 0.06930999999999997f, 0.0f, 0.62745098039f, 0.157f, 0.0f,
       // front
-      -0.7323350000000001f, -0.036025000000000064f, 1.0f, 0.62745098039f, 0.157f, 0.0f,
-      -0.7523350000000001f, -0.136025000000000064f, 1.0f, 1.0f, 0.157f, 0.0f,
-      -0.7323350000000001f, -0.29941000000000004f, 1.0f, 0.62745098039f, 0.157f, 0.0f,
-      -0.6523350000000001f, -0.32941000000000004f, 1.0f, 0.62745098039f, 0.157f, 0.0f,
-      0.0f, -0.32941000000000004f, 1.0f, 0.62745098039f, 0.157f, 0.0f,
+      -0.7323350000000001f, -0.036025000000000064f, 0.0f, 0.62745098039f, 0.157f, 0.0f,
+      -0.7523350000000001f, -0.136025000000000064f, 0.0f, 1.0f, 0.157f, 0.0f,
+      -0.7323350000000001f, -0.29941000000000004f, 0.0f, 0.62745098039f, 0.157f, 0.0f,
+      -0.6523350000000001f, -0.32941000000000004f, 0.0f, 0.62745098039f, 0.157f, 0.0f,
+      0.0f, -0.32941000000000004f, 0.0f, 0.62745098039f, 0.157f, 0.0f,
 
       // window shadow
-      0.0f, 0.1f, 1.0f, 0.62745098039f, 0.157f, 0.0f,
-      0.81141f, 0.07588999999999999f, 1.0f, 0.62745098039f, 0.157f, 0.0f,
-      0.6579649999999999f, 0.10588999999999999f, 1.0f, 0.62745098039f, 0.157f, 0.0f,
-      0.3579649999999999f, 0.20361999999999994f, 1.0f, 0.62745098039f, 0.157f, 0.0f,
-      0.0579649999999999f, 0.20361999999999994f, 1.0f, 0.62745098039f, 0.157f, 0.0f,
-      -0.22641000000000006f, 0.06930999999999997f, 1.0f, 0.62745098039f, 0.157f, 0.0f,
-      -0.7323350000000001f, -0.036025000000000064f, 1.0f, 0.62745098039f, 0.157f, 0.0f,
-      -0.10641000000000006f, -0.03030999999999997f, 1.0f, 0.62745098039f, 0.157f, 0.0f,
-      0.2579649999999999f, -0.03030999999999997f, 1.0f, 0.62745098039f, 0.157f, 0.0f,
-      0.2579649999999999, -0.02930999999999997f, 1.0f, 0.62745098039f, 0.157f, 0.0f,
-      0.6079649999999999f, 0.03588999999999999f, 1.0f, 0.62745098039f, 0.157f, 0.0f,
-      0.81141f, 0.07588999999999999f, 1.0f, 0.62745098039f, 0.157f, 0.0f,
+      0.0f, 0.1f, 0.0f, 0.62745098039f, 0.157f, 0.0f,
+      0.81141f, 0.07588999999999999f, 0.0f, 0.62745098039f, 0.157f, 0.0f,
+      0.6579649999999999f, 0.10588999999999999f, 0.0f, 0.62745098039f, 0.157f, 0.0f,
+      0.3579649999999999f, 0.20361999999999994f, 0.0f, 0.62745098039f, 0.157f, 0.0f,
+      0.0579649999999999f, 0.20361999999999994f, 0.0f, 0.62745098039f, 0.157f, 0.0f,
+      -0.22641000000000006f, 0.06930999999999997f, 0.0f, 0.62745098039f, 0.157f, 0.0f,
+      -0.7323350000000001f, -0.036025000000000064f, 0.0f, 0.62745098039f, 0.157f, 0.0f,
+      -0.10641000000000006f, -0.03030999999999997f, 0.0f, 0.62745098039f, 0.157f, 0.0f,
+      0.2579649999999999f, -0.03030999999999997f, 0.0f, 0.62745098039f, 0.157f, 0.0f,
+      0.2579649999999999, -0.02930999999999997f, 0.0f, 0.62745098039f, 0.157f, 0.0f,
+      0.6079649999999999f, 0.03588999999999999f, 0.0f, 0.62745098039f, 0.157f, 0.0f,
+      0.81141f, 0.07588999999999999f, 0.0f, 0.62745098039f, 0.157f, 0.0f,
 
       // window
-      0.0f, 0.1f, 1.0f, 1.0f, 1.0f, 1.0f,
-      0.3579649999999999f, 0.01930999999999997f, 1.0f, 0.5f, 0.5f, 0.5f,
-      0.3579649999999999f, 0.15361999999999994f, 1.0f, 0.8f, 0.8f, 0.8f,
-      0.3279649999999999f, 0.18361999999999994f, 1.0f, 1.0f, 1.0f, 1.0f,
-      0.0579649999999999f, 0.18361999999999994f, 1.0f, 1.0f, 1.0f, 1.0f,
-      -0.18641000000000006f, 0.06930999999999997f, 1.0f, 1.0f, 1.0f, 1.0f,
-      -0.20641000000000006f, 0.02930999999999997f, 1.0f, 0.8f, 0.8f, 0.8f,
-      -0.10641000000000006f, 0.00030999999999997f, 1.0f, 1.0f, 1.0f, 1.0f,
-      0.2579649999999999f, 0.00030999999999997f, 1.0f, 0.8f, 0.8f, 0.8f,
-      0.3579649999999999f, 0.01930999999999997f, 1.0f, 0.5f, 0.5f, 0.5f,
+      0.0f, 0.1f, 0.0f, 1.0f, 1.0f, 1.0f,
+      0.3579649999999999f, 0.01930999999999997f, 0.0f, 0.5f, 0.5f, 0.5f,
+      0.3579649999999999f, 0.15361999999999994f, 0.0f, 0.8f, 0.8f, 0.8f,
+      0.3279649999999999f, 0.18361999999999994f, 0.0f, 1.0f, 1.0f, 1.0f,
+      0.0579649999999999f, 0.18361999999999994f, 0.0f, 1.0f, 1.0f, 1.0f,
+      -0.18641000000000006f, 0.06930999999999997f, 0.0f, 1.0f, 1.0f, 1.0f,
+      -0.20641000000000006f, 0.02930999999999997f, 0.0f, 0.8f, 0.8f, 0.8f,
+      -0.10641000000000006f, 0.00030999999999997f, 0.0f, 1.0f, 1.0f, 1.0f,
+      0.2579649999999999f, 0.00030999999999997f, 0.0f, 0.8f, 0.8f, 0.8f,
+      0.3579649999999999f, 0.01930999999999997f, 0.0f, 0.5f, 0.5f, 0.5f,
 
-      0.4579649999999999f, 0.1f, 1.0f, 1.0f, 1.0f, 1.0f,
-      0.6079649999999999f, 0.08888999999999999f, 1.0f, 1.0f, 1.0f, 1.0f,
-      0.4079649999999999f, 0.15361999999999994f, 1.0f, 1.0f, 1.0f, 1.0f,
-      0.3879649999999999f, 0.15361999999999994f, 1.0f, 1.0f, 1.0f, 1.0f,
-      0.3879649999999999f, 0.01930999999999997f, 1.0f, 0.5f, 0.5f, 0.5f,
-      0.6079649999999999f, 0.06588999999999999f, 1.0f, 1.0f, 1.0f, 1.0f,
-      0.6079649999999999f, 0.08888999999999999f, 1.0f, 1.0f, 1.0f, 1.0f,
+      0.4579649999999999f, 0.1f, 0.0f, 1.0f, 1.0f, 1.0f,
+      0.6079649999999999f, 0.08888999999999999f, 0.0f, 1.0f, 1.0f, 1.0f,
+      0.4079649999999999f, 0.15361999999999994f, 0.0f, 1.0f, 1.0f, 1.0f,
+      0.3879649999999999f, 0.15361999999999994f, 0.0f, 1.0f, 1.0f, 1.0f,
+      0.3879649999999999f, 0.01930999999999997f, 0.0f, 0.5f, 0.5f, 0.5f,
+      0.6079649999999999f, 0.06588999999999999f, 0.0f, 1.0f, 1.0f, 1.0f,
+      0.6079649999999999f, 0.08888999999999999f, 0.0f, 1.0f, 1.0f, 1.0f,
 
       //botom shadow
-      0.0f, -0.30941000000000004f, 1.0f, 0.62745098039f, 0.157f, 0.0f,
-      -0.3523350000000001f, -0.32941000000000004f, 1.0f, 0.62745098039f, 0.157f, 0.0f,
-      0.7348599999999999f, -0.32941000000000004f, 1.0f, 0.62745098039f, 0.157f, 0.0f,
-      0.7348599999999999f, -0.25941000000000004f, 1.0f, 0.62745098039f, 0.157f, 0.0f,
-      -0.3523350000000001f, -0.25941000000000004f, 1.0f, 0.62745098039f, 0.157f, 0.0f,
-      -0.3523350000000001f, -0.32941000000000004f, 1.0f, 0.62745098039f, 0.157f, 0.0f,
+      0.0f, -0.30941000000000004f, 0.0f, 0.62745098039f, 0.157f, 0.0f,
+      -0.3523350000000001f, -0.32941000000000004f, 0.0f, 0.62745098039f, 0.157f, 0.0f,
+      0.7348599999999999f, -0.32941000000000004f, 0.0f, 0.62745098039f, 0.157f, 0.0f,
+      0.7348599999999999f, -0.25941000000000004f, 0.0f, 0.62745098039f, 0.157f, 0.0f,
+      -0.3523350000000001f, -0.25941000000000004f, 0.0f, 0.62745098039f, 0.157f, 0.0f,
+      -0.3523350000000001f, -0.32941000000000004f, 0.0f, 0.62745098039f, 0.157f, 0.0f,
 
     };
 
@@ -230,8 +261,8 @@ int main(int argc, char** argv) {
     createTire(tire_front_vertices, 0.0f, 0.0f, 0.15f, side, tire_color);
     createTire(tire_back_vertices, 0.0f, 0.0f, 0.16f, side, tire_color);
 
-    std::string vertex_shader_source_code = loadShader("./src/main2_car/CarVS.vs");
-    std::string fragment_shader_source_code = loadShader("./src/main2_car/CarFS.fs");
+    std::string vertex_shader_source_code = loadShader("./src/main3_car3d/CarVS.vs");
+    std::string fragment_shader_source_code = loadShader("./src/main3_car3d/CarFS.fs");
 
     unsigned int shader_program = createShader(vertex_shader_source_code, fragment_shader_source_code);
 
@@ -242,14 +273,28 @@ int main(int argc, char** argv) {
     createVAOVBO(tire_back_vertices, sizeof(tire_back_vertices),&vbo3,&vao3);
     glUseProgram(shader_program);
 
-    GLuint transform = glGetUniformLocation(shader_program, "transform");
+    GLuint modelLoc = glGetUniformLocation(shader_program, "model");
+    GLuint viewLoc = glGetUniformLocation(shader_program, "view");
+    GLuint projectionLoc = glGetUniformLocation(shader_program, "projection");
+    float lastFrame = 0.0f;
+    float deltaTime = 0.0f;
+
+    camera = new Camera();
+    glfwSetCursorPosCallback(window, mouse_callback);
+    glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(glm::ortho(-1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f)));
     while(!glfwWindowShouldClose(window)) {
-        processInput(window);
+        float currentFrame = glfwGetTime();
+        deltaTime = currentFrame - lastFrame;
+        lastFrame = currentFrame;
 
         glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        glUniformMatrix4fv(transform, 1, GL_FALSE, glm::value_ptr(glm::mat4()));
+        processInput(window, deltaTime);
+        glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(camera->GetViewMatrix()));
+        std::cout << glm::to_string(camera->Position) << std::endl;
+
+        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(glm::mat4()));
         glBindVertexArray(vao);
         glDrawArrays(GL_TRIANGLE_FAN, 0, 16);
         glDrawArrays(GL_TRIANGLE_FAN, 16, 12);
@@ -257,12 +302,12 @@ int main(int argc, char** argv) {
         glDrawArrays(GL_TRIANGLE_FAN, 38, 7);
         glDrawArrays(GL_TRIANGLE_FAN, 45, 6);
 
-        rotate(transform, -0.4523350000000001f, -0.22941000000000004f, 0.0f);
+        rotate(modelLoc, -0.4523350000000001f, -0.22941000000000004f, 0.0f);
         glBindVertexArray(vao2);
         glDrawArrays(GL_TRIANGLE_FAN, 0, side+2);
         glDrawArrays(GL_TRIANGLE_FAN, side+2, side*2+2);
 
-        rotate(transform,0.6348599999999999f, -0.22941000000000004f, 0.0f);
+        rotate(modelLoc,0.6348599999999999f, -0.22941000000000004f, 0.0f);
         glBindVertexArray(vao3);
         glDrawArrays(GL_TRIANGLE_FAN, 0, side+2);
         glDrawArrays(GL_TRIANGLE_FAN, side+2, side*2+2);

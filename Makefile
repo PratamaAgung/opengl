@@ -18,4 +18,7 @@ task_3: src/main3_car3d/main.cpp
 	g++ src/main3_car3d/main.cpp -o bin/main3_car -lglfw -lGL -lGLEW
 
 task_2_mac:
-	 $(CC) src/main2_car/main.cpp -o bin/main2_car $(INCLUDE_PATHS) $(LIBRARY_PATHS) $(LINKER_FLAGS)
+	$(CC) src/main2_car/main.cpp -o bin/main2_car $(INCLUDE_PATHS) $(LIBRARY_PATHS) $(LINKER_FLAGS)
+
+task_3_mac:
+	$(CC) src/main3_car3d/main.cpp -o bin/main3_car3d $(INCLUDE_PATHS) $(LIBRARY_PATHS) $(LINKER_FLAGS)
