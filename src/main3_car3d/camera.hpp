@@ -6,7 +6,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 enum Camera_Movement{
-    FORWARD, BACKWARD, LEFT, RIGHT
+    UP, DOWN, LEFT, RIGHT
 };
 
 const float YAW         = -90.0f;
@@ -29,7 +29,7 @@ class Camera{
         float Zoom;
 
         Camera() : Front(glm::vec3(0.0f, 0.0f, -1.0f)), Yaw(YAW), Pitch(PITCH), MovementSpeed(SPEED), MouseSensitivity(SENSITIVITY), Zoom(ZOOM) {
-            Position = glm::vec3(0.0f, 0.0f, 3.0f);
+            Position = glm::vec3(0.0f, 0.0f, 5.0f);
             WorldUp = glm::vec3(0.0f, 1.0f, 0.0f);
             updateCameraVectors();
         }
@@ -49,11 +49,11 @@ class Camera{
         void ProcessKeyboard(Camera_Movement direction, float deltaTime) {
             float velocity = MovementSpeed * deltaTime;
             switch(direction){
-                case FORWARD: 
-                    Position += Front * velocity;
+                case UP: 
+                    Position += Up * velocity;
                     break;
-                case BACKWARD:
-                    Position -= Front * velocity;
+                case DOWN:
+                    Position -= Up * velocity;
                     break;
                 case RIGHT:
                     Position += Right * velocity;
@@ -83,7 +83,7 @@ class Camera{
 
         void ProcessMouseScroll(float yoffset) {
             if (Zoom >= 1.0f && Zoom <= 45.0f)
-                Zoom -= yoffset;
+                Zoom += yoffset;
             if (Zoom <= 1.0f)
                 Zoom = 1.0f;
             if (Zoom >= 45.0f)

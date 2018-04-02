@@ -20,9 +20,9 @@ void processInput(GLFWwindow *window, float deltaTime) {
     if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
     else if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        camera->ProcessKeyboard(FORWARD,  deltaTime);
+        camera->ProcessKeyboard(UP,  deltaTime);
     else if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        camera->ProcessKeyboard(BACKWARD,  deltaTime);
+        camera->ProcessKeyboard(DOWN,  deltaTime);
     else if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
         camera->ProcessKeyboard(LEFT,  deltaTime);
     else if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
@@ -43,6 +43,10 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
     lastY = ypos;
 
     camera->ProcessMouseMovement(xoffset, yoffset);
+}
+
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset){
+    camera->ProcessMouseScroll(yoffset);
 }
 
 int compileShader(unsigned int type, const std::string& source){
@@ -281,9 +285,8 @@ int main(int argc, char** argv) {
 
     camera = new Camera();
     glfwSetCursorPosCallback(window, mouse_callback);
+    glfwSetScrollCallback(window, scroll_callback);
 
-    glm::mat4 projection = glm::perspective(glm::radians(60.0f), 1.0f, 0.1f, 100.0f);
-    glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
     while(!glfwWindowShouldClose(window)) {
         float currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;
@@ -294,6 +297,9 @@ int main(int argc, char** argv) {
 
         processInput(window, deltaTime);
         glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(camera->GetViewMatrix()));
+
+        glm::mat4 projection = glm::perspective(glm::radians(camera->Zoom), 1.0f, 0.1f, 100.0f);
+        glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(glm::mat4()));
         glBindVertexArray(vao);
