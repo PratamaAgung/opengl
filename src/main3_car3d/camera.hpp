@@ -29,7 +29,7 @@ class Camera{
         float Zoom;
 
         Camera() : Front(glm::vec3(0.0f, 0.0f, -1.0f)), Yaw(YAW), Pitch(PITCH), MovementSpeed(SPEED), MouseSensitivity(SENSITIVITY), Zoom(ZOOM) {
-            Position = glm::vec3(0.0f, 0.0f, 0.0f);
+            Position = glm::vec3(0.0f, 0.0f, 3.0f);
             WorldUp = glm::vec3(0.0f, 1.0f, 0.0f);
             updateCameraVectors();
         }
