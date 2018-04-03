@@ -255,7 +255,7 @@ int main(int argc, char** argv) {
 
     };
 
-    int side = 120;
+    int side = 5;
     float tire_front_vertices[((side+2)*6)*2];
     float tire_back_vertices[((side+2)*6)*2];
     float tire_color[3];
@@ -265,8 +265,8 @@ int main(int argc, char** argv) {
     createTire(tire_front_vertices, 0.0f, 0.0f, 0.15f, side, tire_color);
     createTire(tire_back_vertices, 0.0f, 0.0f, 0.16f, side, tire_color);
 
-    std::string vertex_shader_source_code = loadShader("./src/main3_car3d/CarVS.vs");
-    std::string fragment_shader_source_code = loadShader("./src/main3_car3d/CarFS.fs");
+    std::string vertex_shader_source_code = loadShader("./src/main3_car3d/vertex.vs");
+    std::string fragment_shader_source_code = loadShader("./src/main3_car3d/fragment.fs");
 
     unsigned int shader_program = createShader(vertex_shader_source_code, fragment_shader_source_code);
 
