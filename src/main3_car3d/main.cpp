@@ -117,38 +117,58 @@ void buildTexture(unsigned int *texture, const char * path){
   stbi_image_free(data);
 }
 
-void createTire(float* vertices, float x, float y, float r, int side, float* tire_color){
+void createTire(float* vertices, float x, float y, float z, float r, int side, float* tire_color, float width){
   float deg = 360/side;
-  float offset = 0.05f;
-  for(int i=0; i<(side+2)*6; i+=6){
+  for(int i=0; i<(side+2)*8; i+=8){
     if(i == 0){
       vertices[i] = x;
       vertices[i+1] = y;
-      vertices[i+2] = 1.0f;
+      vertices[i+2] = z;
     } else {
       vertices[i] = x + (r * cos((i-1)*deg*M_PI/180.0));
       vertices[i+1] = y + (r * sin((i-1)*deg*M_PI/180.0));
-      vertices[i+2] = 1.0f;
-    }
-    vertices[i+3] = i/((side + 2)*6.0f*1.5f) * sin((i-1)*deg*M_PI/90.0);
-    vertices[i+4] = i/((side + 2)*6.0f*1.5f) * sin((i-1)*deg*M_PI/90.0);
-    vertices[i+5] = i/((side + 2)*6.0f*1.5f) * sin((i-1)*deg*M_PI/90.0);
-  }
-
-  for(int i=(side+2)*6; i<2*((side+2)*6); i+=6){
-    if(i == (side+2)*6){
-      vertices[i] = x;
-      vertices[i+1] = y;
-      vertices[i+2] = 1.0f;
-    } else {
-      vertices[i] = x + ((r-offset) * cos((i-1)*deg*M_PI/180.0));
-      vertices[i+1] = y + ((r-offset) * sin((i-1)*deg*M_PI/180.0));
-      vertices[i+2] = 1.0f;
+      vertices[i+2] = z;
     }
     vertices[i+3] = tire_color[0];
     vertices[i+4] = tire_color[1];
     vertices[i+5] = tire_color[2];
+    vertices[i+6] = 0.0f;
+    vertices[i+7] = 0.0f;
   }
+
+  for(int i=(side+2)*8; i<(side+2)*8*2; i+=8){
+    if(i == (side+2)*8){
+      vertices[i] = x;
+      vertices[i+1] = y;
+      vertices[i+2] = (z<0.0f?z+width:z-width);
+    } else {
+      vertices[i] = x + (r * cos((i-1)*deg*M_PI/180.0));
+      vertices[i+1] = y + (r * sin((i-1)*deg*M_PI/180.0));
+      vertices[i+2] = (z<0.0f?z+width:z-width);
+    }
+    vertices[i+3] = tire_color[0];
+    vertices[i+4] = tire_color[1];
+    vertices[i+5] = tire_color[2];
+    vertices[i+6] = 0.0f;
+    vertices[i+7] = 0.0f;
+  }
+  //
+  // int j = (side+2)*8*2;
+  // for(int i=8; i<(side*8); i+=8, j+=40){
+  //   for(int k=0; k<40; k++){
+  //     if(k<8){
+  //       vertices[j+k] = vertices[i+k];
+  //     } else if (k<16){
+  //       vertices[j+k] = vertices[i+k+((side+2)*8)];
+  //     } else if (k<24){
+  //       vertices[j+k] = vertices[i+8+k+((side+2)*8)];
+  //     } else if (k<32) {
+  //       vertices[j+k] = vertices[i+8+k];
+  //     } else {
+  //       vertices[j+k] = vertices[i+k];
+  //     }
+  //   }
+  // }
 }
 
 int main(int argc, char** argv) {
@@ -325,21 +345,39 @@ int main(int argc, char** argv) {
 
     unsigned int texture;
     buildTexture(&texture, "./src/main3_car3d/container.jpg");
-    // unsigned char *data = stbi_load("./src/main3_car3d/container.jpg", &width, &height, &nrChannels, 0);
 
     std::string vertex_shader_source_code = loadShader("./src/main3_car3d/vertex.vs");
     std::string fragment_shader_source_code = loadShader("./src/main3_car3d/fragment.fs");
 
     unsigned int shader_program = createShader(vertex_shader_source_code, fragment_shader_source_code);
 
-    unsigned int vbo;
-    unsigned int vao;
+    int side = 5;
+    float tire_front_vertices[((side+2)*8)*2];
+    // float tire_back_vertices[((side+2)*8)*2];
+    float tire_color[3];
+    tire_color[0] = 0.1f;
+    tire_color[1] = 0.1f;
+    tire_color[2] = 0.1f;
+    createTire(tire_front_vertices, -0.4523350000000001f, -0.22941000000000004f, 0.45f, 0.15f, side, tire_color, 0.125f);
+    // createTire(tire_back_vertices, 0.0f, 0.0f, 0.16f, side, tire_color);
+
+
+    unsigned int vbo, vbo2, vbo3;
+    unsigned int vao, vao2, vao3;
     createVAOVBO(vertices, sizeof(vertices),&vbo,&vao);
+    createVAOVBO(tire_front_vertices, sizeof(tire_front_vertices),&vbo2,&vao2);
+    // createVAOVBO(tire_back_vertices, sizeof(tire_back_vertices),&vbo3,&vao3);
+
     glBindTexture(GL_TEXTURE_2D, texture);
     glUseProgram(shader_program);
 
     // GLuint transform = glGetUniformLocation(shader_program, "transform");
     // GLuint modelLoc = glGetUniformLocation(shader_program, "model");
+
+    // GLuint modelLoc = glGetUniformLocation(shader_program, "model");
+    // GLuint viewLoc = glGetUniformLocation(shader_program, "view");
+    // GLuint projectionLoc = glGetUniformLocation(shader_program, "projection");
+
     glEnable(GL_DEPTH_TEST);
     while(!glfwWindowShouldClose(window)) {
         processInput(window);
@@ -360,23 +398,34 @@ int main(int argc, char** argv) {
         glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &view[0][0]);
         glUniformMatrix4fv(glGetUniformLocation(shader_program, "projection"), 1, GL_FALSE, &projection[0][0]);
 
-        glBindVertexArray(vao);
-        glDrawArrays(GL_TRIANGLE_FAN, 0, 16);
-        glDrawArrays(GL_TRIANGLE_FAN, 16, 16);
-        glDrawArrays(GL_TRIANGLE_FAN, 32, 5);
-        glDrawArrays(GL_TRIANGLE_FAN, 37, 5);
-        glDrawArrays(GL_TRIANGLE_FAN, 42, 5);
-        glDrawArrays(GL_TRIANGLE_FAN, 47, 5);
-        glDrawArrays(GL_TRIANGLE_FAN, 52, 5);
-        glDrawArrays(GL_TRIANGLE_FAN, 57, 5);
-        glDrawArrays(GL_TRIANGLE_FAN, 62, 5);
-        glDrawArrays(GL_TRIANGLE_FAN, 67, 5);
-        glDrawArrays(GL_TRIANGLE_FAN, 72, 5);
-        glDrawArrays(GL_TRIANGLE_FAN, 77, 5);
-        glDrawArrays(GL_TRIANGLE_FAN, 82, 5);
-        glDrawArrays(GL_TRIANGLE_FAN, 87, 5);
-        glDrawArrays(GL_TRIANGLE_FAN, 92, 5);
-        glDrawArrays(GL_TRIANGLE_FAN, 97, 5);
+        // glBindVertexArray(vao);
+        // glDrawArrays(GL_TRIANGLE_FAN, 0, 16);
+        // glDrawArrays(GL_TRIANGLE_FAN, 16, 16);
+        // glDrawArrays(GL_TRIANGLE_FAN, 32, 5);
+        // glDrawArrays(GL_TRIANGLE_FAN, 37, 5);
+        // glDrawArrays(GL_TRIANGLE_FAN, 42, 5);
+        // glDrawArrays(GL_TRIANGLE_FAN, 47, 5);
+        // glDrawArrays(GL_TRIANGLE_FAN, 52, 5);
+        // glDrawArrays(GL_TRIANGLE_FAN, 57, 5);
+        // glDrawArrays(GL_TRIANGLE_FAN, 62, 5);
+        // glDrawArrays(GL_TRIANGLE_FAN, 67, 5);
+        // glDrawArrays(GL_TRIANGLE_FAN, 72, 5);
+        // glDrawArrays(GL_TRIANGLE_FAN, 77, 5);
+        // glDrawArrays(GL_TRIANGLE_FAN, 82, 5);
+        // glDrawArrays(GL_TRIANGLE_FAN, 87, 5);
+        // glDrawArrays(GL_TRIANGLE_FAN, 92, 5);
+        // glDrawArrays(GL_TRIANGLE_FAN, 97, 5);
+
+        glBindVertexArray(vao2);
+        glDrawArrays(GL_TRIANGLE_FAN, 0, side+2);
+        glDrawArrays(GL_TRIANGLE_FAN, side+2, side*2+2);
+        // for(int i=0; i<side; i++){
+        //   glDrawArrays(GL_TRIANGLE_FAN, side*2+2+i*5, 5);
+        // }
+        // glBindVertexArray(vao3);
+        // glDrawArrays(GL_TRIANGLE_FAN, 0, side+2);
+        // glDrawArrays(GL_TRIANGLE_FAN, side+2, side*2+2);
+
         // glDrawArrays(GL_TRIANGLE_FAN, 93, 5);
         // glDrawArrays(GL_TRIANGLE_FAN, 16, 12);
         // glDrawArrays(GL_TRIANGLE_FAN, 28, 10);
