@@ -90,13 +90,6 @@ void createVAOVBO(float* vertices, unsigned int size, unsigned int* vbo, unsigne
     *vao = vao2;
 }
 
-void rotate(unsigned int transform, float x, float y, float z) {
-    glm::mat4 transformMatrix;
-    transformMatrix = glm::translate(transformMatrix, glm::vec3(x, y, z));
-    transformMatrix = glm::rotate(transformMatrix, (float) glfwGetTime() * 5.0f, glm::vec3(0.0f, 0.0f, 1.0f));
-    glUniformMatrix4fv(transform, 1, GL_FALSE, glm::value_ptr(transformMatrix));
-}
-
 void buildTexture(unsigned int *texture, const char * path){
   glGenTextures(1, &(*texture));
   glBindTexture(GL_TEXTURE_2D, *texture);
@@ -132,8 +125,8 @@ void createTire(float* vertices, float x, float y, float z, float r, int side, f
     vertices[i+3] = tire_color[0];
     vertices[i+4] = tire_color[1];
     vertices[i+5] = tire_color[2];
-    vertices[i+6] = 0.0f;
-    vertices[i+7] = 0.0f;
+    vertices[i+6] = 0.05f;
+    vertices[i+7] = 0.1f;
   }
 
   for(int i=(side+2)*8; i<(side+2)*8*2; i+=8){
@@ -149,26 +142,26 @@ void createTire(float* vertices, float x, float y, float z, float r, int side, f
     vertices[i+3] = tire_color[0];
     vertices[i+4] = tire_color[1];
     vertices[i+5] = tire_color[2];
-    vertices[i+6] = 0.0f;
-    vertices[i+7] = 0.0f;
+    vertices[i+6] = 0.05f;
+    vertices[i+7] = 0.1f;
   }
   //
-  // int j = (side+2)*8*2;
-  // for(int i=8; i<(side*8); i+=8, j+=40){
-  //   for(int k=0; k<40; k++){
-  //     if(k<8){
-  //       vertices[j+k] = vertices[i+k];
-  //     } else if (k<16){
-  //       vertices[j+k] = vertices[i+k+((side+2)*8)];
-  //     } else if (k<24){
-  //       vertices[j+k] = vertices[i+8+k+((side+2)*8)];
-  //     } else if (k<32) {
-  //       vertices[j+k] = vertices[i+8+k];
-  //     } else {
-  //       vertices[j+k] = vertices[i+k];
-  //     }
-  //   }
-  // }
+  int j = (side+2)*8*2;
+  for(int i=8; i<(side*8); i+=8, j+=40){
+    for(int k=0; k<40; k++){
+      if(k<8){
+        vertices[j+k] = vertices[i+k];
+      } else if (k<16){
+        vertices[j+k] = vertices[i+k+((side+2)*8)];
+      } else if (k<24){
+        vertices[j+k] = vertices[i+8+k+((side+2)*8)];
+      } else if (k<32) {
+        vertices[j+k] = vertices[i+8+k];
+      } else {
+        vertices[j+k] = vertices[i+k];
+      }
+    }
+  }
 }
 
 int main(int argc, char** argv) {
@@ -204,44 +197,44 @@ int main(int argc, char** argv) {
         // left
         0.0f, 0.0f, 0.4f, 1.0f, 0.157f, 0.0f, 0.0f, 0.0f,
         // back  0.0f, 0.0f,
-        0.0f, -0.32941000000000004f, 0.4f, 0.62745098039f, 0.157f, 0.0f,  0.0f, 0.0f,
+        0.0f, -0.32941000000000004f, 0.4f, 0.62745098039f, 0.157f, 1.0f,  0.0f, 0.0f,
         0.7348599999999999f, -0.32941000000000004f, 0.4f, 0.62745098039f, 0.157f, 0.0f,  0.0f, 0.0f,
-        0.8577449999999999f, -0.22941000000000004f, 0.4f, 0.62745098039f, 0.157f, 0.0f,  0.0f, 0.0f,
+        0.8577449999999999f, -0.22941000000000004f, 0.4f, 0.62745098039f, 0.157f, 0.0f,  0.0f, 1.0f,
         0.8777449999999999f, -0.10218999999999994f, 0.4f, 1.0f, 0.157f, 0.0f,  0.0f, 0.0f,
-        0.8677449999999999f, 0.05218999999999994f, 0.4f, 0.62745098039f, 0.157f, 0.0f,  0.0f, 0.0f,
+        0.8677449999999999f, 0.05218999999999994f, 0.4f, 0.62745098039f, 0.157f, 0.0f,  1.0f, 0.0f,
         0.81141f, 0.07588999999999999f, 0.4f, 0.62745098039f, 0.157f, 0.0f,  0.0f, 0.0f,
-        0.6579649999999999f, 0.10588999999999999f, 0.4f, 0.62745098039f, 0.157f, 0.0f,  0.0f, 0.0f,
+        0.6579649999999999f, 0.10588999999999999f, 0.4f, 0.62745098039f, 0.157f, 0.0f,  0.0f, 1.0f,
         // top  0.0f, 0.0f,
         0.3579649999999999f, 0.20361999999999994f, 0.4f, 0.62745098039f, 0.157f, 0.0f,  0.0f, 0.0f,
-        0.0579649999999999f, 0.20361999999999994f, 0.4f, 0.62745098039f, 0.157f, 0.0f,  0.0f, 0.0f,
+        0.0579649999999999f, 0.20361999999999994f, 0.4f, 0.62745098039f, 0.157f, 0.0f,  1.0f, 0.0f,
         -0.22641000000000006f, 0.06930999999999997f, 0.4f, 0.62745098039f, 0.157f, 0.0f,  0.0f, 0.0f,
         // front  0.0f, 0.0f,
-        -0.7323350000000001f, -0.036025000000000064f, 0.4f, 0.62745098039f, 0.157f, 0.0f,  0.0f, 0.0f,
+        -0.7323350000000001f, -0.036025000000000064f, 0.4f, 0.62745098039f, 0.157f, 0.0f,  0.0f, 1.0f,
         -0.7523350000000001f, -0.136025000000000064f, 0.4f, 1.0f, 0.157f, 0.0f,  0.0f, 0.0f,
-        -0.7323350000000001f, -0.29941000000000004f, 0.4f, 0.62745098039f, 0.157f, 0.0f,  0.0f, 0.0f,
+        -0.7323350000000001f, -0.29941000000000004f, 0.4f, 0.62745098039f, 0.157f, 0.0f,  1.0f, 0.0f,
         -0.6523350000000001f, -0.32941000000000004f, 0.4f, 0.62745098039f, 0.157f, 0.0f,  0.0f, 0.0f,
-        0.0f, -0.32941000000000004f, 0.4f, 0.62745098039f, 0.157f, 0.0f,  0.0f, 0.0f,
+        0.0f, -0.32941000000000004f, 0.4f, 0.62745098039f, 0.157f, 0.0f,  1.0f, 0.0f,
 
         // right
         0.0f, 0.0f, -0.4f, 1.0f, 0.157f, 0.0f, 0.0f, 0.0f,
         // back  0.0f, 0.0f,
-        0.0f, -0.32941000000000004f, -0.4f, 0.62745098039f, 0.157f, 0.0f,  0.0f, 0.0f,
+        0.0f, -0.32941000000000004f, -0.4f, 0.62745098039f, 0.157f, 0.0f,  1.0f, 0.0f,
         0.7348599999999999f, -0.32941000000000004f, -0.4f, 0.62745098039f, 0.157f, 0.0f,  0.0f, 0.0f,
-        0.8577449999999999f, -0.22941000000000004f, -0.4f, 0.62745098039f, 0.157f, 0.0f,  0.0f, 0.0f,
+        0.8577449999999999f, -0.22941000000000004f, -0.4f, 0.62745098039f, 0.157f, 0.0f,  0.0f, 1.0f,
         0.8777449999999999f, -0.10218999999999994f, -0.4f, 1.0f, 0.157f, 0.0f,  0.0f, 0.0f,
-        0.8677449999999999f, 0.05218999999999994f, -0.4f, 0.62745098039f, 0.157f, 0.0f,  0.0f, 0.0f,
+        0.8677449999999999f, 0.05218999999999994f, -0.4f, 0.62745098039f, 0.157f, 0.0f,  1.0f, 0.0f,
         0.81141f, 0.07588999999999999f, -0.4f, 0.62745098039f, 0.157f, 0.0f,  0.0f, 0.0f,
-        0.6579649999999999f, 0.10588999999999999f, -0.4f, 0.62745098039f, 0.157f, 0.0f,  0.0f, 0.0f,
+        0.6579649999999999f, 0.10588999999999999f, -0.4f, 0.62745098039f, 0.157f, 0.0f,  0.0f, 1.0f,
         // top  0.0f, 0.0f,
         0.3579649999999999f, 0.20361999999999994f, -0.4f, 0.62745098039f, 0.157f, 0.0f,  0.0f, 0.0f,
-        0.0579649999999999f, 0.20361999999999994f, -0.4f, 0.62745098039f, 0.157f, 0.0f,  0.0f, 0.0f,
+        0.0579649999999999f, 0.20361999999999994f, -0.4f, 0.62745098039f, 0.157f, 0.0f,  1.0f, 0.0f,
         -0.22641000000000006f, 0.06930999999999997f, -0.4f, 0.62745098039f, 0.157f, 0.0f,  0.0f, 0.0f,
         // front  0.0f, 0.0f,
-        -0.7323350000000001f, -0.036025000000000064f, -0.4f, 0.62745098039f, 0.157f, 0.0f,  0.0f, 0.0f,
+        -0.7323350000000001f, -0.036025000000000064f, -0.4f, 0.62745098039f, 0.157f, 0.0f,  0.0f, 1.0f,
         -0.7523350000000001f, -0.136025000000000064f, -0.4f, 1.0f, 0.157f, 0.0f,  0.0f, 0.0f,
-        -0.7323350000000001f, -0.29941000000000004f, -0.4f, 0.62745098039f, 0.157f, 0.0f,  0.0f, 0.0f,
+        -0.7323350000000001f, -0.29941000000000004f, -0.4f, 0.62745098039f, 0.157f, 0.0f,  1.0f, 0.0f,
         -0.6523350000000001f, -0.32941000000000004f, -0.4f, 0.62745098039f, 0.157f, 0.0f,  0.0f, 0.0f,
-        0.0f, -0.32941000000000004f, -0.4f, 0.62745098039f, 0.157f, 0.0f,  0.0f, 0.0f,
+        0.0f, -0.32941000000000004f, -0.4f, 0.62745098039f, 0.157f, 0.0f,  1.0f, 0.0f,
 
         // TOP
         // bottom
@@ -380,33 +373,34 @@ int main(int argc, char** argv) {
 
     unsigned int shader_program = createShader(vertex_shader_source_code, fragment_shader_source_code);
 
-    int side = 5;
-    float tire_front_vertices[((side+2)*8)*2];
-    // float tire_back_vertices[((side+2)*8)*2];
+    int side = 120;
+    float tire_front_vertices[((side+2)*8*2) + (side+1)*8*5];
+    float tire_back_vertices[((side+2)*8*2) + (side+1)*8*5];
+    float tire_front_vertices2[((side+2)*8*2) + (side+1)*8*5];
+    float tire_back_vertices2[((side+2)*8*2) + (side+1)*8*5];
     float tire_color[3];
     tire_color[0] = 0.1f;
     tire_color[1] = 0.1f;
     tire_color[2] = 0.1f;
-    createTire(tire_front_vertices, -0.4523350000000001f, -0.22941000000000004f, 0.45f, 0.15f, side, tire_color, 0.125f);
-    // createTire(tire_back_vertices, 0.0f, 0.0f, 0.16f, side, tire_color);
+    createTire(tire_front_vertices, -0.4523350000000001f, -0.22941000000000004f, 0.45f, 0.17f, side, tire_color, 0.125f);
+    createTire(tire_back_vertices, 0.6048599999999999f, -0.22941000000000004f, 0.45f, 0.18f, side, tire_color, 0.125f);
+    createTire(tire_front_vertices2, -0.4523350000000001f, -0.22941000000000004f, -0.45f, 0.17f, side, tire_color, 0.125f);
+    createTire(tire_back_vertices2, 0.6048599999999999f, -0.22941000000000004f, -0.45f, 0.18f, side, tire_color, 0.125f);
 
 
-    unsigned int vbo, vbo2, vbo3;
-    unsigned int vao, vao2, vao3;
+    unsigned int vbo, vbo2, vbo3, vbo4, vbo5;
+    unsigned int vao, vao2, vao3, vao4, vao5;
     createVAOVBO(vertices, sizeof(vertices),&vbo,&vao);
     createVAOVBO(tire_front_vertices, sizeof(tire_front_vertices),&vbo2,&vao2);
-    // createVAOVBO(tire_back_vertices, sizeof(tire_back_vertices),&vbo3,&vao3);
+    createVAOVBO(tire_back_vertices, sizeof(tire_back_vertices),&vbo3,&vao3);
+    createVAOVBO(tire_front_vertices2, sizeof(tire_front_vertices),&vbo4,&vao4);
+    createVAOVBO(tire_back_vertices2, sizeof(tire_back_vertices),&vbo5,&vao5);
 
     glBindTexture(GL_TEXTURE_2D, texture);
     glUseProgram(shader_program);
 
     // GLuint transform = glGetUniformLocation(shader_program, "transform");
     // GLuint modelLoc = glGetUniformLocation(shader_program, "model");
-
-    // GLuint modelLoc = glGetUniformLocation(shader_program, "model");
-    // GLuint viewLoc = glGetUniformLocation(shader_program, "view");
-    // GLuint projectionLoc = glGetUniformLocation(shader_program, "projection");
-
     glEnable(GL_DEPTH_TEST);
     while(!glfwWindowShouldClose(window)) {
         processInput(window);
@@ -427,39 +421,51 @@ int main(int argc, char** argv) {
         glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &view[0][0]);
         glUniformMatrix4fv(glGetUniformLocation(shader_program, "projection"), 1, GL_FALSE, &projection[0][0]);
 
-        // glBindVertexArray(vao);
-        // glDrawArrays(GL_TRIANGLE_FAN, 0, 16);
-        // glDrawArrays(GL_TRIANGLE_FAN, 16, 16);
-        // glDrawArrays(GL_TRIANGLE_FAN, 32, 5);
-        // glDrawArrays(GL_TRIANGLE_FAN, 37, 5);
-        // glDrawArrays(GL_TRIANGLE_FAN, 42, 5);
-        // glDrawArrays(GL_TRIANGLE_FAN, 47, 5);
-        // glDrawArrays(GL_TRIANGLE_FAN, 52, 5);
-        // glDrawArrays(GL_TRIANGLE_FAN, 57, 5);
-        // glDrawArrays(GL_TRIANGLE_FAN, 62, 5);
-        // glDrawArrays(GL_TRIANGLE_FAN, 67, 5);
-        // glDrawArrays(GL_TRIANGLE_FAN, 72, 5);
-        // glDrawArrays(GL_TRIANGLE_FAN, 77, 5);
-        // glDrawArrays(GL_TRIANGLE_FAN, 82, 5);
-        // glDrawArrays(GL_TRIANGLE_FAN, 87, 5);
-        // glDrawArrays(GL_TRIANGLE_FAN, 92, 5);
-        // glDrawArrays(GL_TRIANGLE_FAN, 97, 5);
+        glBindVertexArray(vao);
+        glDrawArrays(GL_TRIANGLE_FAN, 0, 16);
+        glDrawArrays(GL_TRIANGLE_FAN, 16, 16);
+        glDrawArrays(GL_TRIANGLE_FAN, 32, 5);
+        glDrawArrays(GL_TRIANGLE_FAN, 37, 5);
+        glDrawArrays(GL_TRIANGLE_FAN, 42, 5);
+        glDrawArrays(GL_TRIANGLE_FAN, 47, 5);
+        glDrawArrays(GL_TRIANGLE_FAN, 52, 5);
+        glDrawArrays(GL_TRIANGLE_FAN, 57, 5);
+        glDrawArrays(GL_TRIANGLE_FAN, 62, 5);
+        glDrawArrays(GL_TRIANGLE_FAN, 67, 5);
+        glDrawArrays(GL_TRIANGLE_FAN, 72, 5);
+        glDrawArrays(GL_TRIANGLE_FAN, 77, 5);
+        glDrawArrays(GL_TRIANGLE_FAN, 82, 5);
+        glDrawArrays(GL_TRIANGLE_FAN, 87, 5);
+        glDrawArrays(GL_TRIANGLE_FAN, 92, 5);
+        glDrawArrays(GL_TRIANGLE_FAN, 97, 5);
 
         glBindVertexArray(vao2);
         glDrawArrays(GL_TRIANGLE_FAN, 0, side+2);
         glDrawArrays(GL_TRIANGLE_FAN, side+2, side*2+2);
-        // for(int i=0; i<side; i++){
-        //   glDrawArrays(GL_TRIANGLE_FAN, side*2+2+i*5, 5);
-        // }
-        // glBindVertexArray(vao3);
-        // glDrawArrays(GL_TRIANGLE_FAN, 0, side+2);
-        // glDrawArrays(GL_TRIANGLE_FAN, side+2, side*2+2);
+        for(int i=0; i<side-1; i++){
+          glDrawArrays(GL_TRIANGLE_FAN, side*2+2+i*5, 5);
+        }
 
-        // glDrawArrays(GL_TRIANGLE_FAN, 93, 5);
-        // glDrawArrays(GL_TRIANGLE_FAN, 16, 12);
-        // glDrawArrays(GL_TRIANGLE_FAN, 28, 10);
-        // glDrawArrays(GL_TRIANGLE_FAN, 38, 7);
-        // glDrawArrays(GL_TRIANGLE_FAN, 45, 6);
+        glBindVertexArray(vao3);
+        glDrawArrays(GL_TRIANGLE_FAN, 0, side+2);
+        glDrawArrays(GL_TRIANGLE_FAN, side+2, side*2+2);
+        for(int i=0; i<side-1; i++){
+          glDrawArrays(GL_TRIANGLE_FAN, side*2+2+i*5, 5);
+        }
+
+        glBindVertexArray(vao4);
+        glDrawArrays(GL_TRIANGLE_FAN, 0, side+2);
+        glDrawArrays(GL_TRIANGLE_FAN, side+2, side*2+2);
+        for(int i=0; i<side-1; i++){
+          glDrawArrays(GL_TRIANGLE_FAN, side*2+2+i*5, 5);
+        }
+
+        glBindVertexArray(vao5);
+        glDrawArrays(GL_TRIANGLE_FAN, 0, side+2);
+        glDrawArrays(GL_TRIANGLE_FAN, side+2, side*2+2);
+        for(int i=0; i<side-1; i++){
+          glDrawArrays(GL_TRIANGLE_FAN, side*2+2+i*5, 5);
+        }
 
         glfwSwapBuffers(window);
         glfwPollEvents();
