@@ -441,7 +441,12 @@ int main(int argc, char** argv) {
     unsigned int texture;
     buildTexture(&texture, "./src/main3_car3d/container.jpg");
 
-    int side = 5;
+    std::string vertex_shader_source_code = loadShader("./src/main3_car3d/vertex.vs");
+    std::string fragment_shader_source_code = loadShader("./src/main3_car3d/fragment.fs");
+
+    unsigned int shader_program = createShader(vertex_shader_source_code, fragment_shader_source_code);
+
+    int side = 120;
     // float tire_front_vertices[((side+2)*6)*2];
     // float tire_back_vertices[((side+2)*6)*2];
     float tire_front_vertices[((side+2)*8*2) + (side+1)*8*5];
@@ -457,10 +462,6 @@ int main(int argc, char** argv) {
     createTire3d(tire_front_vertices2, -0.4523350000000001f, -0.22941000000000004f, -0.45f, 0.17f, side, tire_color, 0.125f);
     createTire3d(tire_back_vertices2, 0.6048599999999999f, -0.22941000000000004f, -0.45f, 0.18f, side, tire_color, 0.125f);
 
-    std::string vertex_shader_source_code = loadShader("./src/main3_car3d/vertex.vs");
-    std::string fragment_shader_source_code = loadShader("./src/main3_car3d/fragment.fs");
-
-    unsigned int shader_program = createShader(vertex_shader_source_code, fragment_shader_source_code);
 
     // unsigned int vbo, vbo2, vbo3;
     // unsigned int vao, vao2, vao3;
@@ -474,6 +475,8 @@ int main(int argc, char** argv) {
     createVAOVBO(tire_back_vertices, sizeof(tire_back_vertices),&vbo3,&vao3);
     createVAOVBO(tire_front_vertices2, sizeof(tire_front_vertices),&vbo4,&vao4);
     createVAOVBO(tire_back_vertices2, sizeof(tire_back_vertices),&vbo5,&vao5);
+    
+    glBindTexture(GL_TEXTURE_2D, texture);
     glUseProgram(shader_program);
 
     GLuint modelLoc = glGetUniformLocation(shader_program, "model");
@@ -519,6 +522,10 @@ int main(int argc, char** argv) {
         glDrawArrays(GL_TRIANGLE_FAN, 87, 5);
         glDrawArrays(GL_TRIANGLE_FAN, 92, 5);
         glDrawArrays(GL_TRIANGLE_FAN, 97, 5);
+        glDrawArrays(GL_TRIANGLE_FAN, 102, 5);
+        glDrawArrays(GL_TRIANGLE_FAN, 107, 5);
+        glDrawArrays(GL_TRIANGLE_FAN, 112, 5);
+        glDrawArrays(GL_TRIANGLE_FAN, 117, 5);
 
         glBindVertexArray(vao2);
         glDrawArrays(GL_TRIANGLE_FAN, 0, side+2);

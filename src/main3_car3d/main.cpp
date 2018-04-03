@@ -438,6 +438,10 @@ int main(int argc, char** argv) {
         glDrawArrays(GL_TRIANGLE_FAN, 87, 5);
         glDrawArrays(GL_TRIANGLE_FAN, 92, 5);
         glDrawArrays(GL_TRIANGLE_FAN, 97, 5);
+        glDrawArrays(GL_TRIANGLE_FAN, 102, 5);
+        glDrawArrays(GL_TRIANGLE_FAN, 107, 5);
+        glDrawArrays(GL_TRIANGLE_FAN, 112, 5);
+        glDrawArrays(GL_TRIANGLE_FAN, 117, 5);
 
         glBindVertexArray(vao2);
         glDrawArrays(GL_TRIANGLE_FAN, 0, side+2);
