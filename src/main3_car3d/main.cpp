@@ -97,6 +97,60 @@ void rotate(unsigned int transform, float x, float y, float z) {
     glUniformMatrix4fv(transform, 1, GL_FALSE, glm::value_ptr(transformMatrix));
 }
 
+void buildTexture(unsigned int *texture, const char * path){
+  glGenTextures(1, &(*texture));
+  glBindTexture(GL_TEXTURE_2D, *texture);
+  // set the texture wrapping/filtering options (on the currently bound texture object)
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  // load and generate the texture
+  int width, height, nrChannels;
+  unsigned char *data = stbi_load(path, &width, &height, &nrChannels, 0);
+  if (data){
+      glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+      glGenerateMipmap(GL_TEXTURE_2D);
+  } else {
+      std::cout << "Failed to load texture" << std::endl;
+  }
+  stbi_image_free(data);
+}
+
+void createTire(float* vertices, float x, float y, float r, int side, float* tire_color){
+  float deg = 360/side;
+  float offset = 0.05f;
+  for(int i=0; i<(side+2)*6; i+=6){
+    if(i == 0){
+      vertices[i] = x;
+      vertices[i+1] = y;
+      vertices[i+2] = 1.0f;
+    } else {
+      vertices[i] = x + (r * cos((i-1)*deg*M_PI/180.0));
+      vertices[i+1] = y + (r * sin((i-1)*deg*M_PI/180.0));
+      vertices[i+2] = 1.0f;
+    }
+    vertices[i+3] = i/((side + 2)*6.0f*1.5f) * sin((i-1)*deg*M_PI/90.0);
+    vertices[i+4] = i/((side + 2)*6.0f*1.5f) * sin((i-1)*deg*M_PI/90.0);
+    vertices[i+5] = i/((side + 2)*6.0f*1.5f) * sin((i-1)*deg*M_PI/90.0);
+  }
+
+  for(int i=(side+2)*6; i<2*((side+2)*6); i+=6){
+    if(i == (side+2)*6){
+      vertices[i] = x;
+      vertices[i+1] = y;
+      vertices[i+2] = 1.0f;
+    } else {
+      vertices[i] = x + ((r-offset) * cos((i-1)*deg*M_PI/180.0));
+      vertices[i+1] = y + ((r-offset) * sin((i-1)*deg*M_PI/180.0));
+      vertices[i+2] = 1.0f;
+    }
+    vertices[i+3] = tire_color[0];
+    vertices[i+4] = tire_color[1];
+    vertices[i+5] = tire_color[2];
+  }
+}
+
 int main(int argc, char** argv) {
     if (!glfwInit()) {
         fprintf(stderr, "failed to initialize glfw\n");
@@ -270,26 +324,8 @@ int main(int argc, char** argv) {
     };
 
     unsigned int texture;
-    glGenTextures(1, &texture);
-    glBindTexture(GL_TEXTURE_2D, texture);
-    // set the texture wrapping/filtering options (on the currently bound texture object)
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    // load and generate the texture
-    int width, height, nrChannels;
-    unsigned char *data = stbi_load("./src/main3_car3d/container.jpg", &width, &height, &nrChannels, 0);
-    if (data)
-    {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-        glGenerateMipmap(GL_TEXTURE_2D);
-    }
-    else
-    {
-        std::cout << "Failed to load texture" << std::endl;
-    }
-    stbi_image_free(data);
+    buildTexture(&texture, "./src/main3_car3d/container.jpg");
+    // unsigned char *data = stbi_load("./src/main3_car3d/container.jpg", &width, &height, &nrChannels, 0);
 
     std::string vertex_shader_source_code = loadShader("./src/main3_car3d/vertex.vs");
     std::string fragment_shader_source_code = loadShader("./src/main3_car3d/fragment.fs");
