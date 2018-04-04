@@ -186,40 +186,33 @@ void buildTexture(unsigned int *texture, const char * path){
 
 void createTire3d(float* vertices, float x, float y, float z, float r, int side, float* tire_color, float width){
   float deg = 360/side;
-  for(int i=0; i<(side+2)*8; i+=8){
-    if(i == 0){
+  for(int i=0; i<(side+2)*8*2; i+=8){
+    if((i == 0) || (i == (side+2)*8)){
       vertices[i] = x;
       vertices[i+1] = y;
-      vertices[i+2] = z;
+      if(i < (side+2)*8){
+        vertices[i+2] = z;
+      } else {
+        vertices[i+2] = (z<0.0f?z+width:z-width);
+      }
     } else {
       vertices[i] = x + (r * cos((i-1)*deg*M_PI/180.0));
       vertices[i+1] = y + (r * sin((i-1)*deg*M_PI/180.0));
-      vertices[i+2] = z;
+      if(i < (side+2)*8){
+        vertices[i+2] = z;
+      } else {
+        vertices[i+2] = (z<0.0f?z+width:z-width);
+      }
     }
     vertices[i+3] = tire_color[0];
     vertices[i+4] = tire_color[1];
     vertices[i+5] = tire_color[2];
-    vertices[i+6] = 0.05f;
-    vertices[i+7] = 0.1f;
+    // vertices[i+6] = vertices[i];
+    // vertices[i+7] = vertices[i+1];
+    vertices[i+6] = (vertices[i] + vertices[i+2]) / 2;
+    vertices[i+7] = (vertices[i+1] + vertices[i+2]) / 2;
   }
 
-  for(int i=(side+2)*8; i<(side+2)*8*2; i+=8){
-    if(i == (side+2)*8){
-      vertices[i] = x;
-      vertices[i+1] = y;
-      vertices[i+2] = (z<0.0f?z+width:z-width);
-    } else {
-      vertices[i] = x + (r * cos((i-1)*deg*M_PI/180.0));
-      vertices[i+1] = y + (r * sin((i-1)*deg*M_PI/180.0));
-      vertices[i+2] = (z<0.0f?z+width:z-width);
-    }
-    vertices[i+3] = tire_color[0];
-    vertices[i+4] = tire_color[1];
-    vertices[i+5] = tire_color[2];
-    vertices[i+6] = 0.05f;
-    vertices[i+7] = 0.1f;
-  }
-  //
   int j = (side+2)*8*2;
   for(int i=8; i<(side*8); i+=8, j+=40){
     for(int k=0; k<40; k++){
@@ -427,10 +420,10 @@ int main(int argc, char** argv) {
     tire_color[0] = 0.1f;
     tire_color[1] = 0.1f;
     tire_color[2] = 0.1f;
-    createTire3d(tires[0], -0.4523350000000001f, -0.22941000000000004f, 0.45f, 0.17f, side, tire_color, 0.125f);
-    createTire3d(tires[1], 0.6048599999999999f, -0.22941000000000004f, 0.45f, 0.18f, side, tire_color, 0.125f);
-    createTire3d(tires[2], -0.4523350000000001f, -0.22941000000000004f, -0.45f, 0.17f, side, tire_color, 0.125f);
-    createTire3d(tires[3], 0.6048599999999999f, -0.22941000000000004f, -0.45f, 0.18f, side, tire_color, 0.125f);
+    createTire3d(tires[0], 0.0f, 0.0f, 0.0f, 0.17f, side, tire_color, 0.125f);
+    createTire3d(tires[1], 0.0f, 0.0f, 0.0f, 0.18f, side, tire_color, 0.125f);
+    createTire3d(tires[2], 0.0f, 0.0f, 0.0f, 0.17f, side, tire_color, 0.125f);
+    createTire3d(tires[3], 0.0f, 0.0f, 0.0f, 0.18f, side, tire_color, 0.125f);
 
     unsigned int vbo, vbo_tires[4];
     unsigned int vao, vao_tires[4];
@@ -490,9 +483,13 @@ int main(int argc, char** argv) {
         glDrawArrays(GL_TRIANGLE_FAN, 107, 5);
         glDrawArrays(GL_TRIANGLE_FAN, 112, 5);
         glDrawArrays(GL_TRIANGLE_FAN, 117, 5);
-        
+
         for(int i=0; i<4; i++){
           glBindVertexArray(vao_tires[i]);
+          if (i == 0) rotate(modelLoc, -0.4523350000000001f, -0.22941000000000004f, 0.45f);
+          else if (i == 1) rotate(modelLoc, 0.6048599999999999f, -0.22941000000000004f, 0.45f);
+          else if (i == 2) rotate(modelLoc, -0.4523350000000001f, -0.22941000000000004f, -0.45f);
+          else if (i == 3) rotate(modelLoc, 0.6048599999999999f, -0.22941000000000004f, -0.45f); 
           glDrawArrays(GL_TRIANGLE_FAN, 0, side+2);
           glDrawArrays(GL_TRIANGLE_FAN, side+2, side*2+2);
           for(int i=0; i<side-1; i++){
