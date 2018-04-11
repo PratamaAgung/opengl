@@ -488,8 +488,10 @@ int main(int argc, char** argv) {
           glBindVertexArray(vao_tires[i]);
           if (i == 0) rotate(modelLoc, -0.4523350000000001f, -0.22941000000000004f, 0.45f);
           else if (i == 1) rotate(modelLoc, 0.6048599999999999f, -0.22941000000000004f, 0.45f);
-          else if (i == 2) rotate(modelLoc, -0.4523350000000001f, -0.22941000000000004f, -0.45f);
-          else if (i == 3) rotate(modelLoc, 0.6048599999999999f, -0.22941000000000004f, -0.45f); 
+          // else if (i == 2) rotate(modelLoc, -0.4523350000000001f, -0.22941000000000004f, -0.45f);
+          // else if (i == 3) rotate(modelLoc, 0.6048599999999999f, -0.22941000000000004f, -0.45f); 
+          else if (i == 2) rotate(modelLoc, -0.4523350000000001f, -0.22941000000000004f, -0.325f);
+          else if (i == 3) rotate(modelLoc, 0.6048599999999999f, -0.22941000000000004f, -0.325f);
           glDrawArrays(GL_TRIANGLE_FAN, 0, side+2);
           glDrawArrays(GL_TRIANGLE_FAN, side+2, side*2+2);
           for(int i=0; i<side-1; i++){
