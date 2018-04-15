@@ -213,7 +213,7 @@ void createTire3d(float* vertices, float x, float y, float z, float r, int side,
     vertices[i+5] = tire_color[2];
     // vertices[i+6] = 0.5 + (0.25 * cos((i-1)*deg*M_PI/180.0));
     // vertices[i+7] = 0.5 + (0.25 * sin((i-1)*deg*M_PI/180.0));
-    std::cout << vertices[i+6] << " " << vertices[i+7] << std::endl;
+    // std::cout << vertices[i+6] << " " << vertices[i+7] << std::endl;
     // vertices[i+6] = (vertices[i] + vertices[i+2]) / 2;
     // vertices[i+7] = (vertices[i+1] + vertices[i+2]) / 2;
   }
@@ -415,8 +415,8 @@ int main(int argc, char** argv) {
     buildTexture(&texture_wood, "./src/main3_car3d/metalplate.jpg");
     buildTexture(&texture_tire, "./src/main3_car3d/roda2.jpg");
 
-    std::string vertex_shader_source_code = loadShader("./src/main3_car3d/vertex.vs");
-    std::string fragment_shader_source_code = loadShader("./src/main3_car3d/fragment.fs");
+    std::string vertex_shader_source_code = loadShader("./src/main4_lighting/vertex.vs");
+    std::string fragment_shader_source_code = loadShader("./src/main4_lighting/fragment.fs");
 
     unsigned int shader_program = createShader(vertex_shader_source_code, fragment_shader_source_code);
 
@@ -444,6 +444,9 @@ int main(int argc, char** argv) {
     GLuint modelLoc = glGetUniformLocation(shader_program, "model");
     GLuint viewLoc = glGetUniformLocation(shader_program, "view");
     GLuint projectionLoc = glGetUniformLocation(shader_program, "projection");
+    GLuint lightColorLoc = glGetUniformLocation(shader_program, "lightColor");
+    glUniform3fv(lightColorLoc, 1, glm::value_ptr(glm::vec3(1.0f, 1.0f, 1.0f)));
+    
     float lastFrame = 0.0f;
     float deltaTime = 0.0f;
 
@@ -456,7 +459,7 @@ int main(int argc, char** argv) {
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
 
-        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         processInput(window, deltaTime);
