@@ -17,6 +17,9 @@ task_2: src/main2_car/main.cpp
 task_3: src/main3_car3d/main.cpp
 	g++ src/main3_car3d/main_combine.cpp -o bin/main3_car -lglfw -lGL -lGLEW
 
+task_4: src/main4_lighting/main_combine.cpp
+	g++ src/main4_lighting/main_combine.cpp -o bin/main4_light -lglfw -lGL -lGLEW
+
 task_2_mac:
 	$(CC) src/main2_car/main.cpp -o bin/main2_car $(INCLUDE_PATHS) $(LIBRARY_PATHS) $(LINKER_FLAGS)
 

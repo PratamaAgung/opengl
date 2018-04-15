@@ -213,7 +213,7 @@ void createTire3d(float* vertices, float x, float y, float z, float r, int side,
     vertices[i+5] = tire_color[2];
     // vertices[i+6] = 0.5 + (0.25 * cos((i-1)*deg*M_PI/180.0));
     // vertices[i+7] = 0.5 + (0.25 * sin((i-1)*deg*M_PI/180.0));
-    std::cout << vertices[i+6] << " " << vertices[i+7] << std::endl;
+    // std::cout << vertices[i+6] << " " << vertices[i+7] << std::endl;
     // vertices[i+6] = (vertices[i] + vertices[i+2]) / 2;
     // vertices[i+7] = (vertices[i+1] + vertices[i+2]) / 2;
   }
@@ -409,14 +409,34 @@ int main(int argc, char** argv) {
         0.0f, -0.32941000000000004f, 0.4f, 0.62745098039f, 0.157f, 0.0f,  0.0f, 0.5f,
         -0.6523350000000001f, -0.32941000000000004f, 0.4f, 0.62745098039f, 0.157f, 0.0f,  0.0f, 0.0f,
         -0.6523350000000001f, -0.32941000000000004f, -0.4f, 0.62745098039f, 0.157f, 0.0f,  0.5f, 0.0f,
+
+        // window
+        0.0f, 0.1f, 0.4f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,
+        0.3579649999999999f, 0.01930999999999997f, 0.4f, 0.5f, 0.5f, 0.5f, 0.0f, 0.0f,
+        0.3579649999999999f, 0.15361999999999994f, 0.4f, 0.8f, 0.8f, 0.8f, 0.0f, 0.0f,
+        0.3279649999999999f, 0.18361999999999994f, 0.4f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,
+        0.0579649999999999f, 0.18361999999999994f, 0.4f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,
+        -0.18641000000000006f, 0.06930999999999997f, 0.4f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,
+        -0.20641000000000006f, 0.02930999999999997f, 0.4f, 0.8f, 0.8f, 0.8f, 0.0f, 0.0f,
+        -0.10641000000000006f, 0.00030999999999997f, 0.4f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,
+        0.2579649999999999f, 0.00030999999999997f, 0.4f, 0.8f, 0.8f, 0.8f, 0.0f, 0.0f,
+        0.3579649999999999f, 0.01930999999999997f, 0.4f, 0.5f, 0.5f, 0.5f, 0.0f, 0.0f,
+
+        0.4579649999999999f, 0.1f, 0.4f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,
+        0.6079649999999999f, 0.08888999999999999f, 0.4f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,
+        0.4079649999999999f, 0.15361999999999994f, 0.4f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,
+        0.3879649999999999f, 0.15361999999999994f, 0.4f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,
+        0.3879649999999999f, 0.01930999999999997f, 0.4f, 0.5f, 0.5f, 0.5f, 0.0f, 0.0f,
+        0.6079649999999999f, 0.06588999999999999f, 0.4f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,
+        0.6079649999999999f, 0.08888999999999999f, 0.4f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,
     };
     
     unsigned int texture_wood, texture_tire;
-    buildTexture(&texture_wood, "./src/main3_car3d/metalplate.jpg");
-    buildTexture(&texture_tire, "./src/main3_car3d/roda2.jpg");
+    buildTexture(&texture_wood, "./src/main4_lighting/metalplate.jpg");
+    buildTexture(&texture_tire, "./src/main4_lighting/roda2.jpg");
 
-    std::string vertex_shader_source_code = loadShader("./src/main3_car3d/vertex.vs");
-    std::string fragment_shader_source_code = loadShader("./src/main3_car3d/fragment.fs");
+    std::string vertex_shader_source_code = loadShader("./src/main4_lighting/vertex.vs");
+    std::string fragment_shader_source_code = loadShader("./src/main4_lighting/fragment.fs");
 
     unsigned int shader_program = createShader(vertex_shader_source_code, fragment_shader_source_code);
 
@@ -488,6 +508,8 @@ int main(int argc, char** argv) {
         glDrawArrays(GL_TRIANGLE_FAN, 107, 5);
         glDrawArrays(GL_TRIANGLE_FAN, 112, 5);
         glDrawArrays(GL_TRIANGLE_FAN, 117, 5);
+        glDrawArrays(GL_TRIANGLE_FAN, 122, 10);
+        glDrawArrays(GL_TRIANGLE_FAN, 132, 7);
 
         glBindTexture(GL_TEXTURE_2D, texture_tire);
         for(int i=0; i<4; i++){
