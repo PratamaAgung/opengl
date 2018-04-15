@@ -1,0 +1,40 @@
+# Exported from Wings 3D 1.4.1
+newmtl 3d.svg_auv
+Ns 100.0
+d 1.0
+illum 2
+Kd 1.0 1.0 1.0
+Ka 1.0 1.0 1.0
+Ks 1.0 1.0 1.0
+Ke 0.0 0.0 0.0
+map_Kd 3d.png.jpg.png
+
+newmtl default
+Ns 100.0
+d 1.0
+illum 2
+Kd 0.698039 0.7176470588235294 0.5764705882352941
+Ka 0.698039 0.7176470588235294 0.5764705882352941
+Ks 1.0 1.0 1.0
+Ke 0.0 0.0 0.0
+
+newmtl image
+Ns 100.0
+d 1.0
+illum 2
+Kd 1.0 1.0 1.0
+Ka 1.0 1.0 1.0
+Ks 1.0 1.0 1.0
+Ke 1.0 1.0 1.0
+map_Kd 3d.png.jpg.png
+
+newmtl image2
+Ns 100.0
+d 1.0
+illum 2
+Kd 1.0 1.0 1.0
+Ka 1.0 1.0 1.0
+Ks 1.0 1.0 1.0
+Ke 1.0 1.0 1.0
+map_Kd 3d.png.jpg.png
+
