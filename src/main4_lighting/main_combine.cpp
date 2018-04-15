@@ -499,6 +499,9 @@ int main(int argc, char** argv) {
     GLuint modelLoc = glGetUniformLocation(shader_program, "model");
     GLuint viewLoc = glGetUniformLocation(shader_program, "view");
     GLuint projectionLoc = glGetUniformLocation(shader_program, "projection");
+    GLuint lightColorLoc = glGetUniformLocation(shader_program, "lightColor");
+    glUniform3fv(lightColorLoc, 1, glm::value_ptr(glm::vec3(1.0f, 1.0f, 1.0f)));
+    
     float lastFrame = 0.0f;
     float deltaTime = 0.0f;
 
@@ -511,7 +514,7 @@ int main(int argc, char** argv) {
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
 
-        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         processInput(window, deltaTime);

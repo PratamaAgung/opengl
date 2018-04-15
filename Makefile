@@ -3,7 +3,7 @@ INCLUDE_PATHS = -I/usr/local/include -I/opt/X11/include
 LIBRARY_PATHS = -L/usr/local/lib -I/opt/X11/lib
 LINKER_FLAGS = -framework OpenGL -lglfw -lglew
 
-all: task_1 task_2 task_3
+all: task_1 task_2 task_3 task_4
 
 task_1:
 	g++ src/main1_triangle/main.cpp -o bin/main1 -lglfw -lGLEW -lGL
