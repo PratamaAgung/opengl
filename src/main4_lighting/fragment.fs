@@ -12,7 +12,7 @@ uniform sampler2D texture2;
 void main()
 {
 	// linearly interpolate between both textures (80% container, 20% awesomeface)
-	
+
 	float ambientStrength = 0.5;
 	// vec3 ambient = ambientStrength * lightColor;
 	vec3 ambient = ambientStrength * texture(texture1, TexCoord).rgb; 
