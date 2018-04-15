@@ -195,6 +195,8 @@ void createTire3d(float* vertices, float x, float y, float z, float r, int side,
       } else {
         vertices[i+2] = (z<0.0f?z+width:z-width);
       }
+      vertices[i+6] = 0.5;
+      vertices[i+7] = 0.5;
     } else {
       vertices[i] = x + (r * cos((i-1)*deg*M_PI/180.0));
       vertices[i+1] = y + (r * sin((i-1)*deg*M_PI/180.0));
@@ -203,14 +205,17 @@ void createTire3d(float* vertices, float x, float y, float z, float r, int side,
       } else {
         vertices[i+2] = (z<0.0f?z+width:z-width);
       }
+      vertices[i+6] = 0.5 + (0.5 * cos((i-1)*deg*M_PI/180.0));
+      vertices[i+7] = 0.5 + (0.5 * sin((i-1)*deg*M_PI/180.0));
     }
     vertices[i+3] = tire_color[0];
     vertices[i+4] = tire_color[1];
     vertices[i+5] = tire_color[2];
-    // vertices[i+6] = vertices[i];
-    // vertices[i+7] = vertices[i+1];
-    vertices[i+6] = (vertices[i] + vertices[i+2]) / 2;
-    vertices[i+7] = (vertices[i+1] + vertices[i+2]) / 2;
+    // vertices[i+6] = 0.5 + (0.25 * cos((i-1)*deg*M_PI/180.0));
+    // vertices[i+7] = 0.5 + (0.25 * sin((i-1)*deg*M_PI/180.0));
+    std::cout << vertices[i+6] << " " << vertices[i+7] << std::endl;
+    // vertices[i+6] = (vertices[i] + vertices[i+2]) / 2;
+    // vertices[i+7] = (vertices[i+1] + vertices[i+2]) / 2;
   }
 
   int j = (side+2)*8*2;
@@ -406,8 +411,9 @@ int main(int argc, char** argv) {
         -0.6523350000000001f, -0.32941000000000004f, -0.4f, 0.62745098039f, 0.157f, 0.0f,  0.5f, 0.0f,
     };
     
-    unsigned int texture;
-    buildTexture(&texture, "./src/main3_car3d/container.jpg");
+    unsigned int texture_wood, texture_tire;
+    buildTexture(&texture_wood, "./src/main3_car3d/metalplate.jpg");
+    buildTexture(&texture_tire, "./src/main3_car3d/roda2.jpg");
 
     std::string vertex_shader_source_code = loadShader("./src/main3_car3d/vertex.vs");
     std::string fragment_shader_source_code = loadShader("./src/main3_car3d/fragment.fs");
@@ -432,7 +438,6 @@ int main(int argc, char** argv) {
       createVAOVBO(tires[i], sizeof(tires[i]),&vbo_tires[i],&vao_tires[i]);
     }
 
-    glBindTexture(GL_TEXTURE_2D, texture);
     glUseProgram(shader_program);
     glEnable(GL_DEPTH_TEST);
 
@@ -461,7 +466,7 @@ int main(int argc, char** argv) {
         glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(glm::mat4()));
-        
+        glBindTexture(GL_TEXTURE_2D, texture_wood);
         glBindVertexArray(vao);
         glDrawArrays(GL_TRIANGLE_FAN, 0, 16);
         glDrawArrays(GL_TRIANGLE_FAN, 16, 16);
@@ -484,6 +489,7 @@ int main(int argc, char** argv) {
         glDrawArrays(GL_TRIANGLE_FAN, 112, 5);
         glDrawArrays(GL_TRIANGLE_FAN, 117, 5);
 
+        glBindTexture(GL_TEXTURE_2D, texture_tire);
         for(int i=0; i<4; i++){
           glBindVertexArray(vao_tires[i]);
           if (i == 0) rotate(modelLoc, -0.4523350000000001f, -0.22941000000000004f, 0.45f);
