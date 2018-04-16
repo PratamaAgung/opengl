@@ -220,7 +220,11 @@ void createTire3d(float* vertices, float x, float y, float z, float r, int side,
     // vertices[i+7] = (vertices[i+1] + vertices[i+2]) / 2;
     vertices[i+8] = 0.0f;
     vertices[i+9] = 0.0f;
-    vertices[i+10] = 1.0f;
+    if (i < (side + 2) * 11){
+      vertices[i+10] = 1.0f;  
+    } else {
+      vertices[i+10] = -1.0f;
+    }
   }
 
   int j = (side+2)*11*2;
