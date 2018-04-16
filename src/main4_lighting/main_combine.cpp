@@ -338,12 +338,12 @@ int main(int argc, char** argv) {
         0.8577449999999999f, -0.22941000000000004f, 0.4f, 0.62745098039f, 0.157f, 0.0f,  0.0f, 0.0f, 0.101776f, 0.016f, 0.0f,
         0.8577449999999999f, -0.22941000000000004f, -0.4f, 0.62745098039f, 0.157f, 0.0f,  0.5f, 0.0f, 0.101776f, 0.016f, 0.0f,
 
-        // back (corner)
-        0.8777449999999999f, -0.10218999999999994f, -0.4f, 1.0f, 0.157f, 0.0f,  0.5f, 0.0f, 0.123504f, -0.00799999f, 0.0f,
-        0.8677449999999999f, 0.05218999999999994f, -0.4f, 0.62745098039f, 0.157f, 0.0f,  0.0f, 0.0f, 0.123504f, -0.00799999f, 0.0f,
-        0.8677449999999999f, 0.05218999999999994f, 0.4f, 0.62745098039f, 0.157f, 0.0f,  0.0f, 0.5f, 0.123504f, -0.00799999f, 0.0f,
-        0.8777449999999999f, -0.10218999999999994f, 0.4f, 1.0f, 0.157f, 0.0f,  0.0f, 0.0f, 0.123504f, -0.00799999f, 0.0f,
-        0.8777449999999999f, -0.10218999999999994f, -0.4f, 1.0f, 0.157f, 0.0f,  0.5f, 0.0f, 0.123504f, -0.00799999f, 0.0f,
+        // back (corner) logo
+        0.8777449999999999f, -0.10218999999999994f, -0.4f, 1.0f, 0.157f, 0.0f,  1.0f, 0.675f, 0.123504f, -0.00799999f, 0.0f,
+        0.8677449999999999f, 0.05218999999999994f, -0.4f, 0.62745098039f, 0.157f, 0.0f,  1.0f, 0.325f, 0.123504f, -0.00799999f, 0.0f,
+        0.8677449999999999f, 0.05218999999999994f, 0.4f, 0.62745098039f, 0.157f, 0.0f,  0.0f, 0.325f, 0.123504f, -0.00799999f, 0.0f,
+        0.8777449999999999f, -0.10218999999999994f, 0.4f, 1.0f, 0.157f, 0.0f,  0.0f, 0.675f, 0.123504f, -0.00799999f, 0.0f, 
+        0.8777449999999999f, -0.10218999999999994f, -0.4f, 1.0f, 0.157f, 0.0f,  1.0f, 0.675f, 0.123504f, -0.00799999f, 0.0f, 
 
         // back (top)
         0.8677449999999999f, 0.05218999999999994f, -0.4f, 0.62745098039f, 0.157f, 0.0f,  0.5f, 0.0f, 0.01896f, -0.045068f, 0.0f,
@@ -482,14 +482,29 @@ int main(int argc, char** argv) {
         -0.7521350000000001f, -0.130025000000000064f, -0.395f, 1.0f, 0.157f, 0.0f,  1.0f, 0.675f, -0.0118f, -0.00236f, 0.0f,
         -0.7353350000000001f, -0.046025000000000064f, -0.395f, 0.62745098039f, 0.157f, 0.0f,  1.0f, 0.325f, -0.0118f, -0.00236f, 0.0f,
         -0.7393350000000001f, -0.066025000000000064f, -0.225f, 0.62745098039f, 0.157f, 0.0f,  0.0f, 0.325f, -0.0118f, -0.00236f, 0.0f,
+
+        // lampu belakang
+        0.8765494954009585f, -0.08218999999999994f, 0.25f, 0.0f, 0.0f, 0.0f,  0.0f, 0.675f, -0.020876f, 0.00135225f, 0.0f,
+        0.8697882568985619f, 0.02218999999999994f, 0.2f, 0.0f, 0.0f, 0.0f,  0.0f, 0.325f, -0.020876f, 0.00135225f, 0.0f,
+        0.8697882568985619f, 0.02218999999999994f, 0.4f, 0.0f, 0.0f, 0.0f,  1.0f, 0.325f, -0.020876f, 0.00135225f, 0.0f, 
+        0.8765494954009585f, -0.08218999999999994f, 0.4f, 0.0f, 0.0f, 0.0f,  1.0f, 0.675f, -0.020876f, 0.00135225f, 0.0f,
+        0.8765494954009585f, -0.08218999999999994f, 0.25f, 0.0f, 0.0f, 0.0f,  0.0f, 0.675f, -0.020876f, 0.00135225f, 0.0f,
+
+        // lampu belakang
+        0.8765494954009585f, -0.08218999999999994f, -0.25f, 0.0f, 0.0f, 0.0f,  0.0f, 0.675f, 0.020876f, -0.00135225f, 0.0f,
+        0.8697882568985619f, 0.02218999999999994f, -0.2f, 0.0f, 0.0f, 0.0f,  0.0f, 0.325f, 0.020876f, -0.00135225f, 0.0f,
+        0.8697882568985619f, 0.02218999999999994f, -0.4f, 0.0f, 0.0f, 0.0f,  1.0f, 0.325f, 0.020876f, -0.00135225f, 0.0f,
+        0.8765494954009585f, -0.08218999999999994f, -0.4f, 0.0f, 0.0f, 0.0f,  1.0f, 0.675f, 0.020876f, -0.00135225f, 0.0f,
+        0.8765494954009585f, -0.08218999999999994f, -0.25f, 0.0f, 0.0f, 0.0f,  0.0f, 0.675f, 0.020876f, -0.00135225f, 0.0f,
     };
     
-    unsigned int texture_wood, texture_tire, texture_logo, texture_window;
+    unsigned int texture_wood, texture_tire, texture_logo, texture_window, texture_rear_logo;
     buildTexture(&texture_wood, "./src/main4_lighting/ferraribody.jpg");
     buildTexture(&texture_tire, "./src/main4_lighting/roda2.jpg");
     buildTexture(&texture_logo, "./src/main4_lighting/ferrarilogomerah.jpg");
     buildTexture(&texture_window, "./src/main4_lighting/window.jpg");
-    
+    buildTexture(&texture_rear_logo, "./src/main4_lighting/Ferrari.jpg");
+        
     std::string vertex_shader_source_code = loadShader("./src/main4_lighting/vertex.vs");
     std::string fragment_shader_source_code = loadShader("./src/main4_lighting/fragment.fs");
 
@@ -551,7 +566,9 @@ int main(int argc, char** argv) {
         glDrawArrays(GL_TRIANGLE_FAN, 32, 5);
         glDrawArrays(GL_TRIANGLE_FAN, 37, 5);
         glDrawArrays(GL_TRIANGLE_FAN, 42, 5);
+        glBindTexture(GL_TEXTURE_2D, texture_rear_logo);
         glDrawArrays(GL_TRIANGLE_FAN, 47, 5);
+        glBindTexture(GL_TEXTURE_2D, texture_wood);        
         glDrawArrays(GL_TRIANGLE_FAN, 52, 5);
         glDrawArrays(GL_TRIANGLE_FAN, 57, 5);
         glDrawArrays(GL_TRIANGLE_FAN, 62, 5);
@@ -576,6 +593,8 @@ int main(int argc, char** argv) {
         // lampu
         glDrawArrays(GL_TRIANGLE_FAN, 146, 5);
         glDrawArrays(GL_TRIANGLE_FAN, 151, 5);
+        glDrawArrays(GL_TRIANGLE_FAN, 156, 5);
+        glDrawArrays(GL_TRIANGLE_FAN, 161, 5);
         
         glBindTexture(GL_TEXTURE_2D, texture_tire);
         for(int i=0; i<4; i++){
