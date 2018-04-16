@@ -535,6 +535,8 @@ int main(int argc, char** argv) {
     GLuint viewLoc = glGetUniformLocation(shader_program, "view");
     GLuint projectionLoc = glGetUniformLocation(shader_program, "projection");
     GLuint lightColorLoc = glGetUniformLocation(shader_program, "lightColor");
+    GLuint lightPosLoc = glGetUniformLocation(shader_program, "lightPos");
+    GLuint viewPosLoc = glGetUniformLocation(shader_program, "viewPos");
     glUniform3fv(lightColorLoc, 1, glm::value_ptr(glm::vec3(1.0f, 1.0f, 1.0f)));
     
     float lastFrame = 0.0f;
@@ -552,6 +554,8 @@ int main(int argc, char** argv) {
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+        glUniform3fv(lightPosLoc, 1, glm::value_ptr(camera->Position));
+        glUniform3fv(viewPosLoc, 1,  glm::value_ptr(camera->Position));
         processInput(window, deltaTime);
         glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(camera->GetViewMatrix()));
 
