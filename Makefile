@@ -3,7 +3,7 @@ INCLUDE_PATHS = -I/usr/local/include -I/opt/X11/include
 LIBRARY_PATHS = -L/usr/local/lib -I/opt/X11/lib
 LINKER_FLAGS = -framework OpenGL -lglfw -lglew
 
-all: task_1 task_2 task_3 task_4
+all: task_1 task_2 task_3 task_4 task_5
 
 task_1:
 	g++ src/main1_triangle/main.cpp -o bin/main1 -lglfw -lGLEW -lGL
@@ -19,6 +19,9 @@ task_3: src/main3_car3d/main.cpp
 
 task_4: src/main4_lighting/main_combine.cpp
 	g++ src/main4_lighting/main_combine.cpp -o bin/main4_light -lglfw -lGL -lGLEW
+
+task_5: src/main5_particles/main.cpp
+	g++ src/main5_particles/main.cpp -o bin/main5_particles -lglfw -lGL -lGLEW
 
 task_2_mac:
 	$(CC) src/main2_car/main.cpp -o bin/main2_car $(INCLUDE_PATHS) $(LIBRARY_PATHS) $(LINKER_FLAGS)
