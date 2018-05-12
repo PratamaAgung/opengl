@@ -572,7 +572,8 @@ int main(int argc, char** argv) {
       createVAOVBO(tires[i], sizeof(tires[i]),&vbo_tires[i],&vao_tires[i]);
     }
     
-    glm::mat4 teardrop_position[amountRain];
+    glm::mat4 teardrop_instance_matrix[amountRain];
+    float teardrop_y_location[amountRain];
     srand(glfwGetTime()); // initialize random seed	
     float radius = 30.0f;
     float offset = 40.0f;
@@ -584,7 +585,9 @@ int main(int argc, char** argv) {
         float displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
         float x = sin(angle) * radius + displacement;
         displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
-        float y = abs(displacement * 0.4f); // keep height of asteroid field smaller compared to width of x and z
+        float y = abs(displacement * 0.8f); // keep height of asteroid field smaller compared to width of x and z
+        teardrop_y_location[i] = y;
+          std::cout << teardrop_y_location[i] << std::endl;
         displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
         float z = cos(angle) * radius + displacement;
         model = glm::translate(model, glm::vec3(x, y, z));
@@ -598,10 +601,10 @@ int main(int argc, char** argv) {
         // model = glm::rotate(model, rotAngle, glm::vec3(0.4f, 0.6f, 0.8f));
 
         // 4. now add to list of matrices
-        teardrop_position[i] = model;
+        teardrop_instance_matrix[i] = model;
     }
 
-    createVAOVBOInstance(teardrop_vertices, sizeof(teardrop_vertices), teardrop_position, &vao_particles, &vbo_particles);
+    createVAOVBOInstance(teardrop_vertices, sizeof(teardrop_vertices), teardrop_instance_matrix, &vao_particles, &vbo_particles);
 
     glEnable(GL_DEPTH_TEST);
     
@@ -690,10 +693,15 @@ int main(int argc, char** argv) {
 
         // update teardrop position
         for (int i = 0; i < amountRain; i++){
-          teardrop_position[i] = glm::translate(teardrop_position[i], glm::vec3(0.0f, -1.0f, 0.0f));
+          teardrop_instance_matrix[i] = glm::translate(teardrop_instance_matrix[i], glm::vec3(0.0f, -1.0f, 0.0f));
+          teardrop_y_location[i] -= 1.0f;
+          if (teardrop_y_location[i] < -5.0f){
+            teardrop_y_location[i] += 100.0f;
+            teardrop_instance_matrix[i] = glm::translate(teardrop_instance_matrix[i], glm::vec3(0.0f, 100.0f, 0.0f));
+          }
         }
         glBindBuffer(GL_ARRAY_BUFFER, vbo_particles);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(teardrop_position), teardrop_position, GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(teardrop_instance_matrix), teardrop_instance_matrix, GL_STATIC_DRAW);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
