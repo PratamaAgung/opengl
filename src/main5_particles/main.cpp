@@ -591,12 +591,12 @@ int main(int argc, char** argv) {
         float displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
         float x = sin(angle) * radius + displacement;
         displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
-        float y = displacement * 0.4f; // keep height of asteroid field smaller compared to width of x and z
+        float y = abs(displacement * 0.4f); // keep height of asteroid field smaller compared to width of x and z
         displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
         float z = cos(angle) * radius + displacement;
         model = glm::translate(model, glm::vec3(x, y, z));
 
-        // 2. scale: Scale between 0.05 and 0.25f
+        // 2. scale: Scale between 0.03 and 0.13f
         float scale = (rand() % 10) / 100.0f + 0.03;
         model = glm::scale(model, glm::vec3(scale));
 
