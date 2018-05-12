@@ -14,6 +14,7 @@ using namespace glm;
 bool firstMouse;
 float lastX, lastY;
 Camera* camera;
+int amountRain = 500;
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
     glViewport(0, 0, width, height);
@@ -158,6 +159,47 @@ void createVAOVBO(float* vertices, unsigned int size, unsigned int* vbo, unsigne
     glEnableVertexAttribArray(3);
 
     *vao = vao2;
+}
+
+void createVAOInstance(float* vertices, unsigned int size, glm::mat4* instanceLoc, unsigned int* vao){
+    glGenVertexArrays(1, vao);
+    glBindVertexArray(*vao);
+    
+    unsigned int instanceVBO;
+    glGenBuffers(1, &instanceVBO);
+    glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(glm::mat4) * amountRain, instanceLoc, GL_STATIC_DRAW);
+
+    unsigned int quadVBO;
+    glGenBuffers(1, &quadVBO);
+    glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
+    glBufferData(GL_ARRAY_BUFFER, size, vertices, GL_STATIC_DRAW);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    
+    // // also set instance data
+    // glEnableVertexAttribArray(2);
+    //  // this attribute comes from a different vertex buffer
+    // glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
+    // glBindBuffer(GL_ARRAY_BUFFER, 0);
+    // glVertexAttribDivisor(2, 1); // tell OpenGL this is an instanced vertex attribute.
+
+    glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)0);
+    glEnableVertexAttribArray(2);
+    glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(sizeof(glm::vec4)));
+    glEnableVertexAttribArray(3);
+    glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(2 * sizeof(glm::vec4)));
+    glEnableVertexAttribArray(4);
+    glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(3 * sizeof(glm::vec4)));
+
+    glVertexAttribDivisor(1, 1);
+    glVertexAttribDivisor(2, 1);
+    glVertexAttribDivisor(3, 1);
+    glVertexAttribDivisor(4, 1);
+
+    glBindVertexArray(0);
 }
 
 void rotate(Shader shader, float x, float y, float z) {
@@ -536,7 +578,37 @@ int main(int argc, char** argv) {
     for(int i=0; i<4; i++){
       createVAOVBO(tires[i], sizeof(tires[i]),&vbo_tires[i],&vao_tires[i]);
     }
-    createVAOVBO(teardrop_vertices, sizeof(teardrop_vertices), &vbo_particles, &vao_particles);
+    
+    glm::mat4 teardrop_position[amountRain];
+    srand(glfwGetTime()); // initialize random seed	
+    float radius = 30.0f;
+    float offset = 40.0f;
+    for (unsigned int i = 0; i < amountRain; i++)
+    {
+        glm::mat4 model;
+        // 1. translation: displace along circle with 'radius' in range [-offset, offset]
+        float angle = (float)i / (float)amountRain * 360.0f;
+        float displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
+        float x = sin(angle) * radius + displacement;
+        displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
+        float y = displacement * 0.4f; // keep height of asteroid field smaller compared to width of x and z
+        displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
+        float z = cos(angle) * radius + displacement;
+        model = glm::translate(model, glm::vec3(x, y, z));
+
+        // 2. scale: Scale between 0.05 and 0.25f
+        float scale = (rand() % 10) / 100.0f + 0.03;
+        model = glm::scale(model, glm::vec3(scale));
+
+        // 3. rotation: add random rotation around a (semi)randomly picked rotation axis vector
+        float rotAngle = (rand() % 360);
+        model = glm::rotate(model, rotAngle, glm::vec3(0.4f, 0.6f, 0.8f));
+
+        // 4. now add to list of matrices
+        teardrop_position[i] = model;
+    }
+
+    createVAOInstance(teardrop_vertices, sizeof(teardrop_vertices), teardrop_position, &vao_particles);
 
     glEnable(GL_DEPTH_TEST);
     
@@ -551,11 +623,10 @@ int main(int argc, char** argv) {
         float currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
+        processInput(window, deltaTime);
 
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        processInput(window, deltaTime);
         
         glm::mat4 projection = glm::perspective(glm::radians(camera->Zoom), 1.0f, 0.1f, 100.0f);
         
@@ -620,10 +691,9 @@ int main(int argc, char** argv) {
         particle_shader.use();
         particle_shader.setVec3("viewPos", camera->Position);
         particle_shader.setMat4("view", camera->GetViewMatrix());
-        particle_shader.setMat4("model", glm::mat4());
         particle_shader.setMat4("projection", projection);
         glBindVertexArray(vao_particles);
-        glDrawArrays(GL_TRIANGLE_FAN, 0, 5);
+        glDrawArraysInstanced(GL_TRIANGLE_FAN, 0, 6, amountRain);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
