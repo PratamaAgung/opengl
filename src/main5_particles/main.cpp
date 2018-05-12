@@ -587,18 +587,13 @@ int main(int argc, char** argv) {
         displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
         float y = abs(displacement * 0.8f); // keep height of asteroid field smaller compared to width of x and z
         teardrop_y_location[i] = y;
-          std::cout << teardrop_y_location[i] << std::endl;
         displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
         float z = cos(angle) * radius + displacement;
         model = glm::translate(model, glm::vec3(x, y, z));
 
-        // 2. scale: Scale between 0.05 and 0.1f
-        float scale = (rand() % 5) / 100.0f + 0.05;
+        // 2. scale: Scale between 0.05 and 0.13f
+        float scale = (rand() % 5) / 100.0f + 0.08;
         model = glm::scale(model, glm::vec3(scale));
-
-        // 3. rotation: add random rotation around a (semi)randomly picked rotation axis vector
-        // float rotAngle = (rand() % 360);
-        // model = glm::rotate(model, rotAngle, glm::vec3(0.4f, 0.6f, 0.8f));
 
         // 4. now add to list of matrices
         teardrop_instance_matrix[i] = model;
