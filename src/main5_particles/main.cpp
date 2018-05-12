@@ -6,6 +6,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/ext.hpp>
 #include "camera.hpp"
+#include "shader.hpp"
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
@@ -159,11 +160,12 @@ void createVAOVBO(float* vertices, unsigned int size, unsigned int* vbo, unsigne
     *vao = vao2;
 }
 
-void rotate(unsigned int transform, float x, float y, float z) {
+void rotate(Shader shader, float x, float y, float z) {
     glm::mat4 transformMatrix;
     transformMatrix = glm::translate(transformMatrix, glm::vec3(x, y, z));
     transformMatrix = glm::rotate(transformMatrix, (float) glfwGetTime() * 5.0f, glm::vec3(0.0f, 0.0f, 1.0f));
-    glUniformMatrix4fv(transform, 1, GL_FALSE, glm::value_ptr(transformMatrix));
+    shader.use();
+    shader.setMat4("model", transformMatrix);
 }
 
 void buildTexture(unsigned int *texture, const char * path){
@@ -213,11 +215,6 @@ void createTire3d(float* vertices, float x, float y, float z, float r, int side,
     vertices[i+3] = tire_color[0];
     vertices[i+4] = tire_color[1];
     vertices[i+5] = tire_color[2];
-    // vertices[i+6] = 0.5 + (0.25 * cos((i-1)*deg*M_PI/180.0));
-    // vertices[i+7] = 0.5 + (0.25 * sin((i-1)*deg*M_PI/180.0));
-    // std::cout << vertices[i+6] << " " << vertices[i+7] << std::endl;
-    // vertices[i+6] = (vertices[i] + vertices[i+2]) / 2;
-    // vertices[i+7] = (vertices[i+1] + vertices[i+2]) / 2;
     vertices[i+8] = 0.0f;
     vertices[i+9] = 0.0f;
     vertices[i+10] = 1.0f;
@@ -497,18 +494,30 @@ int main(int argc, char** argv) {
         0.8765494954009585f, -0.08218999999999994f, -0.4f, 0.0f, 0.0f, 0.0f,  1.0f, 0.675f, 0.020876f, -0.00135225f, 0.0f,
         0.8765494954009585f, -0.08218999999999994f, -0.25f, 0.0f, 0.0f, 0.0f,  0.0f, 0.675f, 0.020876f, -0.00135225f, 0.0f,
     };
+
+    float teardrop_vertices[] = {
+      0.0f, -0.5f, 0.0f,
+      -0.25f, 0.25f, 0.25f,
+      0.25f, 0.25f, 0.25f,
+      0.25f, 0.25f, -0.25f,
+      -0.25f, 0.25f, -0.25f,
+      -0.25f, 0.25f, 0.25f
+    };
     
     unsigned int texture_wood, texture_tire, texture_logo, texture_window, texture_rear_logo;
-    buildTexture(&texture_wood, "./src/main4_lighting/ferraribody.jpg");
-    buildTexture(&texture_tire, "./src/main4_lighting/roda2.jpg");
-    buildTexture(&texture_logo, "./src/main4_lighting/ferrarilogomerah.jpg");
-    buildTexture(&texture_window, "./src/main4_lighting/window.jpg");
-    buildTexture(&texture_rear_logo, "./src/main4_lighting/Ferrari.jpg");
+    buildTexture(&texture_wood, "./src/main5_particles/ferraribody.jpg");
+    buildTexture(&texture_tire, "./src/main5_particles/roda2.jpg");
+    buildTexture(&texture_logo, "./src/main5_particles/ferrarilogomerah.jpg");
+    buildTexture(&texture_window, "./src/main5_particles/window.jpg");
+    buildTexture(&texture_rear_logo, "./src/main5_particles/Ferrari.jpg");
         
-    std::string vertex_shader_source_code = loadShader("./src/main4_lighting/vertex.vs");
-    std::string fragment_shader_source_code = loadShader("./src/main4_lighting/fragment.fs");
-
-    unsigned int shader_program = createShader(vertex_shader_source_code, fragment_shader_source_code);
+    std::string vertex_shader_source_code = loadShader("./src/main5_particles/vertex.vs");
+    std::string fragment_shader_source_code = loadShader("./src/main5_particles/fragment.fs");
+    Shader car_shader("./src/main5_particles/vertex.vs", "./src/main5_particles/fragment.fs");
+    
+    std::string particle_vertex_shader_source_code = loadShader("./src/main5_particles/particles_vertex.vs");
+    std::string particle_fragment_shader_source_code = loadShader("./src/main5_particles/particles_fragment.fs");
+    Shader particle_shader("./src/main5_particles/particles_vertex.vs", "./src/main5_particles/particles_fragment.fs");
 
     int side = 120;
     float tires[4][((side+2)*11*2) + (side+1)*11*5];
@@ -521,23 +530,15 @@ int main(int argc, char** argv) {
     createTire3d(tires[2], 0.0f, 0.0f, 0.0f, 0.17f, side, tire_color, 0.125f);
     createTire3d(tires[3], 0.0f, 0.0f, 0.0f, 0.18f, side, tire_color, 0.125f);
 
-    unsigned int vbo, vbo_tires[4];
-    unsigned int vao, vao_tires[4];
+    unsigned int vbo, vbo_tires[4], vbo_particles;
+    unsigned int vao, vao_tires[4], vao_particles;
     createVAOVBO(car_vertices, sizeof(car_vertices),&vbo,&vao);
     for(int i=0; i<4; i++){
       createVAOVBO(tires[i], sizeof(tires[i]),&vbo_tires[i],&vao_tires[i]);
     }
+    createVAOVBO(teardrop_vertices, sizeof(teardrop_vertices), &vbo_particles, &vao_particles);
 
-    glUseProgram(shader_program);
     glEnable(GL_DEPTH_TEST);
-
-    GLuint modelLoc = glGetUniformLocation(shader_program, "model");
-    GLuint viewLoc = glGetUniformLocation(shader_program, "view");
-    GLuint projectionLoc = glGetUniformLocation(shader_program, "projection");
-    GLuint lightColorLoc = glGetUniformLocation(shader_program, "lightColor");
-    GLuint lightPosLoc = glGetUniformLocation(shader_program, "lightPos");
-    GLuint viewPosLoc = glGetUniformLocation(shader_program, "viewPos");
-    glUniform3fv(lightColorLoc, 1, glm::value_ptr(glm::vec3(1.0f, 1.0f, 1.0f)));
     
     float lastFrame = 0.0f;
     float deltaTime = 0.0f;
@@ -554,15 +555,17 @@ int main(int argc, char** argv) {
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        glUniform3fv(lightPosLoc, 1, glm::value_ptr(camera->Position));
-        glUniform3fv(viewPosLoc, 1,  glm::value_ptr(camera->Position));
         processInput(window, deltaTime);
-        glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(camera->GetViewMatrix()));
-
+        
         glm::mat4 projection = glm::perspective(glm::radians(camera->Zoom), 1.0f, 0.1f, 100.0f);
-        glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
-
-        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(glm::mat4()));
+        
+        car_shader.use();
+        car_shader.setVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
+        car_shader.setVec3("lightPos", camera->Position);
+        car_shader.setVec3("viewPos", camera->Position);
+        car_shader.setMat4("view", camera->GetViewMatrix());
+        car_shader.setMat4("model", glm::mat4());
+        car_shader.setMat4("projection", projection);
         glBindTexture(GL_TEXTURE_2D, texture_wood);
         glBindVertexArray(vao);
         glDrawArrays(GL_TRIANGLE_FAN, 0, 16);
@@ -603,16 +606,24 @@ int main(int argc, char** argv) {
         glBindTexture(GL_TEXTURE_2D, texture_tire);
         for(int i=0; i<4; i++){
           glBindVertexArray(vao_tires[i]);
-          if (i == 0) rotate(modelLoc, -0.4523350000000001f, -0.22941000000000004f, 0.45f);
-          else if (i == 1) rotate(modelLoc, 0.6048599999999999f, -0.22941000000000004f, 0.45f);
-          else if (i == 2) rotate(modelLoc, -0.4523350000000001f, -0.22941000000000004f, -0.325f);
-          else if (i == 3) rotate(modelLoc, 0.6048599999999999f, -0.22941000000000004f, -0.325f);
+          if (i == 0) rotate(car_shader, -0.4523350000000001f, -0.22941000000000004f, 0.45f);
+          else if (i == 1) rotate(car_shader, 0.6048599999999999f, -0.22941000000000004f, 0.45f);
+          else if (i == 2) rotate(car_shader, -0.4523350000000001f, -0.22941000000000004f, -0.325f);
+          else if (i == 3) rotate(car_shader, 0.6048599999999999f, -0.22941000000000004f, -0.325f);
           glDrawArrays(GL_TRIANGLE_FAN, 0, side+2);
           glDrawArrays(GL_TRIANGLE_FAN, side+2, side*2+2);
           for(int i=0; i<side-1; i++){
             glDrawArrays(GL_TRIANGLE_FAN, side*2+2+i*5, 5);
           }
         }
+
+        particle_shader.use();
+        particle_shader.setVec3("viewPos", camera->Position);
+        particle_shader.setMat4("view", camera->GetViewMatrix());
+        particle_shader.setMat4("model", glm::mat4());
+        particle_shader.setMat4("projection", projection);
+        glBindVertexArray(vao_particles);
+        glDrawArrays(GL_TRIANGLE_FAN, 0, 5);
 
         glfwSwapBuffers(window);
         glfwPollEvents();

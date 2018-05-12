@@ -21,7 +21,7 @@ task_4: src/main4_lighting/main_combine.cpp
 	g++ src/main4_lighting/main_combine.cpp -o bin/main4_light -lglfw -lGL -lGLEW
 
 task_5: src/main5_particles/main.cpp
-	g++ src/main5_particles/main.cpp -o bin/main5_particles -lglfw -lGL -lGLEW
+	g++ src/main5_particles/main.cpp -o bin/main5_particles -lglfw -lGL -lGLEW -std=c++11
 
 task_2_mac:
 	$(CC) src/main2_car/main.cpp -o bin/main2_car $(INCLUDE_PATHS) $(LIBRARY_PATHS) $(LINKER_FLAGS)
