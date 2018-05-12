@@ -161,30 +161,23 @@ void createVAOVBO(float* vertices, unsigned int size, unsigned int* vbo, unsigne
     *vao = vao2;
 }
 
-void createVAOInstance(float* vertices, unsigned int size, glm::mat4* instanceLoc, unsigned int* vao){
+void createVAOVBOInstance(float* vertices, unsigned int size, glm::mat4* instanceLoc, unsigned int* vao, unsigned int* vbo){
     glGenVertexArrays(1, vao);
     glBindVertexArray(*vao);
     
+    
+    glGenBuffers(1, vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, *vbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(glm::mat4) * amountRain, instanceLoc, GL_STATIC_DRAW);
+
     unsigned int instanceVBO;
     glGenBuffers(1, &instanceVBO);
     glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(glm::mat4) * amountRain, instanceLoc, GL_STATIC_DRAW);
-
-    unsigned int quadVBO;
-    glGenBuffers(1, &quadVBO);
-    glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
     glBufferData(GL_ARRAY_BUFFER, size, vertices, GL_STATIC_DRAW);
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     
-    // // also set instance data
-    // glEnableVertexAttribArray(2);
-    //  // this attribute comes from a different vertex buffer
-    // glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
-    // glBindBuffer(GL_ARRAY_BUFFER, 0);
-    // glVertexAttribDivisor(2, 1); // tell OpenGL this is an instanced vertex attribute.
-
-    glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
+    glBindBuffer(GL_ARRAY_BUFFER, *vbo);
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)0);
     glEnableVertexAttribArray(2);
@@ -596,19 +589,19 @@ int main(int argc, char** argv) {
         float z = cos(angle) * radius + displacement;
         model = glm::translate(model, glm::vec3(x, y, z));
 
-        // 2. scale: Scale between 0.03 and 0.13f
-        float scale = (rand() % 10) / 100.0f + 0.03;
+        // 2. scale: Scale between 0.05 and 0.1f
+        float scale = (rand() % 5) / 100.0f + 0.05;
         model = glm::scale(model, glm::vec3(scale));
 
         // 3. rotation: add random rotation around a (semi)randomly picked rotation axis vector
-        float rotAngle = (rand() % 360);
-        model = glm::rotate(model, rotAngle, glm::vec3(0.4f, 0.6f, 0.8f));
+        // float rotAngle = (rand() % 360);
+        // model = glm::rotate(model, rotAngle, glm::vec3(0.4f, 0.6f, 0.8f));
 
         // 4. now add to list of matrices
         teardrop_position[i] = model;
     }
 
-    createVAOInstance(teardrop_vertices, sizeof(teardrop_vertices), teardrop_position, &vao_particles);
+    createVAOVBOInstance(teardrop_vertices, sizeof(teardrop_vertices), teardrop_position, &vao_particles, &vbo_particles);
 
     glEnable(GL_DEPTH_TEST);
     
@@ -694,6 +687,13 @@ int main(int argc, char** argv) {
         particle_shader.setMat4("projection", projection);
         glBindVertexArray(vao_particles);
         glDrawArraysInstanced(GL_TRIANGLE_FAN, 0, 6, amountRain);
+
+        // update teardrop position
+        for (int i = 0; i < amountRain; i++){
+          teardrop_position[i] = glm::translate(teardrop_position[i], glm::vec3(0.0f, -1.0f, 0.0f));
+        }
+        glBindBuffer(GL_ARRAY_BUFFER, vbo_particles);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(teardrop_position), teardrop_position, GL_STATIC_DRAW);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
