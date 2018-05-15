@@ -178,22 +178,25 @@ void createVAOVBOInstance(float* vertices, unsigned int size, glm::mat4* instanc
     glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
     glBufferData(GL_ARRAY_BUFFER, size, vertices, GL_STATIC_DRAW);
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)3);
+
 
     glBindBuffer(GL_ARRAY_BUFFER, *vbo);
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)0);
     glEnableVertexAttribArray(2);
-    glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(sizeof(glm::vec4)));
+    glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)0);
     glEnableVertexAttribArray(3);
-    glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(2 * sizeof(glm::vec4)));
+    glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(sizeof(glm::vec4)));
     glEnableVertexAttribArray(4);
-    glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(3 * sizeof(glm::vec4)));
+    glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(2 * sizeof(glm::vec4)));
+    glEnableVertexAttribArray(5);
+    glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(3 * sizeof(glm::vec4)));
 
-    glVertexAttribDivisor(1, 1);
     glVertexAttribDivisor(2, 1);
     glVertexAttribDivisor(3, 1);
     glVertexAttribDivisor(4, 1);
+    glVertexAttribDivisor(5, 1);
 
     glBindVertexArray(0);
 }
@@ -253,11 +256,6 @@ void createTire3d(float* vertices, float x, float y, float z, float r, int side,
     vertices[i+3] = tire_color[0];
     vertices[i+4] = tire_color[1];
     vertices[i+5] = tire_color[2];
-    // vertices[i+6] = 0.5 + (0.25 * cos((i-1)*deg*M_PI/180.0));
-    // vertices[i+7] = 0.5 + (0.25 * sin((i-1)*deg*M_PI/180.0));
-    // std::cout << vertices[i+6] << " " << vertices[i+7] << std::endl;
-    // vertices[i+6] = (vertices[i] + vertices[i+2]) / 2;
-    // vertices[i+7] = (vertices[i+1] + vertices[i+2]) / 2;
     vertices[i+8] = 0.0f;
     vertices[i+9] = 0.0f;
     if (i < (side + 2) * 11){
@@ -557,47 +555,104 @@ int main(int argc, char** argv) {
     };
 
     float teardrop_vertices[] = {
-      0.0f, 0.0f, 0.0f,
-      0.0f, 1.0f, 1.0f,
-      -0.6f, 1.0f, 0.6f,
-      -0.6f, 1.0f, -0.6f,
-      0.0f, 1.0f, -1.0f,
-      0.6f, 1.0f, -0.6f,
-      0.6f, 1.0f, 0.6f,
-      0.0f, 1.0f, 1.0f,
-      0.0f, 0.0f, 0.0f,
+      0.0f, 0.0f, 0.0f, 0.4f, 0.6f, 0.6f, 
+      0.0f, 2.0f, 1.0f, 0.4f, 0.6f, 0.6f, 
+      -0.6f, 2.0f, 0.6f, 0.4f, 0.6f, 0.6f, 
 
-      0.0f, 3.0f, 0.0f,
-      0.0f, 1.0f, 1.0f,
-      -0.6f, 1.0f, 0.6f,
-      -0.6f, 1.0f, -0.6f,
-      0.0f, 1.0f, -1.0f,
-      0.6f, 1.0f, -0.6f,
-      0.6f, 1.0f, 0.6f,
-      0.0f, 1.0f, 1.0f,
-      0.0f, 3.0f, 0.0f,
+      0.0f, 0.0f, 0.0f, -2.4f, 0.72f, 0.0f, 
+      -0.6f, 2.0f, 0.6f, -2.4f, 0.72f, 0.0f, 
+      -0.6f, 2.0f, -0.6f, -2.4f, 0.72f, 0.0f, 
+
+      0.0f, 0.0f, 0.0f, -0.8f, 0.6f, -1.2f,
+      -0.6f, 2.0f, -0.6f, -0.8f, 0.6f, -1.2f,
+      0.0f, 2.0f, -1.0f, -0.8f, 0.6f, -1.2f,
+
+      0.0f, 0.0f, 0.0f, 0.8f, 0.6f, -1.2f,
+      0.0f, 2.0f, -1.0f, 0.8f, 0.6f, -1.2f,
+      0.6f, 2.0f, -0.6f, 0.8f, 0.6f, -1.2f,
+
+      0.0f, 0.0f, 0.0f, 2.4f, 0.72f, 0.0f, 
+      0.6f, 2.0f, -0.6f, 2.4f, 0.72f, 0.0f, 
+      0.6f, 2.0f, 0.6f, 2.4f, 0.72f, 0.0f, 
+
+      0.0f, 0.0f, 0.0f, 0.8f, 0.6f, 1.2f,
+      0.6f, 2.0f, 0.6f, 0.8f, 0.6f, 1.2f,
+      0.0f, 2.0f, 1.0f, 0.8f, 0.6f, 1.2f,
+
+      0.0f, 3.0f, 0.0f, 0.4f, 0.6f, -0.6f, 
+      0.0f, 2.0f, 1.0f, 0.4f, 0.6f, -0.6f, 
+      -0.6f, 2.0f, 0.6f, 0.4f, 0.6f, -0.6f, 
+
+      0.0f, 3.0f, 0.0f, 1.2f, 0.72f, 0.0f, 
+      -0.6f, 2.0f, 0.6f, 1.2f, 0.72f, 0.0f,
+      -0.6f, 2.0f, -0.6f, 1.2f, 0.72f, 0.0f,
+
+      0.0f, 3.0f, 0.0f, 0.4f, 0.6f, 0.6f,
+      -0.6f, 2.0f, -0.6f, 0.4f, 0.6f, 0.6f,
+      0.0f, 2.0f, -1.0f, 0.4f, 0.6f, 0.6f,
+
+      0.0f, 3.0f, 0.0f, -0.4f, 0.6f, 0.6f, 
+      0.0f, 2.0f, -1.0f, -0.4f, 0.6f, 0.6f, 
+      0.6f, 2.0f, -0.6f, -0.4f, 0.6f, 0.6f, 
+
+      0.0f, 3.0f, 0.0f, -1.2f, 0.72f, 0.0f,
+      0.6f, 2.0f, -0.6f, -1.2f, 0.72f, 0.0f,
+      0.6f, 2.0f, 0.6f, -1.2f, 0.72f, 0.0f,
+
+      0.0f, 3.0f, 0.0f, -0.4f, 0.6f, -0.6f, 
+      0.6f, 2.0f, 0.6f, -0.4f, 0.6f, -0.6f, 
+      0.0f, 2.0f, 1.0f, -0.4f, 0.6f, -0.6f, 
     };
 
+    // posX, posY, posZ, norX, norY, norZ
     float smoke_vertices[] = {
-      0.0f, 0.0f, 0.0f,
-      0.0f, 1.0f, 1.0f,
-      -0.6f, 0.6f, 1.0f,
-      -0.6f, -0.6f, 1.0f,
-      0.0f, -1.0f, 1.0f,
-      0.6f, -0.6f, 1.0f,
-      0.6f, 0.6f, 1.0f,
-      0.0f, 1.0f, 1.0f,
-      0.0f, 0.0f, 0.0f,
+      0.0f, 0.0f, 0.0f, -0.4f, -0.6f, -0.6f,
+      0.0f, 1.0f, 1.0f, -0.4f, -0.6f, -0.6f,
+      -0.6f, 0.6f, 1.0f, -0.4f, -0.6f, -0.6f,
 
-      0.0f, 0.0f, 2.0f,
-      0.0f, 1.0f, 1.0f,
-      -0.6f, 0.6f, 1.0f,
-      -0.6f, -0.6f, 1.0f,
-      0.0f, -1.0f, 1.0f,
-      0.6f, -0.6f, 1.0f,
-      0.6f, 0.6f, 1.0f,
-      0.0f, 1.0f, 1.0f,
-      0.0f, 0.0f, 2.0f,
+      0.0f, 0.0f, 0.0f, -1.2f, 0.0f, -0.72f, 
+      -0.6f, 0.6f, 1.0f, -1.2f, 0.0f, -0.72f, 
+      -0.6f, -0.6f, 1.0f, -1.2f, 0.0f, -0.72f, 
+
+      0.0f, 0.0f, 0.0f, -0.4f, 0.6f, -0.6f, 
+      -0.6f, -0.6f, 1.0f, -0.4f, 0.6f, -0.6f, 
+      0.0f, -1.0f, 1.0f, -0.4f, 0.6f, -0.6f, 
+
+      0.0f, 0.0f, 0.0f, 0.4f, 0.6f, -0.6f,
+      0.0f, -1.0f, 1.0f, 0.4f, 0.6f, -0.6f,
+      0.6f, -0.6f, 1.0f, 0.4f, 0.6f, -0.6f,
+
+      0.0f, 0.0f, 0.0f, 1.2f, 0.0f, -0.72f,
+      0.6f, -0.6f, 1.0f, 1.2f, 0.0f, -0.72f,
+      0.6f, 0.6f, 1.0f, 1.2f, 0.0f, -0.72f,
+
+      0.0f, 0.0f, 0.0f, 0.4f, -0.6f, -0.6f, 
+      0.6f, 0.6f, 1.0f, 0.4f, -0.6f, -0.6f, 
+      0.0f, 1.0f, 1.0f, 0.4f, -0.6f, -0.6f, 
+
+      0.0f, 0.0f, 2.0f, 0.4f, 0.6f, -0.6f, 
+      0.0f, 1.0f, 1.0f, 0.4f, 0.6f, -0.6f, 
+      -0.6f, 0.6f, 1.0f, 0.4f, 0.6f, -0.6f, 
+
+      0.0f, 0.0f, 2.0f, 1.2f, 0.0f, -0.72f,
+      -0.6f, 0.6f, 1.0f, 1.2f, 0.0f, -0.72f,
+      -0.6f, -0.6f, 1.0f, 1.2f, 0.0f, -0.72f,
+
+      0.0f, 0.0f, 2.0f, 0.4f, -0.6f, -0.6f,
+      -0.6f, -0.6f, 1.0f, 0.4f, -0.6f, -0.6f,
+      0.0f, -1.0f, 1.0f, 0.4f, -0.6f, -0.6f,
+
+      0.0f, 0.0f, 2.0f, -0.4f, -0.6f, -0.6f,
+      0.0f, -1.0f, 1.0f, -0.4f, -0.6f, -0.6f,
+      0.6f, -0.6f, 1.0f, -0.4f, -0.6f, -0.6f,
+
+      0.0f, 0.0f, 2.0f, -1.2f, -0.0f, -0.72f,
+      0.6f, -0.6f, 1.0f, -1.2f, -0.0f, -0.72f,
+      0.6f, 0.6f, 1.0f, -1.2f, -0.0f, -0.72f,
+ 
+      0.0f, 0.0f, 2.0f, -0.4f, 0.6f, -0.6f,
+      0.6f, 0.6f, 1.0f, -0.4f, 0.6f, -0.6f,
+      0.0f, 1.0f, 1.0f, -0.4f, 0.6f, -0.6f,
     };
 
     unsigned int texture_wood, texture_tire, texture_logo, texture_window, texture_rear_logo;
@@ -776,16 +831,18 @@ int main(int argc, char** argv) {
         particle_shader.setVec3("viewPos", camera->Position);
         particle_shader.setMat4("view", camera->GetViewMatrix());
         particle_shader.setMat4("projection", projection);
+        particle_shader.setVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
+        particle_shader.setVec3("lightPos", camera->Position);
         glBindVertexArray(vao_rain);
-        glDrawArraysInstanced(GL_TRIANGLE_FAN, 0, 9, amountRain);
-        glDrawArraysInstanced(GL_TRIANGLE_FAN, 9, 9, amountRain);
+        glDrawArraysInstanced(GL_TRIANGLES, 0, 36, amountRain);
+        // glDrawArraysInstanced(GL_TRIANGLE_FAN, 9, 9, amountRain);
         rain.updateParticles();
         glBindBuffer(GL_ARRAY_BUFFER, vbo_rain);
         glBufferData(GL_ARRAY_BUFFER, sizeof(glm::mat4) * amountRain, rain.getTransitionMatrix(), GL_STATIC_DRAW);
 
         glBindVertexArray(vao_smoke);
-        glDrawArraysInstanced(GL_TRIANGLE_FAN, 0, 9, amountSmoke);
-        glDrawArraysInstanced(GL_TRIANGLE_FAN, 9, 9, amountSmoke);
+        glDrawArraysInstanced(GL_TRIANGLES, 0, 36, amountSmoke);
+        // glDrawArraysInstanced(GL_TRIANGLE_FAN, 9, 9, amountSmoke);
         smoke.updateParticles();
         glBindBuffer(GL_ARRAY_BUFFER, vbo_smoke);
         glBufferData(GL_ARRAY_BUFFER, sizeof(glm::mat4) * amountSmoke, smoke.getTransitionMatrix(), GL_STATIC_DRAW);

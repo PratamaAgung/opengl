@@ -67,7 +67,7 @@ mat4* SmokeParticles::getTransitionMatrix() {
     for(int i = 0; i < numParticles; i++){
         mat4 matrix;
         matrix = translate(matrix, position[i]);
-        matrix = rotate(matrix, direction[i] - 90, vec3(1.0f, 1.0f, 1.0f));
+        // matrix = rotate(matrix, direction[i] - 90, vec3(1.0f, 1.0f, 1.0f));
         matrix = scale(matrix, vec3(scaleFactor[i]));
         transitionMatrix[i] = matrix;
     }
