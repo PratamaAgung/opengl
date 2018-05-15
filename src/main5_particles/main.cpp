@@ -17,6 +17,7 @@ bool firstMouse;
 float lastX, lastY;
 Camera* camera;
 int amountRain = 500;
+int amountSmoke = 500;
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
     glViewport(0, 0, width, height);
@@ -629,7 +630,7 @@ int main(int argc, char** argv) {
     unsigned int vao_rain, vbo_rain;
     createVAOVBOInstance(teardrop_vertices, sizeof(teardrop_vertices), rain.getTransitionMatrix(), &vao_rain, &vbo_rain);
 
-    SmokeParticles smoke(500, vec3(0.5f, 0.5f, 0.0f), 0.05f);
+    SmokeParticles smoke(amountSmoke, vec3(0.85f, -0.2f, -0.2f), 0.01f);
     unsigned int vao_smoke, vbo_smoke;
     createVAOVBOInstance(teardrop_vertices, sizeof(teardrop_vertices), smoke.getTransitionMatrix(), &vao_smoke, &vbo_smoke);
 
