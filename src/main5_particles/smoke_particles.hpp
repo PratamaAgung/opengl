@@ -56,7 +56,7 @@ void SmokeParticles::updateParticles(){
         position[i].x += movement[i].x + globalPull.x;
         position[i].y += movement[i].y + globalPull.y;
         position[i].z += movement[i].z + globalPull.z;
-        
+
         if (age[i] > lifespan[i]){
             initParticle(i);
         }
@@ -87,7 +87,7 @@ void SmokeParticles::initParticle(int i) {
     this->age[i] = 0.0f;
     this->lifespan[i] = (((rand()%10+1)))/10.0f;
     this->movement[i].x = (((((((2) * rand()%11) + 1)) * rand()%11) + 1) * 0.000035) - (((((((2) * rand()%11) + 1)) * rand()%11) + 1) * 0.000035);
-    this->movement[i].y = ((((((5) * rand()%11) + 3)) * rand()%11) + 7) * 0.00005; 
+    this->movement[i].y = ((((((5) * rand()%11) + 3)) * rand()%11) + 7) * 0.00005;
     this->movement[i].z = (((((((2) * rand()%11) + 1)) * rand()%11) + 1) * 0.000015) - (((((((2) * rand()%11) + 1)) * rand()%11) + 1) * 0.000015);
 }
 

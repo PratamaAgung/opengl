@@ -10,6 +10,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 #include "smoke_particles.hpp"
+#include "rain_particles.hpp"
 
 using namespace glm;
 bool firstMouse;
@@ -166,8 +167,8 @@ void createVAOVBO(float* vertices, unsigned int size, unsigned int* vbo, unsigne
 void createVAOVBOInstance(float* vertices, unsigned int size, glm::mat4* instanceLoc, unsigned int* vao, unsigned int* vbo){
     glGenVertexArrays(1, vao);
     glBindVertexArray(*vao);
-    
-    
+
+
     glGenBuffers(1, vbo);
     glBindBuffer(GL_ARRAY_BUFFER, *vbo);
     glBufferData(GL_ARRAY_BUFFER, sizeof(glm::mat4) * amountRain, instanceLoc, GL_STATIC_DRAW);
@@ -178,7 +179,7 @@ void createVAOVBOInstance(float* vertices, unsigned int size, glm::mat4* instanc
     glBufferData(GL_ARRAY_BUFFER, size, vertices, GL_STATIC_DRAW);
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-    
+
     glBindBuffer(GL_ARRAY_BUFFER, *vbo);
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)0);
@@ -260,7 +261,7 @@ void createTire3d(float* vertices, float x, float y, float z, float r, int side,
     vertices[i+8] = 0.0f;
     vertices[i+9] = 0.0f;
     if (i < (side + 2) * 11){
-      vertices[i+10] = 1.0f;  
+      vertices[i+10] = 1.0f;
     } else {
       vertices[i+10] = -1.0f;
     }
@@ -317,7 +318,7 @@ int main(int argc, char** argv) {
     float car_vertices[] = {
         // left
         // 0.0f, 0.0f, 0.4f, 1.0f, 0.157f, 0.0f, 0.5f, 0.0f,
-        0.0f, -0.32941000000000004f, 0.4f, 0.62745098039f, 0.157f, 1.0f,  0.0f, 0.335295f, 0.0f, -0.32941000000000004f, 1.0f, 
+        0.0f, -0.32941000000000004f, 0.4f, 0.62745098039f, 0.157f, 1.0f,  0.0f, 0.335295f, 0.0f, -0.32941000000000004f, 1.0f,
         // back  0.0f, 0.0f,
         0.0f, -0.32941000000000004f, 0.4f, 0.62745098039f, 0.157f, 1.0f,  0.0f, 0.335295f,0.0f, -0.32941000000000004f, 1.0f,
         0.7348599999999999f, -0.32941000000000004f, 0.4f, 0.62745098039f, 0.157f, 0.0f,  0.8674299999999999f, 0.335295f, 0.7348599999999999f, -0.32941000000000004f, 1.0f,
@@ -504,7 +505,7 @@ int main(int argc, char** argv) {
         0.4079649999999999f, 0.18833166666666662f, 0.38f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0495165f, 0.152f, 0.0f,
         0.6079649999999999f, 0.12317833333333333f, 0.38f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0495165f, 0.152f, 0.0f,
         0.6079649999999999f, 0.12317833333333333f, -0.38f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f, 0.0495165f, 0.152f, 0.0f,
-        
+
         // kaca depan
         0.0234776588365224f, 0.18833166666666662f,  -0.38f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f, -0.0904565f, 0.189915f, 0.0f,
         -0.22641000000000006f, 0.06930999999999997f, -0.38f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, -0.0904565f, 0.189915f, 0.0f,
@@ -529,7 +530,7 @@ int main(int argc, char** argv) {
         // lampu belakang
         0.8765494954009585f, -0.08218999999999994f, 0.25f, 0.0f, 0.0f, 0.0f,  0.0f, 0.675f, 0.020876f, 0.00135225f, 0.0f,
         0.8697882568985619f, 0.02218999999999994f, 0.2f, 0.0f, 0.0f, 0.0f,  0.0f, 0.325f, 0.020876f, 0.00135225f, 0.0f,
-        0.8697882568985619f, 0.02218999999999994f, 0.401f, 0.0f, 0.0f, 0.0f,  1.0f, 0.325f, 0.020876f, 0.00135225f, 0.0f, 
+        0.8697882568985619f, 0.02218999999999994f, 0.401f, 0.0f, 0.0f, 0.0f,  1.0f, 0.325f, 0.020876f, 0.00135225f, 0.0f,
         0.8765494954009585f, -0.08218999999999994f, 0.401f, 0.0f, 0.0f, 0.0f,  1.0f, 0.675f, 0.020876f, 0.00135225f, 0.0f,
         0.8765494954009585f, -0.08218999999999994f, 0.25f, 0.0f, 0.0f, 0.0f,  0.0f, 0.675f, 0.020876f, 0.00135225f, 0.0f,
 
@@ -546,7 +547,7 @@ int main(int argc, char** argv) {
         0.8265494954009585f, -0.08218999999999994f, 0.401f, 0.0f, 0.0f, 0.0f,  1.0f, 0.675f,  0.0f, 0.0f, 1.0f,
         0.8097882568985619f, 0.02218999999999994f, 0.401f, 0.0f, 0.0f, 0.0f,  1.0f, 0.325f,  0.0f, 0.0f, 1.0f,
         0.8697882568985619f, 0.02218999999999994f, 0.401f, 0.0f, 0.0f, 0.0f,  1.0f, 0.325f,  0.0f, 0.0f, 1.0f,
-    
+
         0.8697882568985619f, 0.02218999999999994f, -0.401f, 0.0f, 0.0f, 0.0f,  1.0f, 0.325f,  0.0f, 0.0f, -1.0f,
         0.8765494954009585f, -0.08218999999999994f, -0.401f, 0.0f, 0.0f, 0.0f,  1.0f, 0.675f,  0.0f, 0.0f, -1.0f,
         0.8265494954009585f, -0.08218999999999994f, -0.401f, 0.0f, 0.0f, 0.0f,  1.0f, 0.675f,  0.0f, 0.0f, -1.0f,
@@ -563,7 +564,7 @@ int main(int argc, char** argv) {
       0.0f, 1.0f, -1.0f,
       0.6f, 1.0f, -0.6f,
       0.6f, 1.0f, 0.6f,
-      0.0f, 1.0f, 1.0f,      
+      0.0f, 1.0f, 1.0f,
       0.0f, 0.0f, 0.0f,
 
       0.0f, 3.0f, 0.0f,
@@ -573,7 +574,7 @@ int main(int argc, char** argv) {
       0.0f, 1.0f, -1.0f,
       0.6f, 1.0f, -0.6f,
       0.6f, 1.0f, 0.6f,
-      0.0f, 1.0f, 1.0f,      
+      0.0f, 1.0f, 1.0f,
       0.0f, 3.0f, 0.0f,
     };
 
@@ -598,18 +599,18 @@ int main(int argc, char** argv) {
       0.0f, 1.0f, 1.0f,
       0.0f, 0.0f, 2.0f,
     };
-    
+
     unsigned int texture_wood, texture_tire, texture_logo, texture_window, texture_rear_logo;
     buildTexture(&texture_wood, "./src/main5_particles/ferraribody.jpg");
     buildTexture(&texture_tire, "./src/main5_particles/roda2.jpg");
     buildTexture(&texture_logo, "./src/main5_particles/ferrarilogomerah.jpg");
     buildTexture(&texture_window, "./src/main5_particles/window.jpg");
     buildTexture(&texture_rear_logo, "./src/main5_particles/Ferrari.jpg");
-        
+
     std::string vertex_shader_source_code = loadShader("./src/main5_particles/vertex.vs");
     std::string fragment_shader_source_code = loadShader("./src/main5_particles/fragment.fs");
     Shader car_shader("./src/main5_particles/vertex.vs", "./src/main5_particles/fragment.fs");
-    
+
     std::string particle_vertex_shader_source_code = loadShader("./src/main5_particles/particles_vertex.vs");
     std::string particle_fragment_shader_source_code = loadShader("./src/main5_particles/particles_fragment.fs");
     Shader particle_shader("./src/main5_particles/particles_vertex.vs", "./src/main5_particles/particles_fragment.fs");
@@ -631,41 +632,45 @@ int main(int argc, char** argv) {
     for(int i=0; i<4; i++){
       createVAOVBO(tires[i], sizeof(tires[i]),&vbo_tires[i],&vao_tires[i]);
     }
-    
-    glm::mat4 teardrop_instance_matrix[amountRain];
-    float teardrop_y_location[amountRain];
-    srand(glfwGetTime()); // initialize random seed	
-    float radius = 30.0f;
-    float offset = 40.0f;
-    for (unsigned int i = 0; i < amountRain; i++)
-    {
-        glm::mat4 model;
-        // 1. translation: displace along circle with 'radius' in range [-offset, offset]
-        float angle = (float)i / (float)amountRain * 360.0f;
-        float displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
-        float x = sin(angle) * radius + displacement;
-        displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
-        float y = abs(displacement * 0.8f); // keep height of asteroid field smaller compared to width of x and z
-        teardrop_y_location[i] = y;
-        displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
-        float z = cos(angle) * radius + displacement;
-        model = glm::translate(model, glm::vec3(x, y, z));
 
-        // 2. scale: Scale between 0.05 and 0.13f
-        float scale = (rand() % 5) / 100.0f + 0.08;
-        model = glm::scale(model, glm::vec3(scale));
+    // glm::mat4 teardrop_instance_matrix[amountRain];
+    // float teardrop_y_location[amountRain];
+    // srand(glfwGetTime()); // initialize random seed
+    // float radius = 30.0f;
+    // float offset = 40.0f;
+    // for (unsigned int i = 0; i < amountRain; i++)
+    // {
+    //     glm::mat4 model;
+    //     // 1. translation: displace along circle with 'radius' in range [-offset, offset]
+    //     float angle = (float)i / (float)amountRain * 360.0f;
+    //     float displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
+    //     float x = sin(angle) * radius + displacement;
+    //     displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
+    //     float y = abs(displacement * 0.8f); // keep height of asteroid field smaller compared to width of x and z
+    //     teardrop_y_location[i] = y;
+    //     displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
+    //     float z = cos(angle) * radius + displacement;
+    //     model = glm::translate(model, glm::vec3(x, y, z));
+    //
+    //     // 2. scale: Scale between 0.05 and 0.13f
+    //     float scale = (rand() % 5) / 100.0f + 0.08;
+    //     model = glm::scale(model, glm::vec3(scale));
+    //
+    //     // 4. now add to list of matrices
+    //     teardrop_instance_matrix[i] = model;
+    // }
+    // createVAOVBOInstance(teardrop_vertices, sizeof(teardrop_vertices), teardrop_instance_matrix, &vao_particles, &vbo_particles);
 
-        // 4. now add to list of matrices
-        teardrop_instance_matrix[i] = model;
-    }
-    createVAOVBOInstance(teardrop_vertices, sizeof(teardrop_vertices), teardrop_instance_matrix, &vao_particles, &vbo_particles);
+    RainParticles rain(500);
+    unsigned int vao_rain, vbo_rain;
+    createVAOVBOInstance(teardrop_vertices, sizeof(teardrop_vertices), rain.getTransitionMatrix(), &vao_rain, &vbo_rain);
 
     SmokeParticles smoke(amountSmoke, vec3(0.85f, -0.2f, -0.2f), 0.01f);
     unsigned int vao_smoke, vbo_smoke;
     createVAOVBOInstance(smoke_vertices, sizeof(smoke_vertices), smoke.getTransitionMatrix(), &vao_smoke, &vbo_smoke);
 
     glEnable(GL_DEPTH_TEST);
-    
+
     float lastFrame = 0.0f;
     float deltaTime = 0.0f;
 
@@ -693,9 +698,9 @@ int main(int argc, char** argv) {
 
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        
+
         glm::mat4 projection = glm::perspective(glm::radians(camera->Zoom), 1.0f, 0.1f, 100.0f);
-        
+
         car_shader.use();
         car_shader.setVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
         car_shader.setVec3("lightPos", camera->Position);
@@ -716,7 +721,7 @@ int main(int argc, char** argv) {
         glDrawArrays(GL_TRIANGLE_FAN, 42, 5);
         glBindTexture(GL_TEXTURE_2D, texture_rear_logo);
         glDrawArrays(GL_TRIANGLE_FAN, 47, 5);
-        glBindTexture(GL_TEXTURE_2D, texture_wood);        
+        glBindTexture(GL_TEXTURE_2D, texture_wood);
         glDrawArrays(GL_TRIANGLE_FAN, 52, 5);
         glDrawArrays(GL_TRIANGLE_FAN, 57, 5);
         glDrawArrays(GL_TRIANGLE_FAN, 62, 5);
@@ -771,21 +776,12 @@ int main(int argc, char** argv) {
         particle_shader.setVec3("viewPos", camera->Position);
         particle_shader.setMat4("view", camera->GetViewMatrix());
         particle_shader.setMat4("projection", projection);
-        glBindVertexArray(vao_particles);
+        glBindVertexArray(vao_rain);
         glDrawArraysInstanced(GL_TRIANGLE_FAN, 0, 9, amountRain);
         glDrawArraysInstanced(GL_TRIANGLE_FAN, 9, 9, amountRain);
-
-        // update teardrop position
-        for (int i = 0; i < amountRain; i++){
-          teardrop_instance_matrix[i] = glm::translate(teardrop_instance_matrix[i], glm::vec3(0.0f, -3.0f, 0.0f));
-          teardrop_y_location[i] -= 3.0f;
-          if (teardrop_y_location[i] < -5.0f){
-            teardrop_y_location[i] += 100.0f;
-            teardrop_instance_matrix[i] = glm::translate(teardrop_instance_matrix[i], glm::vec3(0.0f, 100.0f, 0.0f));
-          }
-        }
-        glBindBuffer(GL_ARRAY_BUFFER, vbo_particles);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(teardrop_instance_matrix), teardrop_instance_matrix, GL_STATIC_DRAW);
+        rain.updateParticles();
+        glBindBuffer(GL_ARRAY_BUFFER, vbo_rain);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(glm::mat4) * amountRain, rain.getTransitionMatrix(), GL_STATIC_DRAW);
 
         glBindVertexArray(vao_smoke);
         glDrawArraysInstanced(GL_TRIANGLE_FAN, 0, 9, amountSmoke);
