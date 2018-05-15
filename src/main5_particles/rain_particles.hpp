@@ -22,6 +22,7 @@ class RainParticles {
         mat4* transitionMatrix;
         float radius;
         float offset;
+        float* alpha;
     public:
         RainParticles(int);
         void updateParticles();
@@ -30,6 +31,7 @@ class RainParticles {
         void initParticle(int);
         bool isCollide(int, vec3);
         void updateCollider(vec3);
+        float* getAlpha();
 };
 
 RainParticles::RainParticles(int numParticles){
@@ -47,6 +49,7 @@ RainParticles::RainParticles(int numParticles){
     this->transitionMatrix = new mat4[this->numParticles];
     this->radius = 1.0f;
     this->offset = 3.0f;
+    this->alpha = new float[numParticles];
     srand(time(NULL));
     for (int i = 0; i < this->numParticles; i++){
       this->initParticle(i);
@@ -100,6 +103,7 @@ void RainParticles::initParticle(int i){
     this->movement[i].x = 0.0f;
     this->movement[i].y = -0.05f;
     this->movement[i].z = 0.0f;
+    this->alpha[i] = 1.0f;
 }
 
 bool RainParticles::isCollide(int i, vec3 plane){
@@ -113,6 +117,10 @@ void RainParticles::updateCollider(vec3 plane){
           printf("%s\n", "Collide");
         }
     }
+}
+
+float* RainParticles::getAlpha(){
+    return alpha;
 }
 
 #endif

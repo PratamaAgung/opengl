@@ -3,6 +3,7 @@ out vec4 FragColor;
 
 in vec3 Normal;
 in vec3 FragPos;
+in float Alpha;
 
 struct Material {
     vec3 ambient;
@@ -35,5 +36,5 @@ void main()
     vec3 specular = lightColor * (spec * material.specular);  
         
     vec3 result = ambient + diffuse + specular;
-    FragColor = vec4(result, 1.0);
+    FragColor = vec4(result, Alpha);
 }

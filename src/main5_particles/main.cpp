@@ -164,7 +164,7 @@ void createVAOVBO(float* vertices, unsigned int size, unsigned int* vbo, unsigne
     *vao = vao2;
 }
 
-void createVAOVBOInstance(float* vertices, unsigned int size, glm::mat4* instanceLoc, unsigned int* vao, unsigned int* vbo){
+void createVAOVBOInstance(float* vertices, unsigned int size, glm::mat4* instanceLoc, float* alpha, unsigned int* vao, unsigned int* vbo, unsigned int* vbo_aplha){
     glGenVertexArrays(1, vao);
     glBindVertexArray(*vao);
 
@@ -172,6 +172,10 @@ void createVAOVBOInstance(float* vertices, unsigned int size, glm::mat4* instanc
     glGenBuffers(1, vbo);
     glBindBuffer(GL_ARRAY_BUFFER, *vbo);
     glBufferData(GL_ARRAY_BUFFER, sizeof(glm::mat4) * amountRain, instanceLoc, GL_STATIC_DRAW);
+
+    glGenBuffers(1, vbo_aplha);
+    glBindBuffer(GL_ARRAY_BUFFER, *vbo_aplha);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * amountRain, alpha, GL_STATIC_DRAW);
 
     unsigned int instanceVBO;
     glGenBuffers(1, &instanceVBO);
@@ -193,10 +197,15 @@ void createVAOVBOInstance(float* vertices, unsigned int size, glm::mat4* instanc
     glEnableVertexAttribArray(5);
     glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(3 * sizeof(glm::vec4)));
 
+    glBindBuffer(GL_ARRAY_BUFFER, *vbo_aplha);
+    glEnableVertexAttribArray(6);
+    glVertexAttribPointer(6, 1, GL_FLOAT, GL_FALSE, sizeof(float), (void*)0);
+
     glVertexAttribDivisor(2, 1);
     glVertexAttribDivisor(3, 1);
     glVertexAttribDivisor(4, 1);
     glVertexAttribDivisor(5, 1);
+    glVertexAttribDivisor(6, 1);
 
     glBindVertexArray(0);
 }
@@ -689,14 +698,16 @@ int main(int argc, char** argv) {
     }
 
     RainParticles rain(500);
-    unsigned int vao_rain, vbo_rain;
-    createVAOVBOInstance(teardrop_vertices, sizeof(teardrop_vertices), rain.getTransitionMatrix(), &vao_rain, &vbo_rain);
+    unsigned int vao_rain, vbo_rain, vbo_rain_aplha;
+    createVAOVBOInstance(teardrop_vertices, sizeof(teardrop_vertices), rain.getTransitionMatrix(), rain.getAlpha(), &vao_rain, &vbo_rain, &vbo_rain_aplha);
 
     SmokeParticles smoke(amountSmoke, vec3(0.85f, -0.2f, -0.2f), 0.01f);
-    unsigned int vao_smoke, vbo_smoke;
-    createVAOVBOInstance(smoke_vertices, sizeof(smoke_vertices), smoke.getTransitionMatrix(), &vao_smoke, &vbo_smoke);
+    unsigned int vao_smoke, vbo_smoke, vbo_smoke_aplha;
+    createVAOVBOInstance(smoke_vertices, sizeof(smoke_vertices), smoke.getTransitionMatrix(), smoke.getAlpha(),  &vao_smoke, &vbo_smoke, &vbo_smoke_aplha);
 
     glEnable(GL_DEPTH_TEST);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     float lastFrame = 0.0f;
     float deltaTime = 0.0f;
@@ -812,10 +823,11 @@ int main(int argc, char** argv) {
         particle_shader.setFloat("material.shininess",0.48125f);
         glBindVertexArray(vao_rain);
         glDrawArraysInstanced(GL_TRIANGLES, 0, 36, amountRain);
-        // glDrawArraysInstanced(GL_TRIANGLE_FAN, 9, 9, amountRain);
         rain.updateParticles();
         glBindBuffer(GL_ARRAY_BUFFER, vbo_rain);
         glBufferData(GL_ARRAY_BUFFER, sizeof(glm::mat4) * amountRain, rain.getTransitionMatrix(), GL_STATIC_DRAW);
+        // glBindBuffer(GL_ARRAY_BUFFER, vbo_rain_aplha);
+        // glBufferData(GL_ARRAY_BUFFER, sizeof(float) * amountRain, rain.getAlpha(), GL_STATIC_DRAW);
 
         particle_shader.setVec3("material.ambient",glm::vec3(0.05375f,	0.05f,	0.06625f));
         particle_shader.setVec3("material.diffuse",glm::vec3(0.18275f,	0.17f,	0.22525f));
@@ -827,6 +839,8 @@ int main(int argc, char** argv) {
         smoke.updateParticles();
         glBindBuffer(GL_ARRAY_BUFFER, vbo_smoke);
         glBufferData(GL_ARRAY_BUFFER, sizeof(glm::mat4) * amountSmoke, smoke.getTransitionMatrix(), GL_STATIC_DRAW);
+        glBindBuffer(GL_ARRAY_BUFFER, vbo_smoke_aplha);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(float) * amountRain, smoke.getAlpha(), GL_STATIC_DRAW);
 
 
         glfwSwapBuffers(window);
