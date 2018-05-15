@@ -502,17 +502,17 @@ int main(int argc, char** argv) {
         0.8765494954009585f, -0.08218999999999994f, -0.25f, 0.0f, 0.0f, 0.0f,  0.0f, 0.675f, 0.020876f, 0.00135225f, 0.0f,
 
         // lampu belakang samping
-        0.8697882568985619f, 0.02218999999999994f, 0.401f, 0.0f, 0.0f, 0.0f,  1.0f, 0.325f, 0.020876f, 0.00135225f, 0.0f, 
-        0.8765494954009585f, -0.08218999999999994f, 0.401f, 0.0f, 0.0f, 0.0f,  1.0f, 0.675f, 0.020876f, 0.00135225f, 0.0f,
-        0.8265494954009585f, -0.08218999999999994f, 0.401f, 0.0f, 0.0f, 0.0f,  1.0f, 0.675f, 0.020876f, 0.00135225f, 0.0f,
-        0.8097882568985619f, 0.02218999999999994f, 0.401f, 0.0f, 0.0f, 0.0f,  1.0f, 0.325f, 0.020876f, 0.00135225f, 0.0f, 
-        0.8697882568985619f, 0.02218999999999994f, 0.401f, 0.0f, 0.0f, 0.0f,  1.0f, 0.325f, 0.020876f, 0.00135225f, 0.0f, 
+        0.8697882568985619f, 0.02218999999999994f, 0.401f, 0.0f, 0.0f, 0.0f,  1.0f, 0.325f,  0.0f, 0.0f, 1.0f,
+        0.8765494954009585f, -0.08218999999999994f, 0.401f, 0.0f, 0.0f, 0.0f,  1.0f, 0.675f,  0.0f, 0.0f, 1.0f,
+        0.8265494954009585f, -0.08218999999999994f, 0.401f, 0.0f, 0.0f, 0.0f,  1.0f, 0.675f,  0.0f, 0.0f, 1.0f,
+        0.8097882568985619f, 0.02218999999999994f, 0.401f, 0.0f, 0.0f, 0.0f,  1.0f, 0.325f,  0.0f, 0.0f, 1.0f,
+        0.8697882568985619f, 0.02218999999999994f, 0.401f, 0.0f, 0.0f, 0.0f,  1.0f, 0.325f,  0.0f, 0.0f, 1.0f,
     
-        0.8697882568985619f, 0.02218999999999994f, -0.401f, 0.0f, 0.0f, 0.0f,  1.0f, 0.325f, 0.020876f, 0.00135225f, 0.0f, 
-        0.8765494954009585f, -0.08218999999999994f, -0.401f, 0.0f, 0.0f, 0.0f,  1.0f, 0.675f, 0.020876f, 0.00135225f, 0.0f,
-        0.8265494954009585f, -0.08218999999999994f, -0.401f, 0.0f, 0.0f, 0.0f,  1.0f, 0.675f, 0.020876f, 0.00135225f, 0.0f,
-        0.8097882568985619f, 0.02218999999999994f, -0.401f, 0.0f, 0.0f, 0.0f,  1.0f, 0.325f, 0.020876f, 0.00135225f, 0.0f, 
-        0.8697882568985619f, 0.02218999999999994f, -0.401f, 0.0f, 0.0f, 0.0f,  1.0f, 0.325f, 0.020876f, 0.00135225f, 0.0f, 
+        0.8697882568985619f, 0.02218999999999994f, -0.401f, 0.0f, 0.0f, 0.0f,  1.0f, 0.325f,  0.0f, 0.0f, -1.0f,
+        0.8765494954009585f, -0.08218999999999994f, -0.401f, 0.0f, 0.0f, 0.0f,  1.0f, 0.675f,  0.0f, 0.0f, -1.0f,
+        0.8265494954009585f, -0.08218999999999994f, -0.401f, 0.0f, 0.0f, 0.0f,  1.0f, 0.675f,  0.0f, 0.0f, -1.0f,
+        0.8097882568985619f, 0.02218999999999994f, -0.401f, 0.0f, 0.0f, 0.0f,  1.0f, 0.325f,  0.0f, 0.0f, -1.0f,
+        0.8697882568985619f, 0.02218999999999994f, -0.401f, 0.0f, 0.0f, 0.0f,  1.0f, 0.325f,  0.0f, 0.0f, -1.0f,
 
     };
     
@@ -555,6 +555,10 @@ int main(int argc, char** argv) {
     GLuint lightColorLoc = glGetUniformLocation(shader_program, "lightColor");
     GLuint lightPosLoc = glGetUniformLocation(shader_program, "lightPos");
     GLuint viewPosLoc = glGetUniformLocation(shader_program, "viewPos");
+    GLuint ambientLoc = glGetUniformLocation(shader_program, "material.ambient");
+    GLuint diffuseLoc = glGetUniformLocation(shader_program, "material.diffuse");
+    GLuint specularLoc = glGetUniformLocation(shader_program, "material.specular");
+    GLuint shininessLoc = glGetUniformLocation(shader_program, "material.shininess");
     glUniform3fv(lightColorLoc, 1, glm::value_ptr(glm::vec3(1.0f, 1.0f, 1.0f)));
     
     float lastFrame = 0.0f;
@@ -583,6 +587,10 @@ int main(int argc, char** argv) {
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(glm::mat4()));
         glBindTexture(GL_TEXTURE_2D, texture_wood);
         glBindVertexArray(vao);
+        glUniform3fv(ambientLoc, 1, glm::value_ptr(glm::vec3(0.05f, 0.0f, 0.0f)));
+        glUniform3fv(diffuseLoc, 1, glm::value_ptr(glm::vec3(0.5f, 0.4f, 0.4f)));
+        glUniform3fv(specularLoc, 1, glm::value_ptr(glm::vec3(0.7f, 0.04f, 0.04f)));
+        glUniform1f(shininessLoc, 0.078125f);
         glDrawArrays(GL_TRIANGLE_FAN, 0, 16);
         glDrawArrays(GL_TRIANGLE_FAN, 16, 16);
         glDrawArrays(GL_TRIANGLE_FAN, 32, 5);
@@ -604,6 +612,10 @@ int main(int argc, char** argv) {
         glDrawArrays(GL_TRIANGLE_FAN, 92, 5);
         glDrawArrays(GL_TRIANGLE_FAN, 97, 5);
         glBindTexture(GL_TEXTURE_2D, texture_window);
+        glUniform3fv(ambientLoc, 1, glm::value_ptr(glm::vec3(0.19225f, 0.19225f, 0.19225f)));
+        glUniform3fv(diffuseLoc, 1, glm::value_ptr(glm::vec3(0.50754f, 0.50754f, 0.50754f)));
+        glUniform3fv(specularLoc, 1, glm::value_ptr(glm::vec3(0.502873f, 0.502873f, 0.502873f)));
+        glUniform1f(shininessLoc, 0.4f);
         // jendela kanan kiri
         glDrawArrays(GL_TRIANGLE_FAN, 102, 10);
         glDrawArrays(GL_TRIANGLE_FAN, 112, 7);
@@ -621,6 +633,10 @@ int main(int argc, char** argv) {
         glDrawArrays(GL_TRIANGLE_FAN, 171, 5);
         
         glBindTexture(GL_TEXTURE_2D, texture_tire);
+        glUniform3fv(ambientLoc, 1, glm::value_ptr(glm::vec3(0.02f, 0.02f, 0.02f)));
+        glUniform3fv(diffuseLoc, 1, glm::value_ptr(glm::vec3(0.01f, 0.01f, 0.01f)));
+        glUniform3fv(specularLoc, 1, glm::value_ptr(glm::vec3(0.4f, 0.4f, 0.4f)));
+        glUniform1f(shininessLoc, 0.078125f);
         for(int i=0; i<4; i++){
           glBindVertexArray(vao_tires[i]);
           if (i == 0) rotate(modelLoc, -0.4523350000000001f, -0.22941000000000004f, 0.45f);
