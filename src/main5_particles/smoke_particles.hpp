@@ -3,6 +3,7 @@
 
 #include <glm/glm.hpp>
 #include <time.h>
+#include <stdio.h>
 using namespace glm;
 
 class SmokeParticles {
@@ -30,7 +31,7 @@ SmokeParticles::SmokeParticles(int numParticles, vec3 initPosition, float offset
     this->initPosition = initPosition;
     this->offsetInit = offset;
 
-    this->globalPull.x = 0.005f;
+    this->globalPull.x = 0.0025f;
     this->globalPull.y = 0.0f;
     this->globalPull.z = 0.0f;
     this->position = new vec3[numParticles];
@@ -49,21 +50,22 @@ SmokeParticles::SmokeParticles(int numParticles, vec3 initPosition, float offset
         this->scaleFactor[i] = (rand() % 2) / 100.0f + 0.01;
         this->age[i] = 0.0f;
         this->lifespan[i] = (((rand()%10+1)))/10.0f;
-        this->movement[i].x = (((((((2) * rand()%11) + 1)) * rand()%11) + 1) * 0.0035) - (((((((2) * rand()%11) + 1)) * rand()%11) + 1) * 0.0035);
-        this->movement[i].y = ((((((5) * rand()%11) + 3)) * rand()%11) + 7) * 0.015; 
-        this->movement[i].z = (((((((2) * rand()%11) + 1)) * rand()%11) + 1) * 0.0015) - (((((((2) * rand()%11) + 1)) * rand()%11) + 1) * 0.0015);
-        this->movement[i].x *= 100.0f;
+        this->movement[i].x = (((((((2) * rand()%11) + 1)) * rand()%11) + 1) * 0.000035) - (((((((2) * rand()%11) + 1)) * rand()%11) + 1) * 0.000035);
+        this->movement[i].y = ((((((5) * rand()%11) + 3)) * rand()%11) + 7) * 0.00005; 
+        this->movement[i].z = (((((((2) * rand()%11) + 1)) * rand()%11) + 1) * 0.000015) - (((((((2) * rand()%11) + 1)) * rand()%11) + 1) * 0.000015);
     }
 }
 
 void SmokeParticles::updateParticles(){
+    // std::cout << position[0].x << " " << position[0].y << " " << position[0].z << std::endl;
     for(int i = 0; i < numParticles; i++){
-        age[i] += 0.02f;
-        scaleFactor[i] += 0.001f;
+        age[i] += 0.002f;
+        // scaleFactor[i] += 0.001f;
         direction[i] += ((((((int)(0.5) * rand()%11) + 1)) * rand()%11) + 1);
         position[i].x += movement[i].x + globalPull.x;
         position[i].y += movement[i].y + globalPull.y;
         position[i].z += movement[i].z + globalPull.z;
+        
         if (age[i] > lifespan[i]){
             this->position[i].x = initPosition.x + (rand()%20 - 10) / 10.0f * offsetInit;
             this->position[i].y = initPosition.y + (rand()%20 - 10) / 10.0f * offsetInit;
@@ -72,10 +74,10 @@ void SmokeParticles::updateParticles(){
             this->scaleFactor[i] = (rand() % 2) / 100.0f + 0.01;
             this->age[i] = 0.0f;
             this->lifespan[i] = (((rand()%10+1)))/10.0f;
-            this->movement[i].x = (((((((2) * rand()%11) + 1)) * rand()%11) + 1) * 0.0035) - (((((((2) * rand()%11) + 1)) * rand()%11) + 1) * 0.0035);
-            this->movement[i].y = ((((((5) * rand()%11) + 3)) * rand()%11) + 7) * 0.015; 
-            this->movement[i].z = (((((((2) * rand()%11) + 1)) * rand()%11) + 1) * 0.0015) - (((((((2) * rand()%11) + 1)) * rand()%11) + 1) * 0.0015);
-            this->movement[i].x *= 100.0f;
+            this->movement[i].x = (((((((2) * rand()%11) + 1)) * rand()%11) + 1) * 0.000035) - (((((((2) * rand()%11) + 1)) * rand()%11) + 1) * 0.000035);
+        this->movement[i].y = ((((((5) * rand()%11) + 3)) * rand()%11) + 7) * 0.00005; 
+        this->movement[i].z = (((((((2) * rand()%11) + 1)) * rand()%11) + 1) * 0.000015) - (((((((2) * rand()%11) + 1)) * rand()%11) + 1) * 0.000015);
+            // this->movement[i].xposition /= 10.0f;
             // this->movement[i].y /= 100.0f;
             // this->movement[i].z /= 100.0f;
         }

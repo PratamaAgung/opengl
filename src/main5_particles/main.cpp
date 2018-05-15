@@ -624,7 +624,7 @@ int main(int argc, char** argv) {
     }
     createVAOVBOInstance(teardrop_vertices, sizeof(teardrop_vertices), teardrop_instance_matrix, &vao_particles, &vbo_particles);
 
-    SmokeParticles smoke(500, vec3(0.5f, 0.5f, 0.0f), 0.05f);
+    SmokeParticles smoke(500, vec3(0.5f, 0.5f, 0.0f), 0.01f);
     unsigned int vao_smoke, vbo_smoke;
     createVAOVBOInstance(teardrop_vertices, sizeof(teardrop_vertices), smoke.getTransitionMatrix(), &vao_smoke, &vbo_smoke);
 
