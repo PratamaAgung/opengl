@@ -315,6 +315,16 @@ int main(int argc, char** argv) {
         return -1;
     }
 
+    float ground_vertices[] = {
+      // 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 
+      100.0f, -0.40941000000000005f, 100.0f, 0.0f, 0.0f, 0.0f, 100.0f, 100.0f, 0.0f, 1.0f, 0.0f,
+      -100.0f, -0.40941000000000005f, 100.0f, 0.0f, 0.0f, 0.0f, 0.0f, 100.0f, 0.0f, 1.0f, 0.0f,
+      -100.0f, -0.40941000000000005f, -100.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+      100.0f, -0.40941000000000005f, -100.0f, 0.0f, 0.0f, 0.0f, 100.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+      100.0f, -0.40941000000000005f, 100.0f, 0.0f, 0.0f, 0.0f, 100.0f, 100.0f, 0.0f, 1.0f, 0.0f,      
+      // 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f,   
+    };
+
     float car_vertices[] = {
         // left
         // 0.0f, 0.0f, 0.4f, 1.0f, 0.157f, 0.0f, 0.5f, 0.0f,
@@ -558,23 +568,23 @@ int main(int argc, char** argv) {
 
     float teardrop_vertices[] = {
       0.0f, 0.0f, 0.0f,
-      0.0f, 1.0f, 1.0f,
-      -0.6f, 1.0f, 0.6f,
-      -0.6f, 1.0f, -0.6f,
-      0.0f, 1.0f, -1.0f,
-      0.6f, 1.0f, -0.6f,
-      0.6f, 1.0f, 0.6f,
-      0.0f, 1.0f, 1.0f,
+      0.0f, 2.0f, 1.0f,
+      -0.6f, 2.0f, 0.6f,
+      -0.6f, 2.0f, -0.6f,
+      0.0f, 2.0f, -1.0f,
+      0.6f, 2.0f, -0.6f,
+      0.6f, 2.0f, 0.6f,
+      0.0f, 2.0f, 1.0f,
       0.0f, 0.0f, 0.0f,
 
       0.0f, 3.0f, 0.0f,
-      0.0f, 1.0f, 1.0f,
-      -0.6f, 1.0f, 0.6f,
-      -0.6f, 1.0f, -0.6f,
-      0.0f, 1.0f, -1.0f,
-      0.6f, 1.0f, -0.6f,
-      0.6f, 1.0f, 0.6f,
-      0.0f, 1.0f, 1.0f,
+      0.0f, 2.0f, 1.0f,
+      -0.6f, 2.0f, 0.6f,
+      -0.6f, 2.0f, -0.6f,
+      0.0f, 2.0f, -1.0f,
+      0.6f, 2.0f, -0.6f,
+      0.6f, 2.0f, 0.6f,
+      0.0f, 2.0f, 1.0f,
       0.0f, 3.0f, 0.0f,
     };
 
@@ -600,12 +610,13 @@ int main(int argc, char** argv) {
       0.0f, 0.0f, 2.0f,
     };
 
-    unsigned int texture_wood, texture_tire, texture_logo, texture_window, texture_rear_logo;
+    unsigned int texture_wood, texture_tire, texture_logo, texture_window, texture_rear_logo, texture_road;
     buildTexture(&texture_wood, "./src/main5_particles/ferraribody.jpg");
     buildTexture(&texture_tire, "./src/main5_particles/roda2.jpg");
     buildTexture(&texture_logo, "./src/main5_particles/ferrarilogomerah.jpg");
     buildTexture(&texture_window, "./src/main5_particles/window.jpg");
     buildTexture(&texture_rear_logo, "./src/main5_particles/Ferrari.jpg");
+    buildTexture(&texture_road, "./src/main5_particles/road.jpg");
 
     std::string vertex_shader_source_code = loadShader("./src/main5_particles/vertex.vs");
     std::string fragment_shader_source_code = loadShader("./src/main5_particles/fragment.fs");
@@ -632,6 +643,8 @@ int main(int argc, char** argv) {
     for(int i=0; i<4; i++){
       createVAOVBO(tires[i], sizeof(tires[i]),&vbo_tires[i],&vao_tires[i]);
     }
+    unsigned int vao_ground, vbo_ground;
+    createVAOVBO(ground_vertices, sizeof(ground_vertices), &vbo_ground, &vao_ground);
 
     // glm::mat4 teardrop_instance_matrix[amountRain];
     // float teardrop_y_location[amountRain];
@@ -712,6 +725,13 @@ int main(int argc, char** argv) {
         car_shader.setVec3("material.diffuse",glm::vec3(0.5f, 0.4f, 0.4f));
         car_shader.setVec3("material.specular", glm::vec3(0.7f, 0.04f, 0.04f));
         car_shader.setFloat("material.shininess",0.078125f);
+
+        // road
+        glBindTexture(GL_TEXTURE_2D, texture_road);
+        glBindVertexArray(vao_ground);
+        glDrawArrays(GL_TRIANGLE_FAN, 0, 5);      
+
+        // car
         glBindTexture(GL_TEXTURE_2D, texture_wood);
         glBindVertexArray(vao);
         glDrawArrays(GL_TRIANGLE_FAN, 0, 16);
