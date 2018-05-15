@@ -28,3 +28,6 @@ task_2_mac:
 
 task_3_mac:
 	$(CC) src/main3_car3d/main.cpp -o bin/main3_car3d $(INCLUDE_PATHS) $(LIBRARY_PATHS) $(LINKER_FLAGS)
+
+task_5_mac: src/main5_particles/main.cpp
+	$(CC) src/main5_particles/main.cpp -o bin/main5_particles $(INCLUDE_PATHS) $(LIBRARY_PATHS) $(LINKER_FLAGS) -std=c++11

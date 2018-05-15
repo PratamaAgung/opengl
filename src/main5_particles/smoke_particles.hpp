@@ -50,7 +50,7 @@ SmokeParticles::SmokeParticles(int numParticles, vec3 initPosition, float offset
         this->age[i] = 0.0f;
         this->lifespan[i] = (((rand()%10+1)))/10.0f;
         this->movement[i].x = (((((((2) * rand()%11) + 1)) * rand()%11) + 1) * 0.0035) - (((((((2) * rand()%11) + 1)) * rand()%11) + 1) * 0.0035);
-        this->movement[i].y = ((((((5) * rand()%11) + 3)) * rand()%11) + 7) * 0.015; 
+        this->movement[i].y = ((((((5) * rand()%11) + 3)) * rand()%11) + 7) * 0.015;
         this->movement[i].z = (((((((2) * rand()%11) + 1)) * rand()%11) + 1) * 0.0015) - (((((((2) * rand()%11) + 1)) * rand()%11) + 1) * 0.0015);
         this->movement[i].x *= 100.0f;
     }
@@ -73,7 +73,7 @@ void SmokeParticles::updateParticles(){
             this->age[i] = 0.0f;
             this->lifespan[i] = (((rand()%10+1)))/10.0f;
             this->movement[i].x = (((((((2) * rand()%11) + 1)) * rand()%11) + 1) * 0.0035) - (((((((2) * rand()%11) + 1)) * rand()%11) + 1) * 0.0035);
-            this->movement[i].y = ((((((5) * rand()%11) + 3)) * rand()%11) + 7) * 0.015; 
+            this->movement[i].y = ((((((5) * rand()%11) + 3)) * rand()%11) + 7) * 0.015;
             this->movement[i].z = (((((((2) * rand()%11) + 1)) * rand()%11) + 1) * 0.0015) - (((((((2) * rand()%11) + 1)) * rand()%11) + 1) * 0.0015);
             this->movement[i].x *= 100.0f;
             // this->movement[i].y /= 100.0f;
