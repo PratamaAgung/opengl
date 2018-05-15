@@ -16,6 +16,7 @@ bool firstMouse;
 float lastX, lastY;
 Camera* camera;
 int amountRain = 500;
+int amountSmoke = 500;
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
     glViewport(0, 0, width, height);
@@ -624,7 +625,7 @@ int main(int argc, char** argv) {
     }
     createVAOVBOInstance(teardrop_vertices, sizeof(teardrop_vertices), teardrop_instance_matrix, &vao_particles, &vbo_particles);
 
-    SmokeParticles smoke(500, vec3(0.5f, 0.5f, 0.0f), 0.01f);
+    SmokeParticles smoke(amountSmoke, vec3(0.85f, -0.2f, -0.2f), 0.01f);
     unsigned int vao_smoke, vbo_smoke;
     createVAOVBOInstance(teardrop_vertices, sizeof(teardrop_vertices), smoke.getTransitionMatrix(), &vao_smoke, &vbo_smoke);
 
@@ -648,76 +649,76 @@ int main(int argc, char** argv) {
         
         glm::mat4 projection = glm::perspective(glm::radians(camera->Zoom), 1.0f, 0.1f, 100.0f);
         
-        // car_shader.use();
-        // car_shader.setVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
-        // car_shader.setVec3("lightPos", camera->Position);
-        // car_shader.setVec3("viewPos", camera->Position);
-        // car_shader.setMat4("view", camera->GetViewMatrix());
-        // car_shader.setMat4("model", glm::mat4());
-        // car_shader.setMat4("projection", projection);
-        // car_shader.setVec3("material.ambient",glm::vec3(0.05f, 0.0f, 0.0f));
-        // car_shader.setVec3("material.diffuse",glm::vec3(0.5f, 0.4f, 0.4f));
-        // car_shader.setVec3("material.specular", glm::vec3(0.7f, 0.04f, 0.04f));
-        // car_shader.setFloat("material.shininess",0.078125f);
-        // glBindTexture(GL_TEXTURE_2D, texture_wood);
-        // glBindVertexArray(vao);
-        // glDrawArrays(GL_TRIANGLE_FAN, 0, 16);
-        // glDrawArrays(GL_TRIANGLE_FAN, 16, 16);
-        // glDrawArrays(GL_TRIANGLE_FAN, 32, 5);
-        // glDrawArrays(GL_TRIANGLE_FAN, 37, 5);
-        // glDrawArrays(GL_TRIANGLE_FAN, 42, 5);
-        // glBindTexture(GL_TEXTURE_2D, texture_rear_logo);
-        // glDrawArrays(GL_TRIANGLE_FAN, 47, 5);
-        // glBindTexture(GL_TEXTURE_2D, texture_wood);        
-        // glDrawArrays(GL_TRIANGLE_FAN, 52, 5);
-        // glDrawArrays(GL_TRIANGLE_FAN, 57, 5);
-        // glDrawArrays(GL_TRIANGLE_FAN, 62, 5);
-        // glDrawArrays(GL_TRIANGLE_FAN, 67, 5);
-        // glDrawArrays(GL_TRIANGLE_FAN, 72, 5);
-        // glDrawArrays(GL_TRIANGLE_FAN, 77, 5);
-        // glBindTexture(GL_TEXTURE_2D, texture_logo);
-        // glDrawArrays(GL_TRIANGLE_FAN, 82, 5);
-        // glBindTexture(GL_TEXTURE_2D, texture_wood);
-        // glDrawArrays(GL_TRIANGLE_FAN, 87, 5);
-        // glDrawArrays(GL_TRIANGLE_FAN, 92, 5);
-        // glDrawArrays(GL_TRIANGLE_FAN, 97, 5);
-        // glBindTexture(GL_TEXTURE_2D, texture_window);
+        car_shader.use();
+        car_shader.setVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
+        car_shader.setVec3("lightPos", camera->Position);
+        car_shader.setVec3("viewPos", camera->Position);
+        car_shader.setMat4("view", camera->GetViewMatrix());
+        car_shader.setMat4("model", glm::mat4());
+        car_shader.setMat4("projection", projection);
+        car_shader.setVec3("material.ambient",glm::vec3(0.05f, 0.0f, 0.0f));
+        car_shader.setVec3("material.diffuse",glm::vec3(0.5f, 0.4f, 0.4f));
+        car_shader.setVec3("material.specular", glm::vec3(0.7f, 0.04f, 0.04f));
+        car_shader.setFloat("material.shininess",0.078125f);
+        glBindTexture(GL_TEXTURE_2D, texture_wood);
+        glBindVertexArray(vao);
+        glDrawArrays(GL_TRIANGLE_FAN, 0, 16);
+        glDrawArrays(GL_TRIANGLE_FAN, 16, 16);
+        glDrawArrays(GL_TRIANGLE_FAN, 32, 5);
+        glDrawArrays(GL_TRIANGLE_FAN, 37, 5);
+        glDrawArrays(GL_TRIANGLE_FAN, 42, 5);
+        glBindTexture(GL_TEXTURE_2D, texture_rear_logo);
+        glDrawArrays(GL_TRIANGLE_FAN, 47, 5);
+        glBindTexture(GL_TEXTURE_2D, texture_wood);        
+        glDrawArrays(GL_TRIANGLE_FAN, 52, 5);
+        glDrawArrays(GL_TRIANGLE_FAN, 57, 5);
+        glDrawArrays(GL_TRIANGLE_FAN, 62, 5);
+        glDrawArrays(GL_TRIANGLE_FAN, 67, 5);
+        glDrawArrays(GL_TRIANGLE_FAN, 72, 5);
+        glDrawArrays(GL_TRIANGLE_FAN, 77, 5);
+        glBindTexture(GL_TEXTURE_2D, texture_logo);
+        glDrawArrays(GL_TRIANGLE_FAN, 82, 5);
+        glBindTexture(GL_TEXTURE_2D, texture_wood);
+        glDrawArrays(GL_TRIANGLE_FAN, 87, 5);
+        glDrawArrays(GL_TRIANGLE_FAN, 92, 5);
+        glDrawArrays(GL_TRIANGLE_FAN, 97, 5);
+        glBindTexture(GL_TEXTURE_2D, texture_window);
 
-        // car_shader.setVec3("material.ambient", glm::vec3(0.19225f, 0.19225f, 0.19225f));
-        // car_shader.setVec3("material.diffuse", glm::vec3(0.50754f, 0.50754f, 0.50754f));
-        // car_shader.setVec3("material.specular", glm::vec3(0.502873f, 0.502873f, 0.502873f));
-        // car_shader.setFloat("material.shininess", 0.4f);
-        // // jendela kanan kiri
-        // glDrawArrays(GL_TRIANGLE_FAN, 102, 10);
-        // glDrawArrays(GL_TRIANGLE_FAN, 112, 7);
-        // glDrawArrays(GL_TRIANGLE_FAN, 119, 10);
-        // glDrawArrays(GL_TRIANGLE_FAN, 129, 7);
-        // // kaca depan belakang
-        // glDrawArrays(GL_TRIANGLE_FAN, 136, 5);
-        // glDrawArrays(GL_TRIANGLE_FAN, 141, 5);
-        // // lampu
-        // glDrawArrays(GL_TRIANGLE_FAN, 146, 5);
-        // glDrawArrays(GL_TRIANGLE_FAN, 151, 5);
-        // glDrawArrays(GL_TRIANGLE_FAN, 156, 5);
-        // glDrawArrays(GL_TRIANGLE_FAN, 161, 5);
+        car_shader.setVec3("material.ambient", glm::vec3(0.19225f, 0.19225f, 0.19225f));
+        car_shader.setVec3("material.diffuse", glm::vec3(0.50754f, 0.50754f, 0.50754f));
+        car_shader.setVec3("material.specular", glm::vec3(0.502873f, 0.502873f, 0.502873f));
+        car_shader.setFloat("material.shininess", 0.4f);
+        // jendela kanan kiri
+        glDrawArrays(GL_TRIANGLE_FAN, 102, 10);
+        glDrawArrays(GL_TRIANGLE_FAN, 112, 7);
+        glDrawArrays(GL_TRIANGLE_FAN, 119, 10);
+        glDrawArrays(GL_TRIANGLE_FAN, 129, 7);
+        // kaca depan belakang
+        glDrawArrays(GL_TRIANGLE_FAN, 136, 5);
+        glDrawArrays(GL_TRIANGLE_FAN, 141, 5);
+        // lampu
+        glDrawArrays(GL_TRIANGLE_FAN, 146, 5);
+        glDrawArrays(GL_TRIANGLE_FAN, 151, 5);
+        glDrawArrays(GL_TRIANGLE_FAN, 156, 5);
+        glDrawArrays(GL_TRIANGLE_FAN, 161, 5);
 
-        // car_shader.setVec3("material.ambient", glm::vec3(0.02f, 0.02f, 0.02f));
-        // car_shader.setVec3("material.diffuse", glm::vec3(0.01f, 0.01f, 0.01f));
-        // car_shader.setVec3("material.specular", glm::vec3(0.4f, 0.4f, 0.4f));
-        // car_shader.setFloat("material.shininess", 0.078125f);
-        // glBindTexture(GL_TEXTURE_2D, texture_tire);
-        // for(int i=0; i<4; i++){
-        //   glBindVertexArray(vao_tires[i]);
-        //   if (i == 0) rotate(car_shader, -0.4523350000000001f, -0.22941000000000004f, 0.45f);
-        //   else if (i == 1) rotate(car_shader, 0.6048599999999999f, -0.22941000000000004f, 0.45f);
-        //   else if (i == 2) rotate(car_shader, -0.4523350000000001f, -0.22941000000000004f, -0.325f);
-        //   else if (i == 3) rotate(car_shader, 0.6048599999999999f, -0.22941000000000004f, -0.325f);
-        //   glDrawArrays(GL_TRIANGLE_FAN, 0, side+2);
-        //   glDrawArrays(GL_TRIANGLE_FAN, side+2, side*2+2);
-        //   for(int i=0; i<side-1; i++){
-        //     glDrawArrays(GL_TRIANGLE_FAN, side*2+2+i*5, 5);
-        //   }
-        // }
+        car_shader.setVec3("material.ambient", glm::vec3(0.02f, 0.02f, 0.02f));
+        car_shader.setVec3("material.diffuse", glm::vec3(0.01f, 0.01f, 0.01f));
+        car_shader.setVec3("material.specular", glm::vec3(0.4f, 0.4f, 0.4f));
+        car_shader.setFloat("material.shininess", 0.078125f);
+        glBindTexture(GL_TEXTURE_2D, texture_tire);
+        for(int i=0; i<4; i++){
+          glBindVertexArray(vao_tires[i]);
+          if (i == 0) rotate(car_shader, -0.4523350000000001f, -0.22941000000000004f, 0.45f);
+          else if (i == 1) rotate(car_shader, 0.6048599999999999f, -0.22941000000000004f, 0.45f);
+          else if (i == 2) rotate(car_shader, -0.4523350000000001f, -0.22941000000000004f, -0.325f);
+          else if (i == 3) rotate(car_shader, 0.6048599999999999f, -0.22941000000000004f, -0.325f);
+          glDrawArrays(GL_TRIANGLE_FAN, 0, side+2);
+          glDrawArrays(GL_TRIANGLE_FAN, side+2, side*2+2);
+          for(int i=0; i<side-1; i++){
+            glDrawArrays(GL_TRIANGLE_FAN, side*2+2+i*5, 5);
+          }
+        }
 
         particle_shader.use();
         particle_shader.setVec3("viewPos", camera->Position);
@@ -739,10 +740,10 @@ int main(int argc, char** argv) {
         glBufferData(GL_ARRAY_BUFFER, sizeof(teardrop_instance_matrix), teardrop_instance_matrix, GL_STATIC_DRAW);
 
         glBindVertexArray(vao_smoke);
-        glDrawArraysInstanced(GL_TRIANGLE_FAN, 0, 6, 500);
+        glDrawArraysInstanced(GL_TRIANGLE_FAN, 0, 6, amountSmoke);
         smoke.updateParticles();
         glBindBuffer(GL_ARRAY_BUFFER, vbo_smoke);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(glm::mat4) * 500, smoke.getTransitionMatrix(), GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(glm::mat4) * amountSmoke, smoke.getTransitionMatrix(), GL_STATIC_DRAW);
 
 
         glfwSwapBuffers(window);
