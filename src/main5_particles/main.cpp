@@ -554,12 +554,25 @@ int main(int argc, char** argv) {
     };
 
     float teardrop_vertices[] = {
-      0.0f, -0.5f, 0.0f,
-      -0.25f, 0.25f, 0.25f,
-      0.25f, 0.25f, 0.25f,
-      0.25f, 0.25f, -0.25f,
-      -0.25f, 0.25f, -0.25f,
-      -0.25f, 0.25f, 0.25f
+      0.0f, 0.0f, 0.0f,
+      0.0f, 1.0f, 1.0f,
+      -0.6f, 1.0f, 0.6f,
+      -0.6f, 1.0f, -0.6f,
+      0.0f, 1.0f, -1.0f,
+      0.6f, 1.0f, -0.6f,
+      0.6f, 1.0f, 0.6f,
+      0.0f, 1.0f, 1.0f,      
+      0.0f, 0.0f, 0.0f,
+
+      0.0f, 3.0f, 0.0f,
+      0.0f, 1.0f, 1.0f,
+      -0.6f, 1.0f, 0.6f,
+      -0.6f, 1.0f, -0.6f,
+      0.0f, 1.0f, -1.0f,
+      0.6f, 1.0f, -0.6f,
+      0.6f, 1.0f, 0.6f,
+      0.0f, 1.0f, 1.0f,      
+      0.0f, 3.0f, 0.0f,
     };
     
     unsigned int texture_wood, texture_tire, texture_logo, texture_window, texture_rear_logo;
@@ -732,7 +745,8 @@ int main(int argc, char** argv) {
         particle_shader.setMat4("view", camera->GetViewMatrix());
         particle_shader.setMat4("projection", projection);
         glBindVertexArray(vao_particles);
-        glDrawArraysInstanced(GL_TRIANGLE_FAN, 0, 6, amountRain);
+        glDrawArraysInstanced(GL_TRIANGLE_FAN, 0, 9, amountRain);
+        glDrawArraysInstanced(GL_TRIANGLE_FAN, 9, 9, amountRain);
 
         // update teardrop position
         for (int i = 0; i < amountRain; i++){
