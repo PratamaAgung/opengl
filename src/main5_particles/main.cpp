@@ -557,12 +557,47 @@ int main(int argc, char** argv) {
     };
 
     float teardrop_vertices[] = {
-      0.0f, -0.5f, 0.0f,
-      -0.25f, 0.25f, 0.25f,
-      0.25f, 0.25f, 0.25f,
-      0.25f, 0.25f, -0.25f,
-      -0.25f, 0.25f, -0.25f,
-      -0.25f, 0.25f, 0.25f
+      0.0f, 0.0f, 0.0f,
+      0.0f, 1.0f, 1.0f,
+      -0.6f, 1.0f, 0.6f,
+      -0.6f, 1.0f, -0.6f,
+      0.0f, 1.0f, -1.0f,
+      0.6f, 1.0f, -0.6f,
+      0.6f, 1.0f, 0.6f,
+      0.0f, 1.0f, 1.0f,
+      0.0f, 0.0f, 0.0f,
+
+      0.0f, 3.0f, 0.0f,
+      0.0f, 1.0f, 1.0f,
+      -0.6f, 1.0f, 0.6f,
+      -0.6f, 1.0f, -0.6f,
+      0.0f, 1.0f, -1.0f,
+      0.6f, 1.0f, -0.6f,
+      0.6f, 1.0f, 0.6f,
+      0.0f, 1.0f, 1.0f,
+      0.0f, 3.0f, 0.0f,
+    };
+
+    float smoke_vertices[] = {
+      0.0f, 0.0f, 0.0f,
+      0.0f, 1.0f, 1.0f,
+      -0.6f, 0.6f, 1.0f,
+      -0.6f, -0.6f, 1.0f,
+      0.0f, -1.0f, 1.0f,
+      0.6f, -0.6f, 1.0f,
+      0.6f, 0.6f, 1.0f,
+      0.0f, 1.0f, 1.0f,
+      0.0f, 0.0f, 0.0f,
+
+      0.0f, 0.0f, 2.0f,
+      0.0f, 1.0f, 1.0f,
+      -0.6f, 0.6f, 1.0f,
+      -0.6f, -0.6f, 1.0f,
+      0.0f, -1.0f, 1.0f,
+      0.6f, -0.6f, 1.0f,
+      0.6f, 0.6f, 1.0f,
+      0.0f, 1.0f, 1.0f,
+      0.0f, 0.0f, 2.0f,
     };
 
     unsigned int texture_wood, texture_tire, texture_logo, texture_window, texture_rear_logo;
@@ -632,7 +667,7 @@ int main(int argc, char** argv) {
 
     SmokeParticles smoke(amountSmoke, vec3(0.85f, -0.2f, -0.2f), 0.01f);
     unsigned int vao_smoke, vbo_smoke;
-    createVAOVBOInstance(teardrop_vertices, sizeof(teardrop_vertices), smoke.getTransitionMatrix(), &vao_smoke, &vbo_smoke);
+    createVAOVBOInstance(smoke_vertices, sizeof(smoke_vertices), smoke.getTransitionMatrix(), &vao_smoke, &vbo_smoke);
 
     glEnable(GL_DEPTH_TEST);
 
@@ -643,7 +678,19 @@ int main(int argc, char** argv) {
     glfwSetCursorPosCallback(window, mouse_callback);
     glfwSetScrollCallback(window, scroll_callback);
 
+    double lastTime = glfwGetTime();
+    int nbFrames = 0;
+
     while(!glfwWindowShouldClose(window)) {
+        double currentTime = glfwGetTime();
+        nbFrames++;
+        if ( currentTime - lastTime >= 1.0 ){ // If last prinf() was more than 1 sec ago
+            // printf and reset timer
+            printf("%f ms/frame\n", 1000.0/double(nbFrames));
+            nbFrames = 0;
+            lastTime += 1.0;
+        }
+
         float currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
@@ -729,32 +776,19 @@ int main(int argc, char** argv) {
         particle_shader.setVec3("viewPos", camera->Position);
         particle_shader.setMat4("view", camera->GetViewMatrix());
         particle_shader.setMat4("projection", projection);
-        glBindVertexArray(vao_particles);
-        // glDrawArraysInstanced(GL_TRIANGLE_FAN, 0, 6, amountRain);
-
-        // update teardrop position
-        // for (int i = 0; i < amountRain; i++){
-        //   teardrop_instance_matrix[i] = glm::translate(teardrop_instance_matrix[i], glm::vec3(0.0f, -3.0f, 0.0f));
-        //   teardrop_y_location[i] -= 3.0f;
-        //   if (teardrop_y_location[i] < -5.0f){
-        //     teardrop_y_location[i] += 100.0f;
-        //     teardrop_instance_matrix[i] = glm::translate(teardrop_instance_matrix[i], glm::vec3(0.0f, 100.0f, 0.0f));
-        //   }
-        // }
-        // glBindBuffer(GL_ARRAY_BUFFER, vbo_particles);
-        // glBufferData(GL_ARRAY_BUFFER, sizeof(teardrop_instance_matrix), teardrop_instance_matrix, GL_STATIC_DRAW);
-
         glBindVertexArray(vao_rain);
-        glDrawArraysInstanced(GL_TRIANGLE_FAN, 0, 6, 500);
+        glDrawArraysInstanced(GL_TRIANGLE_FAN, 0, 9, amountRain);
+        glDrawArraysInstanced(GL_TRIANGLE_FAN, 9, 9, amountRain);
         rain.updateParticles();
         glBindBuffer(GL_ARRAY_BUFFER, vbo_rain);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(glm::mat4) * 500, rain.getTransitionMatrix(), GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(glm::mat4) * amountRain, rain.getTransitionMatrix(), GL_STATIC_DRAW);
 
-        // glBindVertexArray(vao_smoke);
-        // glDrawArraysInstanced(GL_TRIANGLE_FAN, 0, 6, 500);
-        // smoke.updateParticles();
-        // glBindBuffer(GL_ARRAY_BUFFER, vbo_smoke);
-        // glBufferData(GL_ARRAY_BUFFER, sizeof(glm::mat4) * 500, smoke.getTransitionMatrix(), GL_STATIC_DRAW);
+        glBindVertexArray(vao_smoke);
+        glDrawArraysInstanced(GL_TRIANGLE_FAN, 0, 9, amountSmoke);
+        glDrawArraysInstanced(GL_TRIANGLE_FAN, 9, 9, amountSmoke);
+        smoke.updateParticles();
+        glBindBuffer(GL_ARRAY_BUFFER, vbo_smoke);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(glm::mat4) * amountSmoke, smoke.getTransitionMatrix(), GL_STATIC_DRAW);
 
 
         glfwSwapBuffers(window);

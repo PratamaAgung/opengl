@@ -53,7 +53,7 @@ RainParticles::RainParticles(int numParticles){
 void RainParticles::updateParticles(){
     for(int i = 0; i < this->numParticles; i++){
         age[i] += 0.001f;
-        scaleFactor[i] -= 0.0001f;
+        scaleFactor[i] -= 0.00001f;
         direction[i] += 0.0f;
         position[i].x += movement[i].x + globalPull.x;
         position[i].y += movement[i].y + globalPull.y;
@@ -68,7 +68,7 @@ mat4* RainParticles::getTransitionMatrix() {
     for(int i = 0; i < numParticles; i++){
         mat4 matrix;
         matrix = translate(matrix, position[i]);
-        matrix = rotate(matrix, direction[i] - 90, vec3(0.0f, 0.0f, 1.0f));
+        // matrix = rotate(matrix, direction[i] - 90, vec3(0.0f, 0.0f, 1.0f));
         matrix = scale(matrix, vec3(scaleFactor[i]));
         transitionMatrix[i] = matrix;
     }
@@ -96,7 +96,7 @@ void RainParticles::initParticle(int i){
     this->age[i] = 0.0f;
     this->lifespan[i] = (((rand()%10+1)))/10.0f;
     this->movement[i].x = 0.0f;
-    this->movement[i].y = -0.1f;
+    this->movement[i].y = -0.05f;
     this->movement[i].z = 0.0f;
 }
 
