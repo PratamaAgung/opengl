@@ -3,6 +3,7 @@
 
 #include <glm/glm.hpp>
 #include <time.h>
+#include <stdio.h>
 
 using namespace glm;
 
@@ -27,6 +28,8 @@ class RainParticles {
         mat4* getTransitionMatrix();
         int getMatrixSize();
         void initParticle(int);
+        bool isCollide(int, vec3);
+        void updateCollider(vec3);
 };
 
 RainParticles::RainParticles(int numParticles){
@@ -80,7 +83,6 @@ int RainParticles::getMatrixSize() {
 }
 
 void RainParticles::initParticle(int i){
-
     float angle = (float)i / (float)numParticles * 360.0f;
     float displacement = (rand() % (int)(2 * this->offset * 100)) / 100.0f - this->offset;
     float x = sin(angle) * this->radius + displacement;
@@ -98,6 +100,19 @@ void RainParticles::initParticle(int i){
     this->movement[i].x = 0.0f;
     this->movement[i].y = -0.05f;
     this->movement[i].z = 0.0f;
+}
+
+bool RainParticles::isCollide(int i, vec3 plane){
+    if(this->position[i].y <= plane.y) return true;
+    return false;
+}
+
+void RainParticles::updateCollider(vec3 plane){
+    for(int i = 0; i < this->numParticles; i++){
+        if(this->isCollide(i, plane)){
+          printf("%s\n", "Collide");
+        }
+    }
 }
 
 #endif
