@@ -574,6 +574,28 @@ int main(int argc, char** argv) {
       0.0f, 1.0f, 1.0f,      
       0.0f, 3.0f, 0.0f,
     };
+
+    float smoke_vertices[] = {
+      0.0f, 0.0f, 0.0f,
+      0.0f, 1.0f, 1.0f,
+      -0.6f, 0.6f, 1.0f,
+      -0.6f, -0.6f, 1.0f,
+      0.0f, -1.0f, 1.0f,
+      0.6f, -0.6f, 1.0f,
+      0.6f, 0.6f, 1.0f,
+      0.0f, 1.0f, 1.0f,
+      0.0f, 0.0f, 0.0f,
+
+      0.0f, 0.0f, 2.0f,
+      0.0f, 1.0f, 1.0f,
+      -0.6f, 0.6f, 1.0f,
+      -0.6f, -0.6f, 1.0f,
+      0.0f, -1.0f, 1.0f,
+      0.6f, -0.6f, 1.0f,
+      0.6f, 0.6f, 1.0f,
+      0.0f, 1.0f, 1.0f,
+      0.0f, 0.0f, 2.0f,
+    };
     
     unsigned int texture_wood, texture_tire, texture_logo, texture_window, texture_rear_logo;
     buildTexture(&texture_wood, "./src/main5_particles/ferraribody.jpg");
