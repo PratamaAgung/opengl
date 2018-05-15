@@ -14,7 +14,7 @@ using namespace glm;
 bool firstMouse;
 float lastX, lastY;
 Camera* camera;
-int amountRain = 500;
+int amountRain = 3000;
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
     glViewport(0, 0, width, height);
@@ -610,7 +610,19 @@ int main(int argc, char** argv) {
     glfwSetCursorPosCallback(window, mouse_callback);
     glfwSetScrollCallback(window, scroll_callback);
 
+    double lastTime = glfwGetTime();
+    int nbFrames = 0;
+
     while(!glfwWindowShouldClose(window)) {
+        double currentTime = glfwGetTime();
+        nbFrames++;
+        if ( currentTime - lastTime >= 1.0 ){ // If last prinf() was more than 1 sec ago
+            // printf and reset timer
+            printf("%f ms/frame\n", 1000.0/double(nbFrames));
+            nbFrames = 0;
+            lastTime += 1.0;
+        }
+
         float currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
