@@ -9,12 +9,14 @@
 #include "shader.hpp"
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
+#include "smoke_particles.hpp"
 
 using namespace glm;
 bool firstMouse;
 float lastX, lastY;
 Camera* camera;
-int amountRain = 3000;
+int amountRain = 500;
+int amountSmoke = 500;
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
     glViewport(0, 0, width, height);
@@ -656,8 +658,11 @@ int main(int argc, char** argv) {
         // 4. now add to list of matrices
         teardrop_instance_matrix[i] = model;
     }
-
     createVAOVBOInstance(teardrop_vertices, sizeof(teardrop_vertices), teardrop_instance_matrix, &vao_particles, &vbo_particles);
+
+    SmokeParticles smoke(amountSmoke, vec3(0.85f, -0.2f, -0.2f), 0.01f);
+    unsigned int vao_smoke, vbo_smoke;
+    createVAOVBOInstance(smoke_vertices, sizeof(smoke_vertices), smoke.getTransitionMatrix(), &vao_smoke, &vbo_smoke);
 
     glEnable(GL_DEPTH_TEST);
     
@@ -781,6 +786,14 @@ int main(int argc, char** argv) {
         }
         glBindBuffer(GL_ARRAY_BUFFER, vbo_particles);
         glBufferData(GL_ARRAY_BUFFER, sizeof(teardrop_instance_matrix), teardrop_instance_matrix, GL_STATIC_DRAW);
+
+        glBindVertexArray(vao_smoke);
+        glDrawArraysInstanced(GL_TRIANGLE_FAN, 0, 9, amountSmoke);
+        glDrawArraysInstanced(GL_TRIANGLE_FAN, 9, 9, amountSmoke);
+        smoke.updateParticles();
+        glBindBuffer(GL_ARRAY_BUFFER, vbo_smoke);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(glm::mat4) * amountSmoke, smoke.getTransitionMatrix(), GL_STATIC_DRAW);
+
 
         glfwSwapBuffers(window);
         glfwPollEvents();
