@@ -688,34 +688,6 @@ int main(int argc, char** argv) {
       createVAOVBO(tires[i], sizeof(tires[i]),&vbo_tires[i],&vao_tires[i]);
     }
 
-    // glm::mat4 teardrop_instance_matrix[amountRain];
-    // float teardrop_y_location[amountRain];
-    // srand(glfwGetTime()); // initialize random seed
-    // float radius = 30.0f;
-    // float offset = 40.0f;
-    // for (unsigned int i = 0; i < amountRain; i++)
-    // {
-    //     glm::mat4 model;
-    //     // 1. translation: displace along circle with 'radius' in range [-offset, offset]
-    //     float angle = (float)i / (float)amountRain * 360.0f;
-    //     float displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
-    //     float x = sin(angle) * radius + displacement;
-    //     displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
-    //     float y = abs(displacement * 0.8f); // keep height of asteroid field smaller compared to width of x and z
-    //     teardrop_y_location[i] = y;
-    //     displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
-    //     float z = cos(angle) * radius + displacement;
-    //     model = glm::translate(model, glm::vec3(x, y, z));
-    //
-    //     // 2. scale: Scale between 0.05 and 0.13f
-    //     float scale = (rand() % 5) / 100.0f + 0.08;
-    //     model = glm::scale(model, glm::vec3(scale));
-    //
-    //     // 4. now add to list of matrices
-    //     teardrop_instance_matrix[i] = model;
-    // }
-    // createVAOVBOInstance(teardrop_vertices, sizeof(teardrop_vertices), teardrop_instance_matrix, &vao_particles, &vbo_particles);
-
     RainParticles rain(500);
     unsigned int vao_rain, vbo_rain;
     createVAOVBOInstance(teardrop_vertices, sizeof(teardrop_vertices), rain.getTransitionMatrix(), &vao_rain, &vbo_rain);
@@ -833,6 +805,11 @@ int main(int argc, char** argv) {
         particle_shader.setMat4("projection", projection);
         particle_shader.setVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
         particle_shader.setVec3("lightPos", camera->Position);
+
+        particle_shader.setVec3("material.ambient",glm::vec3(0.25f,	0.20725f,	0.20725f));
+        particle_shader.setVec3("material.diffuse",glm::vec3(1.0f,	0.829f,	0.829f));
+        particle_shader.setVec3("material.specular", glm::vec3(0.296648f,	0.296648f,	0.296648f));
+        particle_shader.setFloat("material.shininess",0.48125f);
         glBindVertexArray(vao_rain);
         glDrawArraysInstanced(GL_TRIANGLES, 0, 36, amountRain);
         // glDrawArraysInstanced(GL_TRIANGLE_FAN, 9, 9, amountRain);
@@ -840,6 +817,10 @@ int main(int argc, char** argv) {
         glBindBuffer(GL_ARRAY_BUFFER, vbo_rain);
         glBufferData(GL_ARRAY_BUFFER, sizeof(glm::mat4) * amountRain, rain.getTransitionMatrix(), GL_STATIC_DRAW);
 
+        particle_shader.setVec3("material.ambient",glm::vec3(0.05375f,	0.05f,	0.06625f));
+        particle_shader.setVec3("material.diffuse",glm::vec3(0.18275f,	0.17f,	0.22525f));
+        particle_shader.setVec3("material.specular", glm::vec3(0.332741f,	0.328634f,	0.346435f));
+        particle_shader.setFloat("material.shininess",0.3f);
         glBindVertexArray(vao_smoke);
         glDrawArraysInstanced(GL_TRIANGLES, 0, 36, amountSmoke);
         // glDrawArraysInstanced(GL_TRIANGLE_FAN, 9, 9, amountSmoke);
