@@ -67,7 +67,7 @@ mat4* SmokeParticles::getTransitionMatrix() {
     for(int i = 0; i < numParticles; i++){
         mat4 matrix;
         matrix = translate(matrix, position[i]);
-        matrix = rotate(matrix, direction[i] - 90, vec3(0.0f, 0.0f, 1.0f));
+        matrix = rotate(matrix, direction[i] - 90, vec3(1.0f, 1.0f, 1.0f));
         matrix = scale(matrix, vec3(scaleFactor[i]));
         transitionMatrix[i] = matrix;
     }
@@ -83,7 +83,7 @@ void SmokeParticles::initParticle(int i) {
     this->position[i].y = this->initPosition.y + (rand()%20 - 10) / 10.0f * this->offsetInit;
     this->position[i].z = this->initPosition.z + (rand()%20 - 10) / 10.0f * this->offsetInit;
     this->direction[i] = 0.0f;
-    this->scaleFactor[i] = (rand() % 2) / 100.0f + 0.01;
+    this->scaleFactor[i] = (rand() % 8) / 1000.0f + 0.005;
     this->age[i] = 0.0f;
     this->lifespan[i] = (((rand()%10+1)))/10.0f;
     this->movement[i].x = (((((((2) * rand()%11) + 1)) * rand()%11) + 1) * 0.000035) - (((((((2) * rand()%11) + 1)) * rand()%11) + 1) * 0.000035);
