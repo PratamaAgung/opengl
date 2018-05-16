@@ -5,13 +5,13 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/ext.hpp>
-#include "camera.hpp"
-#include "shader.hpp"
+#include "lib/camera.hpp"
+#include "lib/shader.hpp"
 #define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
-#include "smoke_particles.hpp"
-#include "rain_particles.hpp"
-#include "splash_particles.hpp"
+#include "lib/stb_image.h"
+#include "lib/smoke_particles.hpp"
+#include "lib/rain_particles.hpp"
+#include "lib/splash_particles.hpp"
 #include <queue>
 
 using namespace glm;
@@ -782,12 +782,12 @@ int main(int argc, char** argv) {
     };
 
     unsigned int texture_wood, texture_tire, texture_logo, texture_window, texture_rear_logo, texture_road;
-    buildTexture(&texture_wood, "./src/main5_particles/ferraribody.jpg");
-    buildTexture(&texture_tire, "./src/main5_particles/roda2.jpg");
-    buildTexture(&texture_logo, "./src/main5_particles/ferrarilogomerah.jpg");
-    buildTexture(&texture_window, "./src/main5_particles/window.jpg");
-    buildTexture(&texture_rear_logo, "./src/main5_particles/Ferrari.jpg");
-    buildTexture(&texture_road, "./src/main5_particles/road.jpg");
+    buildTexture(&texture_wood, "./src/main5_particles/assets/ferraribody.jpg");
+    buildTexture(&texture_tire, "./src/main5_particles/assets/roda2.jpg");
+    buildTexture(&texture_logo, "./src/main5_particles/assets/ferrarilogomerah.jpg");
+    buildTexture(&texture_window, "./src/main5_particles/assets/window.jpg");
+    buildTexture(&texture_rear_logo, "./src/main5_particles/assets/Ferrari.jpg");
+    buildTexture(&texture_road, "./src/main5_particles/assets/road.jpg");
 
     std::string vertex_shader_source_code = loadShader("./src/main5_particles/vertex.vs");
     std::string fragment_shader_source_code = loadShader("./src/main5_particles/fragment.fs");
