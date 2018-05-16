@@ -20,7 +20,7 @@ float lastX, lastY;
 Camera* camera;
 int amountRain = 500;
 int amountSmoke = 500;
-int amountSplash = 50;
+int amountSplash = 10;
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
     glViewport(0, 0, width, height);
@@ -179,6 +179,45 @@ void createVAOVBOInstance(float* vertices, unsigned int size, glm::mat4* instanc
     glGenBuffers(1, vbo_aplha);
     glBindBuffer(GL_ARRAY_BUFFER, *vbo_aplha);
     glBufferData(GL_ARRAY_BUFFER, sizeof(float) * amountRain, alpha, GL_STATIC_DRAW);
+
+    unsigned int instanceVBO;
+    glGenBuffers(1, &instanceVBO);
+    glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
+    glBufferData(GL_ARRAY_BUFFER, size, vertices, GL_STATIC_DRAW);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)3);
+
+
+    glBindBuffer(GL_ARRAY_BUFFER, *vbo);
+    glEnableVertexAttribArray(2);
+    glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)0);
+    glEnableVertexAttribArray(3);
+    glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(sizeof(glm::vec4)));
+    glEnableVertexAttribArray(4);
+    glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(2 * sizeof(glm::vec4)));
+    glEnableVertexAttribArray(5);
+    glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(3 * sizeof(glm::vec4)));
+
+    glBindBuffer(GL_ARRAY_BUFFER, *vbo_aplha);
+    glEnableVertexAttribArray(6);
+    glVertexAttribPointer(6, 1, GL_FLOAT, GL_FALSE, sizeof(float), (void*)0);
+
+    glVertexAttribDivisor(2, 1);
+    glVertexAttribDivisor(3, 1);
+    glVertexAttribDivisor(4, 1);
+    glVertexAttribDivisor(5, 1);
+    glVertexAttribDivisor(6, 1);
+
+    glBindVertexArray(0);
+}
+
+void createEmptyVAOVBOInstance(float* vertices, int size, unsigned int* vao, unsigned int* vbo, unsigned int* vbo_aplha){
+    glGenVertexArrays(1, vao);
+    glBindVertexArray(*vao);
+    glGenBuffers(1, vbo);
+    glGenBuffers(1, vbo_aplha);
 
     unsigned int instanceVBO;
     glGenBuffers(1, &instanceVBO);
@@ -772,6 +811,9 @@ int main(int argc, char** argv) {
     unsigned int vao_smoke, vbo_smoke, vbo_smoke_aplha;
     createVAOVBOInstance(smoke_vertices, sizeof(smoke_vertices), smoke.getTransitionMatrix(), smoke.getAlpha(),  &vao_smoke, &vbo_smoke, &vbo_smoke_aplha);
 
+    unsigned int vao_splash, vbo_splash, vbo_splash_alpha;
+    createEmptyVAOVBOInstance(splash_vertices, sizeof(splash_vertices), &vao_splash, &vbo_splash, &vbo_splash_alpha);
+
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -792,6 +834,9 @@ int main(int argc, char** argv) {
     for(int i=0; i<amountRain; i++){
       isSplash[i] = 0;
     }
+
+    std::vector<mat4> splash_matrix_vector;
+    std::vector<float> splash_alpha_vector;
 
     while(!glfwWindowShouldClose(window)) {
         double currentTime = glfwGetTime();
@@ -929,42 +974,38 @@ int main(int argc, char** argv) {
             float x = rain.position[i].x;
             float y = rain.position[i].y;
             float z = rain.position[i].z;
-            // printf("Collide : %f %f %f\n", x, y, z);
             rain.initParticle(i);
             SplashParticles * splash = new SplashParticles(amountSplash, vec3(x, y, z), 0.01f);
             splash->id = i;
-            // printf("asasa\n");
-            unsigned int vao_splash, vbo_splash, vbo_splash_alpha;
-            // printf("asasa\n");
-            // printf("Init %d %d", &(*vao_splash), &(*vbo_splash));
-            createVAOVBOInstance(splash_vertices, sizeof(splash_vertices), splash->getTransitionMatrix(), splash->getAlpha(), &vao_splash, &vbo_splash, &vbo_splash_alpha);
-            // printf("asasa\n");
-            splash->vao = &vao_splash;
-            splash->vbo = &vbo_splash;
             splash_vec.push_back(splash);
-            // printf("Init %d %d", vao_splash, vbo_splash);
           }
         }
         if(!splash_vec.empty() && splash_vec.front()->timeOut <= 0){
-          glDeleteBuffers(1, splash_vec.front()->vbo);
-          glDeleteVertexArrays(1, splash_vec.front()->vao);
           isSplash[splash_vec.front()->id] = 0;
           delete splash_vec.front();
           splash_vec.erase(splash_vec.begin());
         }
+
+        splash_alpha_vector.clear();
+        splash_matrix_vector.clear();
         for(int i = 0; i < splash_vec.size(); i++){
-            unsigned int vao = *(splash_vec[i]->vao);
-            unsigned int vbo = *(splash_vec[i]->vbo);
-            // printf("%d %d\n", vao, vbo);
-            glBindVertexArray(vao);
-            glDrawArraysInstanced(GL_TRIANGLE_FAN, 0, 9, amountSplash);
-            glDrawArraysInstanced(GL_TRIANGLE_FAN, 9, 9, amountSplash);
             splash_vec[i]->updateParticles();
-            // printf("Time : %d ", splash_vec[i]->timeOut);
-            glBindBuffer(GL_ARRAY_BUFFER, vbo);
-            glBufferData(GL_ARRAY_BUFFER, sizeof(glm::mat4) * amountSplash, splash_vec[i]->getTransitionMatrix(), GL_STATIC_DRAW);
+            for(int j = 0; j < amountSplash; j++){
+              splash_matrix_vector.push_back(splash_vec[i]->getTransitionMatrix()[j]);
+              splash_alpha_vector.push_back(splash_vec[i]->getAlpha()[j]);
+            }
         }
 
+        if (splash_vec.size() > 0){
+          glBindVertexArray(vao_splash);
+          glBindBuffer(GL_ARRAY_BUFFER, vbo_splash);
+          glBufferData(GL_ARRAY_BUFFER, sizeof(glm::mat4) * amountSplash * splash_matrix_vector.size(), &splash_matrix_vector[0], GL_STATIC_DRAW);
+
+          glBindBuffer(GL_ARRAY_BUFFER, vbo_splash_alpha);
+          glBufferData(GL_ARRAY_BUFFER, sizeof(float) * amountSplash * splash_alpha_vector.size(), &splash_alpha_vector[0], GL_STATIC_DRAW);
+
+          glDrawArraysInstanced(GL_TRIANGLES, 0, 36, amountSplash * splash_vec.size()); 
+        }
         glfwSwapBuffers(window);
         glfwPollEvents();
     }

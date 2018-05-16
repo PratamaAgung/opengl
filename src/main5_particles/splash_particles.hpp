@@ -38,7 +38,7 @@ SplashParticles::SplashParticles(int numParticles, vec3 initPosition, float offs
     this->numParticles = numParticles;
     this->initPosition = initPosition;
     this->offsetInit = offset;
-    this->timeOut = 5;
+    this->timeOut = 10;
 
     this->globalPull.x = 0.0f;
     this->globalPull.y = 0.002f;
