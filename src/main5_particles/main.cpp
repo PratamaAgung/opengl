@@ -835,8 +835,8 @@ int main(int argc, char** argv) {
       isSplash[i] = 0;
     }
 
-    std::vector<mat4> splash_matrix_vector;
-    std::vector<float> splash_alpha_vector;
+    std::vector<mat4>* splash_matrix_vector = new std::vector<mat4>;
+    std::vector<float>* splash_alpha_vector = new std::vector<float>;
 
     while(!glfwWindowShouldClose(window)) {
         double currentTime = glfwGetTime();
@@ -952,8 +952,6 @@ int main(int argc, char** argv) {
         rain.updateParticles();
         glBindBuffer(GL_ARRAY_BUFFER, vbo_rain);
         glBufferData(GL_ARRAY_BUFFER, sizeof(glm::mat4) * amountRain, rain.getTransitionMatrix(), GL_STATIC_DRAW);
-        // glBindBuffer(GL_ARRAY_BUFFER, vbo_rain_aplha);
-        // glBufferData(GL_ARRAY_BUFFER, sizeof(float) * amountRain, rain.getAlpha(), GL_STATIC_DRAW);
 
         particle_shader.setVec3("material.ambient",glm::vec3(0.05375f,	0.05f,	0.06625f));
         particle_shader.setVec3("material.diffuse",glm::vec3(0.18275f,	0.17f,	0.22525f));
@@ -961,7 +959,6 @@ int main(int argc, char** argv) {
         particle_shader.setFloat("material.shininess",0.3f);
         glBindVertexArray(vao_smoke);
         glDrawArraysInstanced(GL_TRIANGLES, 0, 36, amountSmoke);
-        // glDrawArraysInstanced(GL_TRIANGLE_FAN, 9, 9, amountSmoke);
         smoke.updateParticles();
         glBindBuffer(GL_ARRAY_BUFFER, vbo_smoke);
         glBufferData(GL_ARRAY_BUFFER, sizeof(glm::mat4) * amountSmoke, smoke.getTransitionMatrix(), GL_STATIC_DRAW);
@@ -986,23 +983,23 @@ int main(int argc, char** argv) {
           splash_vec.erase(splash_vec.begin());
         }
 
-        splash_alpha_vector.clear();
-        splash_matrix_vector.clear();
+        splash_alpha_vector->clear();
+        splash_matrix_vector->clear();
         for(int i = 0; i < splash_vec.size(); i++){
             splash_vec[i]->updateParticles();
             for(int j = 0; j < amountSplash; j++){
-              splash_matrix_vector.push_back(splash_vec[i]->getTransitionMatrix()[j]);
-              splash_alpha_vector.push_back(splash_vec[i]->getAlpha()[j]);
+              splash_matrix_vector->push_back(splash_vec[i]->getTransitionMatrix()[j]);
+              splash_alpha_vector->push_back(splash_vec[i]->getAlpha()[j]);
             }
         }
 
         if (splash_vec.size() > 0){
           glBindVertexArray(vao_splash);
           glBindBuffer(GL_ARRAY_BUFFER, vbo_splash);
-          glBufferData(GL_ARRAY_BUFFER, sizeof(glm::mat4) * amountSplash * splash_matrix_vector.size(), &splash_matrix_vector[0], GL_STATIC_DRAW);
+          glBufferData(GL_ARRAY_BUFFER, sizeof(glm::mat4) * amountSplash * splash_matrix_vector->size(), &(*splash_matrix_vector)[0], GL_STATIC_DRAW);
 
           glBindBuffer(GL_ARRAY_BUFFER, vbo_splash_alpha);
-          glBufferData(GL_ARRAY_BUFFER, sizeof(float) * amountSplash * splash_alpha_vector.size(), &splash_alpha_vector[0], GL_STATIC_DRAW);
+          glBufferData(GL_ARRAY_BUFFER, sizeof(float) * amountSplash * splash_alpha_vector->size(), &(*splash_alpha_vector)[0], GL_STATIC_DRAW);
 
           glDrawArraysInstanced(GL_TRIANGLES, 0, 36, amountSplash * splash_vec.size()); 
         }
