@@ -27,6 +27,8 @@ class SmokeParticles {
         mat4* getTransitionMatrix();
         int getMatrixSize();
         float* getAlpha();
+        void incGlobalPullX();
+        void decGlobalPullX();
 };
 
 SmokeParticles::SmokeParticles(int numParticles, vec3 initPosition, float offset){
@@ -97,6 +99,14 @@ void SmokeParticles::initParticle(int i) {
 
 float* SmokeParticles::getAlpha(){
     return alpha;
+}
+
+void SmokeParticles::incGlobalPullX() {
+    this->globalPull.x += 0.00005f;
+}
+
+void SmokeParticles::decGlobalPullX(){
+    this->globalPull.x -= 0.00005f;
 }
 
 #endif

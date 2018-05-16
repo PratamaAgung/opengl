@@ -20,7 +20,9 @@ float lastX, lastY;
 Camera* camera;
 int amountRain = 500;
 int amountSmoke = 500;
-int amountSplash = 10;
+SmokeParticles smoke(amountSmoke, vec3(0.85f, -0.2f, -0.2f), 0.01f);    
+RainParticles rain(500);
+int amountSplash = 20;
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
     glViewport(0, 0, width, height);
@@ -37,6 +39,13 @@ void processInput(GLFWwindow *window, float deltaTime) {
         camera->ProcessKeyboard(LEFT,  deltaTime);
     else if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
         camera->ProcessKeyboard(RIGHT,  deltaTime);
+    else if (glfwGetKey(window, GLFW_KEY_MINUS) == GLFW_PRESS) {
+        smoke.decGlobalPullX();
+        rain.decGlobalPullX();  
+    } else if (glfwGetKey(window, GLFW_KEY_EQUAL) == GLFW_PRESS) {
+        smoke.incGlobalPullX();
+        rain.incGlobalPullX();        
+    }
 }
 
 void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
@@ -803,11 +812,11 @@ int main(int argc, char** argv) {
     unsigned int vao_ground, vbo_ground;
     createVAOVBO(ground_vertices, sizeof(ground_vertices), &vbo_ground, &vao_ground);
 
-    RainParticles rain(500);
+    // RainParticles rain(500);
     unsigned int vao_rain, vbo_rain, vbo_rain_aplha;
     createVAOVBOInstance(teardrop_vertices, sizeof(teardrop_vertices), rain.getTransitionMatrix(), rain.getAlpha(), &vao_rain, &vbo_rain, &vbo_rain_aplha);
 
-    SmokeParticles smoke(amountSmoke, vec3(0.85f, -0.2f, -0.2f), 0.01f);
+    // SmokeParticles smoke(amountSmoke, vec3(0.85f, -0.2f, -0.2f), 0.01f);
     unsigned int vao_smoke, vbo_smoke, vbo_smoke_aplha;
     createVAOVBOInstance(smoke_vertices, sizeof(smoke_vertices), smoke.getTransitionMatrix(), smoke.getAlpha(),  &vao_smoke, &vbo_smoke, &vbo_smoke_aplha);
 
@@ -841,9 +850,8 @@ int main(int argc, char** argv) {
     while(!glfwWindowShouldClose(window)) {
         double currentTime = glfwGetTime();
         nbFrames++;
-        if ( currentTime - lastTime >= 1.0 ){ // If last prinf() was more than 1 sec ago
-            // printf and reset timer
-            printf("%f ms/frame\n", 1000.0/double(nbFrames));
+        if ( currentTime - lastTime >= 1.0 ){ 
+            printf("FPS rate: %d fps\n", nbFrames);
             nbFrames = 0;
             lastTime += 1.0;
         }
