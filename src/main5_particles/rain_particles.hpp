@@ -99,7 +99,7 @@ void RainParticles::initParticle(int i){
     this->position[i].x = x + (rand()%20 - 10) / 10.0f * 0.1;
     this->position[i].y = y + (rand()%20 - 10) / 10.0f * 0.1;
     this->position[i].z = z +  (rand()%20 - 10) / 10.0f * 0.1;
-    
+
     y = -0.40941000000000005f;
     // this->splashVertices[i * 6 * 3] = x;
     // this->splashVertices[i * 6 * 3 + 1] = y;
@@ -116,7 +116,7 @@ void RainParticles::initParticle(int i){
     // this->splashVertices[i * 6 * 3 + 9] = x - 0.5f;
     // this->splashVertices[i * 6 * 3 + 10] = y;
     // this->splashVertices[i * 6 * 3 + 11] = z - 0.5f;
-    
+
     // this->splashVertices[i * 6 * 3 + 12] = x + 0.5f;
     // this->splashVertices[i * 6 * 3 + 13] = y;
     // this->splashVertices[i * 6 * 3 + 14] = z - 0.5f;

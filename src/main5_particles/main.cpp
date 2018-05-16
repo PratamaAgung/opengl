@@ -18,11 +18,12 @@ using namespace glm;
 bool firstMouse;
 float lastX, lastY;
 Camera* camera;
-int amountRain = 500;
-int amountSmoke = 500;
-SmokeParticles smoke(amountSmoke, vec3(0.85f, -0.2f, -0.2f), 0.01f);    
-RainParticles rain(500);
-int amountSplash = 20;
+int amountRain = 5000;
+int amountSmoke = 1000;
+SmokeParticles smoke(amountSmoke, vec3(0.85f, -0.2f, -0.2f), 0.01f);
+RainParticles rain(amountRain);
+int amountSplash = 5;
+bool pause = false;
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
     glViewport(0, 0, width, height);
@@ -41,10 +42,14 @@ void processInput(GLFWwindow *window, float deltaTime) {
         camera->ProcessKeyboard(RIGHT,  deltaTime);
     else if (glfwGetKey(window, GLFW_KEY_MINUS) == GLFW_PRESS) {
         smoke.decGlobalPullX();
-        rain.decGlobalPullX();  
+        rain.decGlobalPullX();
     } else if (glfwGetKey(window, GLFW_KEY_EQUAL) == GLFW_PRESS) {
         smoke.incGlobalPullX();
-        rain.incGlobalPullX();        
+        rain.incGlobalPullX();
+    }  else if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS) {
+        pause = true;
+    }  else if (glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS) {
+        pause = false;
     }
 }
 
@@ -358,7 +363,7 @@ int main(int argc, char** argv) {
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     GLFWwindow* window;
-    window = glfwCreateWindow( 800, 800, "Car", NULL, NULL);
+    window = glfwCreateWindow(1000, 1000, "Car", NULL, NULL);
     if(!window){
         fprintf( stderr, "Failed to open GLFW window.\n" );
         glfwTerminate();
@@ -374,13 +379,13 @@ int main(int argc, char** argv) {
     }
 
     float ground_vertices[] = {
-      // 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 
+      // 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f,
       100.0f, -0.40941000000000005f, 100.0f, 0.0f, 0.0f, 0.0f, 100.0f, 100.0f, 0.0f, 1.0f, 0.0f,
       -100.0f, -0.40941000000000005f, 100.0f, 0.0f, 0.0f, 0.0f, 0.0f, 100.0f, 0.0f, 1.0f, 0.0f,
       -100.0f, -0.40941000000000005f, -100.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f,
       100.0f, -0.40941000000000005f, -100.0f, 0.0f, 0.0f, 0.0f, 100.0f, 0.0f, 0.0f, 1.0f, 0.0f,
-      100.0f, -0.40941000000000005f, 100.0f, 0.0f, 0.0f, 0.0f, 100.0f, 100.0f, 0.0f, 1.0f, 0.0f,      
-      // 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f,   
+      100.0f, -0.40941000000000005f, 100.0f, 0.0f, 0.0f, 0.0f, 100.0f, 100.0f, 0.0f, 1.0f, 0.0f,
+      // 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f,
     };
 
     float car_vertices[] = {
@@ -625,13 +630,13 @@ int main(int argc, char** argv) {
     };
 
     float teardrop_vertices[] = {
-      0.0f, 0.0f, 0.0f, 0.4f, 0.6f, 0.6f, 
-      0.0f, 2.0f, 1.0f, 0.4f, 0.6f, 0.6f, 
-      -0.6f, 2.0f, 0.6f, 0.4f, 0.6f, 0.6f, 
+      0.0f, 0.0f, 0.0f, 0.4f, 0.6f, 0.6f,
+      0.0f, 2.0f, 1.0f, 0.4f, 0.6f, 0.6f,
+      -0.6f, 2.0f, 0.6f, 0.4f, 0.6f, 0.6f,
 
-      0.0f, 0.0f, 0.0f, -2.4f, 0.72f, 0.0f, 
-      -0.6f, 2.0f, 0.6f, -2.4f, 0.72f, 0.0f, 
-      -0.6f, 2.0f, -0.6f, -2.4f, 0.72f, 0.0f, 
+      0.0f, 0.0f, 0.0f, -2.4f, 0.72f, 0.0f,
+      -0.6f, 2.0f, 0.6f, -2.4f, 0.72f, 0.0f,
+      -0.6f, 2.0f, -0.6f, -2.4f, 0.72f, 0.0f,
 
       0.0f, 0.0f, 0.0f, -0.8f, 0.6f, -1.2f,
       -0.6f, 2.0f, -0.6f, -0.8f, 0.6f, -1.2f,
@@ -641,19 +646,19 @@ int main(int argc, char** argv) {
       0.0f, 2.0f, -1.0f, 0.8f, 0.6f, -1.2f,
       0.6f, 2.0f, -0.6f, 0.8f, 0.6f, -1.2f,
 
-      0.0f, 0.0f, 0.0f, 2.4f, 0.72f, 0.0f, 
-      0.6f, 2.0f, -0.6f, 2.4f, 0.72f, 0.0f, 
-      0.6f, 2.0f, 0.6f, 2.4f, 0.72f, 0.0f, 
+      0.0f, 0.0f, 0.0f, 2.4f, 0.72f, 0.0f,
+      0.6f, 2.0f, -0.6f, 2.4f, 0.72f, 0.0f,
+      0.6f, 2.0f, 0.6f, 2.4f, 0.72f, 0.0f,
 
       0.0f, 0.0f, 0.0f, 0.8f, 0.6f, 1.2f,
       0.6f, 2.0f, 0.6f, 0.8f, 0.6f, 1.2f,
       0.0f, 2.0f, 1.0f, 0.8f, 0.6f, 1.2f,
 
-      0.0f, 3.0f, 0.0f, 0.4f, 0.6f, -0.6f, 
-      0.0f, 2.0f, 1.0f, 0.4f, 0.6f, -0.6f, 
-      -0.6f, 2.0f, 0.6f, 0.4f, 0.6f, -0.6f, 
+      0.0f, 3.0f, 0.0f, 0.4f, 0.6f, -0.6f,
+      0.0f, 2.0f, 1.0f, 0.4f, 0.6f, -0.6f,
+      -0.6f, 2.0f, 0.6f, 0.4f, 0.6f, -0.6f,
 
-      0.0f, 3.0f, 0.0f, 1.2f, 0.72f, 0.0f, 
+      0.0f, 3.0f, 0.0f, 1.2f, 0.72f, 0.0f,
       -0.6f, 2.0f, 0.6f, 1.2f, 0.72f, 0.0f,
       -0.6f, 2.0f, -0.6f, 1.2f, 0.72f, 0.0f,
 
@@ -661,17 +666,17 @@ int main(int argc, char** argv) {
       -0.6f, 2.0f, -0.6f, 0.4f, 0.6f, 0.6f,
       0.0f, 2.0f, -1.0f, 0.4f, 0.6f, 0.6f,
 
-      0.0f, 3.0f, 0.0f, -0.4f, 0.6f, 0.6f, 
-      0.0f, 2.0f, -1.0f, -0.4f, 0.6f, 0.6f, 
-      0.6f, 2.0f, -0.6f, -0.4f, 0.6f, 0.6f, 
+      0.0f, 3.0f, 0.0f, -0.4f, 0.6f, 0.6f,
+      0.0f, 2.0f, -1.0f, -0.4f, 0.6f, 0.6f,
+      0.6f, 2.0f, -0.6f, -0.4f, 0.6f, 0.6f,
 
       0.0f, 3.0f, 0.0f, -1.2f, 0.72f, 0.0f,
       0.6f, 2.0f, -0.6f, -1.2f, 0.72f, 0.0f,
       0.6f, 2.0f, 0.6f, -1.2f, 0.72f, 0.0f,
 
-      0.0f, 3.0f, 0.0f, -0.4f, 0.6f, -0.6f, 
-      0.6f, 2.0f, 0.6f, -0.4f, 0.6f, -0.6f, 
-      0.0f, 2.0f, 1.0f, -0.4f, 0.6f, -0.6f, 
+      0.0f, 3.0f, 0.0f, -0.4f, 0.6f, -0.6f,
+      0.6f, 2.0f, 0.6f, -0.4f, 0.6f, -0.6f,
+      0.0f, 2.0f, 1.0f, -0.4f, 0.6f, -0.6f,
     };
 
     // posX, posY, posZ, norX, norY, norZ
@@ -680,13 +685,13 @@ int main(int argc, char** argv) {
       0.0f, 1.0f, 1.0f, -0.4f, -0.6f, -0.6f,
       -0.6f, 0.6f, 1.0f, -0.4f, -0.6f, -0.6f,
 
-      0.0f, 0.0f, 0.0f, -1.2f, 0.0f, -0.72f, 
-      -0.6f, 0.6f, 1.0f, -1.2f, 0.0f, -0.72f, 
-      -0.6f, -0.6f, 1.0f, -1.2f, 0.0f, -0.72f, 
+      0.0f, 0.0f, 0.0f, -1.2f, 0.0f, -0.72f,
+      -0.6f, 0.6f, 1.0f, -1.2f, 0.0f, -0.72f,
+      -0.6f, -0.6f, 1.0f, -1.2f, 0.0f, -0.72f,
 
-      0.0f, 0.0f, 0.0f, -0.4f, 0.6f, -0.6f, 
-      -0.6f, -0.6f, 1.0f, -0.4f, 0.6f, -0.6f, 
-      0.0f, -1.0f, 1.0f, -0.4f, 0.6f, -0.6f, 
+      0.0f, 0.0f, 0.0f, -0.4f, 0.6f, -0.6f,
+      -0.6f, -0.6f, 1.0f, -0.4f, 0.6f, -0.6f,
+      0.0f, -1.0f, 1.0f, -0.4f, 0.6f, -0.6f,
 
       0.0f, 0.0f, 0.0f, 0.4f, 0.6f, -0.6f,
       0.0f, -1.0f, 1.0f, 0.4f, 0.6f, -0.6f,
@@ -696,13 +701,13 @@ int main(int argc, char** argv) {
       0.6f, -0.6f, 1.0f, 1.2f, 0.0f, -0.72f,
       0.6f, 0.6f, 1.0f, 1.2f, 0.0f, -0.72f,
 
-      0.0f, 0.0f, 0.0f, 0.4f, -0.6f, -0.6f, 
-      0.6f, 0.6f, 1.0f, 0.4f, -0.6f, -0.6f, 
-      0.0f, 1.0f, 1.0f, 0.4f, -0.6f, -0.6f, 
+      0.0f, 0.0f, 0.0f, 0.4f, -0.6f, -0.6f,
+      0.6f, 0.6f, 1.0f, 0.4f, -0.6f, -0.6f,
+      0.0f, 1.0f, 1.0f, 0.4f, -0.6f, -0.6f,
 
-      0.0f, 0.0f, 2.0f, 0.4f, 0.6f, -0.6f, 
-      0.0f, 1.0f, 1.0f, 0.4f, 0.6f, -0.6f, 
-      -0.6f, 0.6f, 1.0f, 0.4f, 0.6f, -0.6f, 
+      0.0f, 0.0f, 2.0f, 0.4f, 0.6f, -0.6f,
+      0.0f, 1.0f, 1.0f, 0.4f, 0.6f, -0.6f,
+      -0.6f, 0.6f, 1.0f, 0.4f, 0.6f, -0.6f,
 
       0.0f, 0.0f, 2.0f, 1.2f, 0.0f, -0.72f,
       -0.6f, 0.6f, 1.0f, 1.2f, 0.0f, -0.72f,
@@ -719,7 +724,7 @@ int main(int argc, char** argv) {
       0.0f, 0.0f, 2.0f, -1.2f, -0.0f, -0.72f,
       0.6f, -0.6f, 1.0f, -1.2f, -0.0f, -0.72f,
       0.6f, 0.6f, 1.0f, -1.2f, -0.0f, -0.72f,
- 
+
       0.0f, 0.0f, 2.0f, -0.4f, 0.6f, -0.6f,
       0.6f, 0.6f, 1.0f, -0.4f, 0.6f, -0.6f,
       0.0f, 1.0f, 1.0f, -0.4f, 0.6f, -0.6f,
@@ -731,13 +736,13 @@ int main(int argc, char** argv) {
       0.0f, 1.0f, 1.0f, -0.4f, -0.6f, -0.6f,
       -0.6f, 0.6f, 1.0f, -0.4f, -0.6f, -0.6f,
 
-      0.0f, 0.0f, 0.0f, -1.2f, 0.0f, -0.72f, 
-      -0.6f, 0.6f, 1.0f, -1.2f, 0.0f, -0.72f, 
-      -0.6f, -0.6f, 1.0f, -1.2f, 0.0f, -0.72f, 
+      0.0f, 0.0f, 0.0f, -1.2f, 0.0f, -0.72f,
+      -0.6f, 0.6f, 1.0f, -1.2f, 0.0f, -0.72f,
+      -0.6f, -0.6f, 1.0f, -1.2f, 0.0f, -0.72f,
 
-      0.0f, 0.0f, 0.0f, -0.4f, 0.6f, -0.6f, 
-      -0.6f, -0.6f, 1.0f, -0.4f, 0.6f, -0.6f, 
-      0.0f, -1.0f, 1.0f, -0.4f, 0.6f, -0.6f, 
+      0.0f, 0.0f, 0.0f, -0.4f, 0.6f, -0.6f,
+      -0.6f, -0.6f, 1.0f, -0.4f, 0.6f, -0.6f,
+      0.0f, -1.0f, 1.0f, -0.4f, 0.6f, -0.6f,
 
       0.0f, 0.0f, 0.0f, 0.4f, 0.6f, -0.6f,
       0.0f, -1.0f, 1.0f, 0.4f, 0.6f, -0.6f,
@@ -747,13 +752,13 @@ int main(int argc, char** argv) {
       0.6f, -0.6f, 1.0f, 1.2f, 0.0f, -0.72f,
       0.6f, 0.6f, 1.0f, 1.2f, 0.0f, -0.72f,
 
-      0.0f, 0.0f, 0.0f, 0.4f, -0.6f, -0.6f, 
-      0.6f, 0.6f, 1.0f, 0.4f, -0.6f, -0.6f, 
-      0.0f, 1.0f, 1.0f, 0.4f, -0.6f, -0.6f, 
+      0.0f, 0.0f, 0.0f, 0.4f, -0.6f, -0.6f,
+      0.6f, 0.6f, 1.0f, 0.4f, -0.6f, -0.6f,
+      0.0f, 1.0f, 1.0f, 0.4f, -0.6f, -0.6f,
 
-      0.0f, 0.0f, 2.0f, 0.4f, 0.6f, -0.6f, 
-      0.0f, 1.0f, 1.0f, 0.4f, 0.6f, -0.6f, 
-      -0.6f, 0.6f, 1.0f, 0.4f, 0.6f, -0.6f, 
+      0.0f, 0.0f, 2.0f, 0.4f, 0.6f, -0.6f,
+      0.0f, 1.0f, 1.0f, 0.4f, 0.6f, -0.6f,
+      -0.6f, 0.6f, 1.0f, 0.4f, 0.6f, -0.6f,
 
       0.0f, 0.0f, 2.0f, 1.2f, 0.0f, -0.72f,
       -0.6f, 0.6f, 1.0f, 1.2f, 0.0f, -0.72f,
@@ -770,7 +775,7 @@ int main(int argc, char** argv) {
       0.0f, 0.0f, 2.0f, -1.2f, -0.0f, -0.72f,
       0.6f, -0.6f, 1.0f, -1.2f, -0.0f, -0.72f,
       0.6f, 0.6f, 1.0f, -1.2f, -0.0f, -0.72f,
- 
+
       0.0f, 0.0f, 2.0f, -0.4f, 0.6f, -0.6f,
       0.6f, 0.6f, 1.0f, -0.4f, 0.6f, -0.6f,
       0.0f, 1.0f, 1.0f, -0.4f, 0.6f, -0.6f,
@@ -850,8 +855,8 @@ int main(int argc, char** argv) {
     while(!glfwWindowShouldClose(window)) {
         double currentTime = glfwGetTime();
         nbFrames++;
-        if ( currentTime - lastTime >= 1.0 ){ 
-            printf("FPS rate: %d fps\n", nbFrames);
+        if ( currentTime - lastTime >= 1.0 ){
+            if (!pause) printf("FPS rate: %d fps\n", nbFrames);
             nbFrames = 0;
             lastTime += 1.0;
         }
@@ -861,157 +866,162 @@ int main(int argc, char** argv) {
         lastFrame = currentFrame;
         processInput(window, deltaTime);
 
-        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        if (!pause) {
+          glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+          glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        glm::mat4 projection = glm::perspective(glm::radians(camera->Zoom), 1.0f, 0.1f, 100.0f);
+          glm::mat4 projection = glm::perspective(glm::radians(camera->Zoom), 1.0f, 0.1f, 100.0f);
 
-        car_shader.use();
-        car_shader.setVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
-        car_shader.setVec3("lightPos", camera->Position);
-        car_shader.setVec3("viewPos", camera->Position);
-        car_shader.setMat4("view", camera->GetViewMatrix());
-        car_shader.setMat4("model", glm::mat4());
-        car_shader.setMat4("projection", projection);
-        car_shader.setVec3("material.ambient",glm::vec3(0.05f, 0.0f, 0.0f));
-        car_shader.setVec3("material.diffuse",glm::vec3(0.5f, 0.4f, 0.4f));
-        car_shader.setVec3("material.specular", glm::vec3(0.7f, 0.04f, 0.04f));
-        car_shader.setFloat("material.shininess",0.078125f);
+          car_shader.use();
+          car_shader.setVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
+          car_shader.setVec3("lightPos", camera->Position);
+          car_shader.setVec3("viewPos", camera->Position);
+          car_shader.setMat4("view", camera->GetViewMatrix());
+          car_shader.setMat4("model", glm::mat4());
+          car_shader.setMat4("projection", projection);
+          car_shader.setVec3("material.ambient",glm::vec3(0.05f, 0.0f, 0.0f));
+          car_shader.setVec3("material.diffuse",glm::vec3(0.5f, 0.4f, 0.4f));
+          car_shader.setVec3("material.specular", glm::vec3(0.7f, 0.04f, 0.04f));
+          car_shader.setFloat("material.shininess",0.078125f);
 
-        // road
-        glBindTexture(GL_TEXTURE_2D, texture_road);
-        glBindVertexArray(vao_ground);
-        glDrawArrays(GL_TRIANGLE_FAN, 0, 5);      
+          // road
+          glBindTexture(GL_TEXTURE_2D, texture_road);
+          glBindVertexArray(vao_ground);
+          glDrawArrays(GL_TRIANGLE_FAN, 0, 5);
 
-        // car
-        glBindTexture(GL_TEXTURE_2D, texture_wood);
-        glBindVertexArray(vao);
-        glDrawArrays(GL_TRIANGLE_FAN, 0, 16);
-        glDrawArrays(GL_TRIANGLE_FAN, 16, 16);
-        glDrawArrays(GL_TRIANGLE_FAN, 32, 5);
-        glDrawArrays(GL_TRIANGLE_FAN, 37, 5);
-        glDrawArrays(GL_TRIANGLE_FAN, 42, 5);
-        glBindTexture(GL_TEXTURE_2D, texture_rear_logo);
-        glDrawArrays(GL_TRIANGLE_FAN, 47, 5);
-        glBindTexture(GL_TEXTURE_2D, texture_wood);
-        glDrawArrays(GL_TRIANGLE_FAN, 52, 5);
-        glDrawArrays(GL_TRIANGLE_FAN, 57, 5);
-        glDrawArrays(GL_TRIANGLE_FAN, 62, 5);
-        glDrawArrays(GL_TRIANGLE_FAN, 67, 5);
-        glDrawArrays(GL_TRIANGLE_FAN, 72, 5);
-        glDrawArrays(GL_TRIANGLE_FAN, 77, 5);
-        glBindTexture(GL_TEXTURE_2D, texture_logo);
-        glDrawArrays(GL_TRIANGLE_FAN, 82, 5);
-        glBindTexture(GL_TEXTURE_2D, texture_wood);
-        glDrawArrays(GL_TRIANGLE_FAN, 87, 5);
-        glDrawArrays(GL_TRIANGLE_FAN, 92, 5);
-        glDrawArrays(GL_TRIANGLE_FAN, 97, 5);
-        glBindTexture(GL_TEXTURE_2D, texture_window);
+          // car
+          glBindTexture(GL_TEXTURE_2D, texture_wood);
+          glBindVertexArray(vao);
+          glDrawArrays(GL_TRIANGLE_FAN, 0, 16);
+          glDrawArrays(GL_TRIANGLE_FAN, 16, 16);
+          glDrawArrays(GL_TRIANGLE_FAN, 32, 5);
+          glDrawArrays(GL_TRIANGLE_FAN, 37, 5);
+          glDrawArrays(GL_TRIANGLE_FAN, 42, 5);
+          glBindTexture(GL_TEXTURE_2D, texture_rear_logo);
+          glDrawArrays(GL_TRIANGLE_FAN, 47, 5);
+          glBindTexture(GL_TEXTURE_2D, texture_wood);
+          glDrawArrays(GL_TRIANGLE_FAN, 52, 5);
+          glDrawArrays(GL_TRIANGLE_FAN, 57, 5);
+          glDrawArrays(GL_TRIANGLE_FAN, 62, 5);
+          glDrawArrays(GL_TRIANGLE_FAN, 67, 5);
+          glDrawArrays(GL_TRIANGLE_FAN, 72, 5);
+          glDrawArrays(GL_TRIANGLE_FAN, 77, 5);
+          glBindTexture(GL_TEXTURE_2D, texture_logo);
+          glDrawArrays(GL_TRIANGLE_FAN, 82, 5);
+          glBindTexture(GL_TEXTURE_2D, texture_wood);
+          glDrawArrays(GL_TRIANGLE_FAN, 87, 5);
+          glDrawArrays(GL_TRIANGLE_FAN, 92, 5);
+          glDrawArrays(GL_TRIANGLE_FAN, 97, 5);
+          glBindTexture(GL_TEXTURE_2D, texture_window);
 
-        car_shader.setVec3("material.ambient", glm::vec3(0.19225f, 0.19225f, 0.19225f));
-        car_shader.setVec3("material.diffuse", glm::vec3(0.50754f, 0.50754f, 0.50754f));
-        car_shader.setVec3("material.specular", glm::vec3(0.502873f, 0.502873f, 0.502873f));
-        car_shader.setFloat("material.shininess", 0.4f);
-        // jendela kanan kiri
-        glDrawArrays(GL_TRIANGLE_FAN, 102, 10);
-        glDrawArrays(GL_TRIANGLE_FAN, 112, 7);
-        glDrawArrays(GL_TRIANGLE_FAN, 119, 10);
-        glDrawArrays(GL_TRIANGLE_FAN, 129, 7);
-        // kaca depan belakang
-        glDrawArrays(GL_TRIANGLE_FAN, 136, 5);
-        glDrawArrays(GL_TRIANGLE_FAN, 141, 5);
-        // lampu
-        glDrawArrays(GL_TRIANGLE_FAN, 146, 5);
-        glDrawArrays(GL_TRIANGLE_FAN, 151, 5);
-        glDrawArrays(GL_TRIANGLE_FAN, 156, 5);
-        glDrawArrays(GL_TRIANGLE_FAN, 161, 5);
+          car_shader.setVec3("material.ambient", glm::vec3(0.19225f, 0.19225f, 0.19225f));
+          car_shader.setVec3("material.diffuse", glm::vec3(0.50754f, 0.50754f, 0.50754f));
+          car_shader.setVec3("material.specular", glm::vec3(0.502873f, 0.502873f, 0.502873f));
+          car_shader.setFloat("material.shininess", 0.4f);
+          // jendela kanan kiri
+          glDrawArrays(GL_TRIANGLE_FAN, 102, 10);
+          glDrawArrays(GL_TRIANGLE_FAN, 112, 7);
+          glDrawArrays(GL_TRIANGLE_FAN, 119, 10);
+          glDrawArrays(GL_TRIANGLE_FAN, 129, 7);
+          // kaca depan belakang
+          glDrawArrays(GL_TRIANGLE_FAN, 136, 5);
+          glDrawArrays(GL_TRIANGLE_FAN, 141, 5);
+          // lampu
+          glDrawArrays(GL_TRIANGLE_FAN, 146, 5);
+          glDrawArrays(GL_TRIANGLE_FAN, 151, 5);
+          glDrawArrays(GL_TRIANGLE_FAN, 156, 5);
+          glDrawArrays(GL_TRIANGLE_FAN, 161, 5);
 
-        car_shader.setVec3("material.ambient", glm::vec3(0.02f, 0.02f, 0.02f));
-        car_shader.setVec3("material.diffuse", glm::vec3(0.01f, 0.01f, 0.01f));
-        car_shader.setVec3("material.specular", glm::vec3(0.4f, 0.4f, 0.4f));
-        car_shader.setFloat("material.shininess", 0.078125f);
-        glBindTexture(GL_TEXTURE_2D, texture_tire);
-        for(int i=0; i<4; i++){
-          glBindVertexArray(vao_tires[i]);
-          if (i == 0) rotate(car_shader, -0.4523350000000001f, -0.22941000000000004f, 0.45f);
-          else if (i == 1) rotate(car_shader, 0.6048599999999999f, -0.22941000000000004f, 0.45f);
-          else if (i == 2) rotate(car_shader, -0.4523350000000001f, -0.22941000000000004f, -0.325f);
-          else if (i == 3) rotate(car_shader, 0.6048599999999999f, -0.22941000000000004f, -0.325f);
-          glDrawArrays(GL_TRIANGLE_FAN, 0, side+2);
-          glDrawArrays(GL_TRIANGLE_FAN, side+2, side*2+2);
-          for(int i=0; i<side-1; i++){
-            glDrawArrays(GL_TRIANGLE_FAN, side*2+2+i*5, 5);
-          }
-        }
-
-        particle_shader.use();
-        particle_shader.setVec3("viewPos", camera->Position);
-        particle_shader.setMat4("view", camera->GetViewMatrix());
-        particle_shader.setMat4("projection", projection);
-        particle_shader.setVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
-        particle_shader.setVec3("lightPos", camera->Position);
-
-        particle_shader.setVec3("material.ambient",glm::vec3(0.25f,	0.20725f,	0.20725f));
-        particle_shader.setVec3("material.diffuse",glm::vec3(1.0f,	0.829f,	0.829f));
-        particle_shader.setVec3("material.specular", glm::vec3(0.296648f,	0.296648f,	0.296648f));
-        particle_shader.setFloat("material.shininess",0.48125f);
-        glBindVertexArray(vao_rain);
-        glDrawArraysInstanced(GL_TRIANGLES, 0, 36, amountRain);
-        rain.updateParticles();
-        glBindBuffer(GL_ARRAY_BUFFER, vbo_rain);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(glm::mat4) * amountRain, rain.getTransitionMatrix(), GL_STATIC_DRAW);
-
-        particle_shader.setVec3("material.ambient",glm::vec3(0.05375f,	0.05f,	0.06625f));
-        particle_shader.setVec3("material.diffuse",glm::vec3(0.18275f,	0.17f,	0.22525f));
-        particle_shader.setVec3("material.specular", glm::vec3(0.332741f,	0.328634f,	0.346435f));
-        particle_shader.setFloat("material.shininess",0.3f);
-        glBindVertexArray(vao_smoke);
-        glDrawArraysInstanced(GL_TRIANGLES, 0, 36, amountSmoke);
-        smoke.updateParticles();
-        glBindBuffer(GL_ARRAY_BUFFER, vbo_smoke);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(glm::mat4) * amountSmoke, smoke.getTransitionMatrix(), GL_STATIC_DRAW);
-        glBindBuffer(GL_ARRAY_BUFFER, vbo_smoke_aplha);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(float) * amountRain, smoke.getAlpha(), GL_STATIC_DRAW);
-
-        for(int i=0; i<rain.getNumParticles(); i++){
-          if(rain.isCollide(i, vec3(0.0f, -0.4f, 0.0f)) && !isSplash[i]){
-            isSplash[i] = 1;
-            float x = rain.position[i].x;
-            float y = rain.position[i].y;
-            float z = rain.position[i].z;
-            rain.initParticle(i);
-            SplashParticles * splash = new SplashParticles(amountSplash, vec3(x, y, z), 0.01f);
-            splash->id = i;
-            splash_vec.push_back(splash);
-          }
-        }
-        if(!splash_vec.empty() && splash_vec.front()->timeOut <= 0){
-          isSplash[splash_vec.front()->id] = 0;
-          delete splash_vec.front();
-          splash_vec.erase(splash_vec.begin());
-        }
-
-        splash_alpha_vector->clear();
-        splash_matrix_vector->clear();
-        for(int i = 0; i < splash_vec.size(); i++){
-            splash_vec[i]->updateParticles();
-            for(int j = 0; j < amountSplash; j++){
-              splash_matrix_vector->push_back(splash_vec[i]->getTransitionMatrix()[j]);
-              splash_alpha_vector->push_back(splash_vec[i]->getAlpha()[j]);
+          car_shader.setVec3("material.ambient", glm::vec3(0.02f, 0.02f, 0.02f));
+          car_shader.setVec3("material.diffuse", glm::vec3(0.01f, 0.01f, 0.01f));
+          car_shader.setVec3("material.specular", glm::vec3(0.4f, 0.4f, 0.4f));
+          car_shader.setFloat("material.shininess", 0.078125f);
+          glBindTexture(GL_TEXTURE_2D, texture_tire);
+          for(int i=0; i<4; i++){
+            glBindVertexArray(vao_tires[i]);
+            if (i == 0) rotate(car_shader, -0.4523350000000001f, -0.22941000000000004f, 0.45f);
+            else if (i == 1) rotate(car_shader, 0.6048599999999999f, -0.22941000000000004f, 0.45f);
+            else if (i == 2) rotate(car_shader, -0.4523350000000001f, -0.22941000000000004f, -0.325f);
+            else if (i == 3) rotate(car_shader, 0.6048599999999999f, -0.22941000000000004f, -0.325f);
+            glDrawArrays(GL_TRIANGLE_FAN, 0, side+2);
+            glDrawArrays(GL_TRIANGLE_FAN, side+2, side*2+2);
+            for(int i=0; i<side-1; i++){
+              glDrawArrays(GL_TRIANGLE_FAN, side*2+2+i*5, 5);
             }
+          }
+
+          particle_shader.use();
+          particle_shader.setVec3("viewPos", camera->Position);
+          particle_shader.setMat4("view", camera->GetViewMatrix());
+          particle_shader.setMat4("projection", projection);
+          particle_shader.setVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
+          particle_shader.setVec3("lightPos", camera->Position);
+
+          particle_shader.setVec3("material.ambient",glm::vec3(0.25f,	0.20725f,	0.20725f));
+          particle_shader.setVec3("material.diffuse",glm::vec3(1.0f,	0.829f,	0.829f));
+          particle_shader.setVec3("material.specular", glm::vec3(0.296648f,	0.296648f,	0.296648f));
+          particle_shader.setFloat("material.shininess",0.48125f);
+          glBindVertexArray(vao_rain);
+          glDrawArraysInstanced(GL_TRIANGLES, 0, 36, amountRain);
+          rain.updateParticles();
+          glBindBuffer(GL_ARRAY_BUFFER, vbo_rain);
+          glBufferData(GL_ARRAY_BUFFER, sizeof(glm::mat4) * amountRain, rain.getTransitionMatrix(), GL_STATIC_DRAW);
+
+          particle_shader.setVec3("material.ambient",glm::vec3(0.05375f,	0.05f,	0.06625f));
+          particle_shader.setVec3("material.diffuse",glm::vec3(0.18275f,	0.17f,	0.22525f));
+          particle_shader.setVec3("material.specular", glm::vec3(0.332741f,	0.328634f,	0.346435f));
+          particle_shader.setFloat("material.shininess",0.3f);
+          glBindVertexArray(vao_smoke);
+          glDrawArraysInstanced(GL_TRIANGLES, 0, 36, amountSmoke);
+          smoke.updateParticles();
+          glBindBuffer(GL_ARRAY_BUFFER, vbo_smoke);
+          glBufferData(GL_ARRAY_BUFFER, sizeof(glm::mat4) * amountSmoke, smoke.getTransitionMatrix(), GL_STATIC_DRAW);
+          glBindBuffer(GL_ARRAY_BUFFER, vbo_smoke_aplha);
+          glBufferData(GL_ARRAY_BUFFER, sizeof(float) * amountRain, smoke.getAlpha(), GL_STATIC_DRAW);
+
+          for(int i=0; i<rain.getNumParticles(); i++){
+            if(rain.isCollide(i, vec3(0.0f, -0.4f, 0.0f)) && !isSplash[i]){
+              isSplash[i] = 1;
+              float x = rain.position[i].x;
+              float y = rain.position[i].y;
+              float z = rain.position[i].z;
+              rain.initParticle(i);
+              SplashParticles * splash = new SplashParticles(amountSplash, vec3(x, y, z), 0.01f);
+              splash->id = i;
+              splash_vec.push_back(splash);
+            }
+          }
+
+          for(int i = 0; i < splash_vec.size(); i++){
+            if(splash_vec[i]->timeOut <= 0){
+              isSplash[splash_vec[i]->id] = 0;
+              delete splash_vec[i];
+              splash_vec.erase(splash_vec.begin() + i);
+            }
+          }
+
+          splash_alpha_vector->clear();
+          splash_matrix_vector->clear();
+          for(int i = 0; i < splash_vec.size(); i++){
+              splash_vec[i]->updateParticles();
+              for(int j = 0; j < amountSplash; j++){
+                splash_matrix_vector->push_back(splash_vec[i]->getTransitionMatrix()[j]);
+                splash_alpha_vector->push_back(splash_vec[i]->getAlpha()[j]);
+              }
+          }
+
+          if (splash_vec.size() > 0){
+            glBindVertexArray(vao_splash);
+            glBindBuffer(GL_ARRAY_BUFFER, vbo_splash);
+            glBufferData(GL_ARRAY_BUFFER, sizeof(glm::mat4) * amountSplash * splash_matrix_vector->size(), &(*splash_matrix_vector)[0], GL_STATIC_DRAW);
+
+            glBindBuffer(GL_ARRAY_BUFFER, vbo_splash_alpha);
+            glBufferData(GL_ARRAY_BUFFER, sizeof(float) * amountSplash * splash_alpha_vector->size(), &(*splash_alpha_vector)[0], GL_STATIC_DRAW);
+
+            glDrawArraysInstanced(GL_TRIANGLES, 0, 36, amountSplash * splash_vec.size());
+          }
+          glfwSwapBuffers(window);
         }
-
-        if (splash_vec.size() > 0){
-          glBindVertexArray(vao_splash);
-          glBindBuffer(GL_ARRAY_BUFFER, vbo_splash);
-          glBufferData(GL_ARRAY_BUFFER, sizeof(glm::mat4) * amountSplash * splash_matrix_vector->size(), &(*splash_matrix_vector)[0], GL_STATIC_DRAW);
-
-          glBindBuffer(GL_ARRAY_BUFFER, vbo_splash_alpha);
-          glBufferData(GL_ARRAY_BUFFER, sizeof(float) * amountSplash * splash_alpha_vector->size(), &(*splash_alpha_vector)[0], GL_STATIC_DRAW);
-
-          glDrawArraysInstanced(GL_TRIANGLES, 0, 36, amountSplash * splash_vec.size()); 
-        }
-        glfwSwapBuffers(window);
         glfwPollEvents();
     }
 

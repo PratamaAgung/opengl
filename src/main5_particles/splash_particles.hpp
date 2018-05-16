@@ -38,10 +38,10 @@ SplashParticles::SplashParticles(int numParticles, vec3 initPosition, float offs
     this->numParticles = numParticles;
     this->initPosition = initPosition;
     this->offsetInit = offset;
-    this->timeOut = 10;
+    this->timeOut = 3;
 
     this->globalPull.x = 0.0f;
-    this->globalPull.y = 0.002f;
+    this->globalPull.y = 0.000002f;
     this->globalPull.z = 0.0f;
     this->position = new vec3[numParticles];
     this->direction = new float[numParticles];
@@ -74,14 +74,14 @@ void SplashParticles::updateParticles(){
     for(int i = 0; i < numParticles; i++){
         age[i] += 0.003f;
         scaleFactor[i] += 0.00001f;
-        direction[i] += ((((((int)(0.5) * rand()%11) + 1)) * rand()%11) + 1);
+        direction[i] = ((((((int)(0.5) * rand()%11) + 1)) * rand()%11) + 1);
         position[i].x += movement[i].x + globalPull.x;
         position[i].y += movement[i].y + globalPull.y;
         position[i].z += movement[i].z + globalPull.z;
 
-        if (age[i] > lifespan[i]){
-            initParticle(i);
-        }
+        // if (age[i] > lifespan[i]){
+        //     initParticle(i);
+        // }
     }
 }
 
@@ -102,7 +102,7 @@ int SplashParticles::getMatrixSize() {
 
 void SplashParticles::initParticle(int i) {
     this->position[i].x = this->initPosition.x + (rand()%20 - 10) / 10.0f * this->offsetInit;
-    this->position[i].y = this->initPosition.y + (rand()%20 - 10) / 10.0f * this->offsetInit;
+    this->position[i].y = -0.4f;
     this->position[i].z = this->initPosition.z + (rand()%20 - 10) / 10.0f * this->offsetInit;
     this->direction[i] = 0.0f;
     this->scaleFactor[i] = (rand() % 8) / 1000.0f + 0.005;
