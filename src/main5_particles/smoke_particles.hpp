@@ -19,12 +19,14 @@ class SmokeParticles {
         vec3 globalPull;
         vec3* movement;
         mat4* transitionMatrix;
+        float* alpha;
         void initParticle(int);
     public:
         SmokeParticles(int, vec3, float);
         void updateParticles();
         mat4* getTransitionMatrix();
         int getMatrixSize();
+        float* getAlpha();
 };
 
 SmokeParticles::SmokeParticles(int numParticles, vec3 initPosition, float offset){
@@ -42,6 +44,7 @@ SmokeParticles::SmokeParticles(int numParticles, vec3 initPosition, float offset
     this->lifespan = new float[numParticles];
     this->movement = new vec3[numParticles];
     this->transitionMatrix = new mat4[numParticles];
+    this->alpha = new float[numParticles];
     srand(time(NULL));
     for (int i = 0; i < numParticles; i++){
         initParticle(i);
@@ -67,7 +70,7 @@ mat4* SmokeParticles::getTransitionMatrix() {
     for(int i = 0; i < numParticles; i++){
         mat4 matrix;
         matrix = translate(matrix, position[i]);
-        matrix = rotate(matrix, direction[i] - 90, vec3(1.0f, 1.0f, 1.0f));
+        // matrix = rotate(matrix, direction[i] - 90, vec3(1.0f, 1.0f, 1.0f));
         matrix = scale(matrix, vec3(scaleFactor[i]));
         transitionMatrix[i] = matrix;
     }
@@ -89,6 +92,11 @@ void SmokeParticles::initParticle(int i) {
     this->movement[i].x = (((((((2) * rand()%11) + 1)) * rand()%11) + 1) * 0.000035) - (((((((2) * rand()%11) + 1)) * rand()%11) + 1) * 0.000035);
     this->movement[i].y = ((((((5) * rand()%11) + 3)) * rand()%11) + 7) * 0.00005;
     this->movement[i].z = (((((((2) * rand()%11) + 1)) * rand()%11) + 1) * 0.000015) - (((((((2) * rand()%11) + 1)) * rand()%11) + 1) * 0.000015);
+    this->alpha[i] = (rand() % 5) / 10.0f + 0.1f;
+}
+
+float* SmokeParticles::getAlpha(){
+    return alpha;
 }
 
 #endif

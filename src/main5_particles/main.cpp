@@ -167,7 +167,7 @@ void createVAOVBO(float* vertices, unsigned int size, unsigned int* vbo, unsigne
     *vao = vao2;
 }
 
-void createVAOVBOInstance(float* vertices, unsigned int size, glm::mat4* instanceLoc, unsigned int* vao, unsigned int* vbo){
+void createVAOVBOInstance(float* vertices, unsigned int size, glm::mat4* instanceLoc, float* alpha, unsigned int* vao, unsigned int* vbo, unsigned int* vbo_aplha){
     glGenVertexArrays(1, vao);
     glBindVertexArray(*vao);
 
@@ -176,27 +176,39 @@ void createVAOVBOInstance(float* vertices, unsigned int size, glm::mat4* instanc
     glBindBuffer(GL_ARRAY_BUFFER, *vbo);
     glBufferData(GL_ARRAY_BUFFER, sizeof(glm::mat4) * amountRain, instanceLoc, GL_STATIC_DRAW);
 
+    glGenBuffers(1, vbo_aplha);
+    glBindBuffer(GL_ARRAY_BUFFER, *vbo_aplha);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * amountRain, alpha, GL_STATIC_DRAW);
+
     unsigned int instanceVBO;
     glGenBuffers(1, &instanceVBO);
     glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
     glBufferData(GL_ARRAY_BUFFER, size, vertices, GL_STATIC_DRAW);
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)3);
+
 
     glBindBuffer(GL_ARRAY_BUFFER, *vbo);
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)0);
     glEnableVertexAttribArray(2);
-    glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(sizeof(glm::vec4)));
+    glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)0);
     glEnableVertexAttribArray(3);
-    glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(2 * sizeof(glm::vec4)));
+    glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(sizeof(glm::vec4)));
     glEnableVertexAttribArray(4);
-    glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(3 * sizeof(glm::vec4)));
+    glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(2 * sizeof(glm::vec4)));
+    glEnableVertexAttribArray(5);
+    glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(3 * sizeof(glm::vec4)));
 
-    glVertexAttribDivisor(1, 1);
+    glBindBuffer(GL_ARRAY_BUFFER, *vbo_aplha);
+    glEnableVertexAttribArray(6);
+    glVertexAttribPointer(6, 1, GL_FLOAT, GL_FALSE, sizeof(float), (void*)0);
+
     glVertexAttribDivisor(2, 1);
     glVertexAttribDivisor(3, 1);
     glVertexAttribDivisor(4, 1);
+    glVertexAttribDivisor(5, 1);
+    glVertexAttribDivisor(6, 1);
 
     glBindVertexArray(0);
 }
@@ -256,11 +268,6 @@ void createTire3d(float* vertices, float x, float y, float z, float r, int side,
     vertices[i+3] = tire_color[0];
     vertices[i+4] = tire_color[1];
     vertices[i+5] = tire_color[2];
-    // vertices[i+6] = 0.5 + (0.25 * cos((i-1)*deg*M_PI/180.0));
-    // vertices[i+7] = 0.5 + (0.25 * sin((i-1)*deg*M_PI/180.0));
-    // std::cout << vertices[i+6] << " " << vertices[i+7] << std::endl;
-    // vertices[i+6] = (vertices[i] + vertices[i+2]) / 2;
-    // vertices[i+7] = (vertices[i+1] + vertices[i+2]) / 2;
     vertices[i+8] = 0.0f;
     vertices[i+9] = 0.0f;
     if (i < (side + 2) * 11){
@@ -570,70 +577,155 @@ int main(int argc, char** argv) {
     };
 
     float teardrop_vertices[] = {
-      0.0f, 0.0f, 0.0f,
-      0.0f, 2.0f, 1.0f,
-      -0.6f, 2.0f, 0.6f,
-      -0.6f, 2.0f, -0.6f,
-      0.0f, 2.0f, -1.0f,
-      0.6f, 2.0f, -0.6f,
-      0.6f, 2.0f, 0.6f,
-      0.0f, 2.0f, 1.0f,
-      0.0f, 0.0f, 0.0f,
+      0.0f, 0.0f, 0.0f, 0.4f, 0.6f, 0.6f, 
+      0.0f, 2.0f, 1.0f, 0.4f, 0.6f, 0.6f, 
+      -0.6f, 2.0f, 0.6f, 0.4f, 0.6f, 0.6f, 
 
-      0.0f, 3.0f, 0.0f,
-      0.0f, 2.0f, 1.0f,
-      -0.6f, 2.0f, 0.6f,
-      -0.6f, 2.0f, -0.6f,
-      0.0f, 2.0f, -1.0f,
-      0.6f, 2.0f, -0.6f,
-      0.6f, 2.0f, 0.6f,
-      0.0f, 2.0f, 1.0f,
-      0.0f, 3.0f, 0.0f,
+      0.0f, 0.0f, 0.0f, -2.4f, 0.72f, 0.0f, 
+      -0.6f, 2.0f, 0.6f, -2.4f, 0.72f, 0.0f, 
+      -0.6f, 2.0f, -0.6f, -2.4f, 0.72f, 0.0f, 
+
+      0.0f, 0.0f, 0.0f, -0.8f, 0.6f, -1.2f,
+      -0.6f, 2.0f, -0.6f, -0.8f, 0.6f, -1.2f,
+      0.0f, 2.0f, -1.0f, -0.8f, 0.6f, -1.2f,
+
+      0.0f, 0.0f, 0.0f, 0.8f, 0.6f, -1.2f,
+      0.0f, 2.0f, -1.0f, 0.8f, 0.6f, -1.2f,
+      0.6f, 2.0f, -0.6f, 0.8f, 0.6f, -1.2f,
+
+      0.0f, 0.0f, 0.0f, 2.4f, 0.72f, 0.0f, 
+      0.6f, 2.0f, -0.6f, 2.4f, 0.72f, 0.0f, 
+      0.6f, 2.0f, 0.6f, 2.4f, 0.72f, 0.0f, 
+
+      0.0f, 0.0f, 0.0f, 0.8f, 0.6f, 1.2f,
+      0.6f, 2.0f, 0.6f, 0.8f, 0.6f, 1.2f,
+      0.0f, 2.0f, 1.0f, 0.8f, 0.6f, 1.2f,
+
+      0.0f, 3.0f, 0.0f, 0.4f, 0.6f, -0.6f, 
+      0.0f, 2.0f, 1.0f, 0.4f, 0.6f, -0.6f, 
+      -0.6f, 2.0f, 0.6f, 0.4f, 0.6f, -0.6f, 
+
+      0.0f, 3.0f, 0.0f, 1.2f, 0.72f, 0.0f, 
+      -0.6f, 2.0f, 0.6f, 1.2f, 0.72f, 0.0f,
+      -0.6f, 2.0f, -0.6f, 1.2f, 0.72f, 0.0f,
+
+      0.0f, 3.0f, 0.0f, 0.4f, 0.6f, 0.6f,
+      -0.6f, 2.0f, -0.6f, 0.4f, 0.6f, 0.6f,
+      0.0f, 2.0f, -1.0f, 0.4f, 0.6f, 0.6f,
+
+      0.0f, 3.0f, 0.0f, -0.4f, 0.6f, 0.6f, 
+      0.0f, 2.0f, -1.0f, -0.4f, 0.6f, 0.6f, 
+      0.6f, 2.0f, -0.6f, -0.4f, 0.6f, 0.6f, 
+
+      0.0f, 3.0f, 0.0f, -1.2f, 0.72f, 0.0f,
+      0.6f, 2.0f, -0.6f, -1.2f, 0.72f, 0.0f,
+      0.6f, 2.0f, 0.6f, -1.2f, 0.72f, 0.0f,
+
+      0.0f, 3.0f, 0.0f, -0.4f, 0.6f, -0.6f, 
+      0.6f, 2.0f, 0.6f, -0.4f, 0.6f, -0.6f, 
+      0.0f, 2.0f, 1.0f, -0.4f, 0.6f, -0.6f, 
     };
 
+    // posX, posY, posZ, norX, norY, norZ
     float smoke_vertices[] = {
-      0.0f, 0.0f, 0.0f,
-      0.0f, 1.0f, 1.0f,
-      -0.6f, 0.6f, 1.0f,
-      -0.6f, -0.6f, 1.0f,
-      0.0f, -1.0f, 1.0f,
-      0.6f, -0.6f, 1.0f,
-      0.6f, 0.6f, 1.0f,
-      0.0f, 1.0f, 1.0f,
-      0.0f, 0.0f, 0.0f,
+      0.0f, 0.0f, 0.0f, -0.4f, -0.6f, -0.6f,
+      0.0f, 1.0f, 1.0f, -0.4f, -0.6f, -0.6f,
+      -0.6f, 0.6f, 1.0f, -0.4f, -0.6f, -0.6f,
 
-      0.0f, 0.0f, 2.0f,
-      0.0f, 1.0f, 1.0f,
-      -0.6f, 0.6f, 1.0f,
-      -0.6f, -0.6f, 1.0f,
-      0.0f, -1.0f, 1.0f,
-      0.6f, -0.6f, 1.0f,
-      0.6f, 0.6f, 1.0f,
-      0.0f, 1.0f, 1.0f,
-      0.0f, 0.0f, 2.0f,
+      0.0f, 0.0f, 0.0f, -1.2f, 0.0f, -0.72f, 
+      -0.6f, 0.6f, 1.0f, -1.2f, 0.0f, -0.72f, 
+      -0.6f, -0.6f, 1.0f, -1.2f, 0.0f, -0.72f, 
+
+      0.0f, 0.0f, 0.0f, -0.4f, 0.6f, -0.6f, 
+      -0.6f, -0.6f, 1.0f, -0.4f, 0.6f, -0.6f, 
+      0.0f, -1.0f, 1.0f, -0.4f, 0.6f, -0.6f, 
+
+      0.0f, 0.0f, 0.0f, 0.4f, 0.6f, -0.6f,
+      0.0f, -1.0f, 1.0f, 0.4f, 0.6f, -0.6f,
+      0.6f, -0.6f, 1.0f, 0.4f, 0.6f, -0.6f,
+
+      0.0f, 0.0f, 0.0f, 1.2f, 0.0f, -0.72f,
+      0.6f, -0.6f, 1.0f, 1.2f, 0.0f, -0.72f,
+      0.6f, 0.6f, 1.0f, 1.2f, 0.0f, -0.72f,
+
+      0.0f, 0.0f, 0.0f, 0.4f, -0.6f, -0.6f, 
+      0.6f, 0.6f, 1.0f, 0.4f, -0.6f, -0.6f, 
+      0.0f, 1.0f, 1.0f, 0.4f, -0.6f, -0.6f, 
+
+      0.0f, 0.0f, 2.0f, 0.4f, 0.6f, -0.6f, 
+      0.0f, 1.0f, 1.0f, 0.4f, 0.6f, -0.6f, 
+      -0.6f, 0.6f, 1.0f, 0.4f, 0.6f, -0.6f, 
+
+      0.0f, 0.0f, 2.0f, 1.2f, 0.0f, -0.72f,
+      -0.6f, 0.6f, 1.0f, 1.2f, 0.0f, -0.72f,
+      -0.6f, -0.6f, 1.0f, 1.2f, 0.0f, -0.72f,
+
+      0.0f, 0.0f, 2.0f, 0.4f, -0.6f, -0.6f,
+      -0.6f, -0.6f, 1.0f, 0.4f, -0.6f, -0.6f,
+      0.0f, -1.0f, 1.0f, 0.4f, -0.6f, -0.6f,
+
+      0.0f, 0.0f, 2.0f, -0.4f, -0.6f, -0.6f,
+      0.0f, -1.0f, 1.0f, -0.4f, -0.6f, -0.6f,
+      0.6f, -0.6f, 1.0f, -0.4f, -0.6f, -0.6f,
+
+      0.0f, 0.0f, 2.0f, -1.2f, -0.0f, -0.72f,
+      0.6f, -0.6f, 1.0f, -1.2f, -0.0f, -0.72f,
+      0.6f, 0.6f, 1.0f, -1.2f, -0.0f, -0.72f,
+ 
+      0.0f, 0.0f, 2.0f, -0.4f, 0.6f, -0.6f,
+      0.6f, 0.6f, 1.0f, -0.4f, 0.6f, -0.6f,
+      0.0f, 1.0f, 1.0f, -0.4f, 0.6f, -0.6f,
     };
 
 
     float splash_vertices[] = {
-      0.0f, 0.0f, 0.0f,
-      0.0f, 1.0f, 1.0f,
-      -0.6f, 0.6f, 1.0f,
-      -0.6f, -0.6f, 1.0f,
-      0.0f, -1.0f, 1.0f,
-      0.6f, -0.6f, 1.0f,
-      0.6f, 0.6f, 1.0f,
-      0.0f, 1.0f, 1.0f,
-      0.0f, 0.0f, 0.0f,
+      0.0f, 0.0f, 0.0f, -0.4f, -0.6f, -0.6f,
+      0.0f, 1.0f, 1.0f, -0.4f, -0.6f, -0.6f,
+      -0.6f, 0.6f, 1.0f, -0.4f, -0.6f, -0.6f,
 
-      0.0f, 0.0f, 2.0f,
-      0.0f, 1.0f, 1.0f,
-      -0.6f, 0.6f, 1.0f,
-      -0.6f, -0.6f, 1.0f,
-      0.0f, -1.0f, 1.0f,
-      0.6f, -0.6f, 1.0f,
-      0.6f, 0.6f, 1.0f,
-      0.0f, 1.0f, 1.0f,
-      0.0f, 0.0f, 2.0f,
+      0.0f, 0.0f, 0.0f, -1.2f, 0.0f, -0.72f, 
+      -0.6f, 0.6f, 1.0f, -1.2f, 0.0f, -0.72f, 
+      -0.6f, -0.6f, 1.0f, -1.2f, 0.0f, -0.72f, 
+
+      0.0f, 0.0f, 0.0f, -0.4f, 0.6f, -0.6f, 
+      -0.6f, -0.6f, 1.0f, -0.4f, 0.6f, -0.6f, 
+      0.0f, -1.0f, 1.0f, -0.4f, 0.6f, -0.6f, 
+
+      0.0f, 0.0f, 0.0f, 0.4f, 0.6f, -0.6f,
+      0.0f, -1.0f, 1.0f, 0.4f, 0.6f, -0.6f,
+      0.6f, -0.6f, 1.0f, 0.4f, 0.6f, -0.6f,
+
+      0.0f, 0.0f, 0.0f, 1.2f, 0.0f, -0.72f,
+      0.6f, -0.6f, 1.0f, 1.2f, 0.0f, -0.72f,
+      0.6f, 0.6f, 1.0f, 1.2f, 0.0f, -0.72f,
+
+      0.0f, 0.0f, 0.0f, 0.4f, -0.6f, -0.6f, 
+      0.6f, 0.6f, 1.0f, 0.4f, -0.6f, -0.6f, 
+      0.0f, 1.0f, 1.0f, 0.4f, -0.6f, -0.6f, 
+
+      0.0f, 0.0f, 2.0f, 0.4f, 0.6f, -0.6f, 
+      0.0f, 1.0f, 1.0f, 0.4f, 0.6f, -0.6f, 
+      -0.6f, 0.6f, 1.0f, 0.4f, 0.6f, -0.6f, 
+
+      0.0f, 0.0f, 2.0f, 1.2f, 0.0f, -0.72f,
+      -0.6f, 0.6f, 1.0f, 1.2f, 0.0f, -0.72f,
+      -0.6f, -0.6f, 1.0f, 1.2f, 0.0f, -0.72f,
+
+      0.0f, 0.0f, 2.0f, 0.4f, -0.6f, -0.6f,
+      -0.6f, -0.6f, 1.0f, 0.4f, -0.6f, -0.6f,
+      0.0f, -1.0f, 1.0f, 0.4f, -0.6f, -0.6f,
+
+      0.0f, 0.0f, 2.0f, -0.4f, -0.6f, -0.6f,
+      0.0f, -1.0f, 1.0f, -0.4f, -0.6f, -0.6f,
+      0.6f, -0.6f, 1.0f, -0.4f, -0.6f, -0.6f,
+
+      0.0f, 0.0f, 2.0f, -1.2f, -0.0f, -0.72f,
+      0.6f, -0.6f, 1.0f, -1.2f, -0.0f, -0.72f,
+      0.6f, 0.6f, 1.0f, -1.2f, -0.0f, -0.72f,
+ 
+      0.0f, 0.0f, 2.0f, -0.4f, 0.6f, -0.6f,
+      0.6f, 0.6f, 1.0f, -0.4f, 0.6f, -0.6f,
+      0.0f, 1.0f, 1.0f, -0.4f, 0.6f, -0.6f,
     };
 
     unsigned int texture_wood, texture_tire, texture_logo, texture_window, texture_rear_logo, texture_road;
@@ -672,43 +764,17 @@ int main(int argc, char** argv) {
     unsigned int vao_ground, vbo_ground;
     createVAOVBO(ground_vertices, sizeof(ground_vertices), &vbo_ground, &vao_ground);
 
-    // glm::mat4 teardrop_instance_matrix[amountRain];
-    // float teardrop_y_location[amountRain];
-    // srand(glfwGetTime()); // initialize random seed
-    // float radius = 30.0f;
-    // float offset = 40.0f;
-    // for (unsigned int i = 0; i < amountRain; i++)
-    // {
-    //     glm::mat4 model;
-    //     // 1. translation: displace along circle with 'radius' in range [-offset, offset]
-    //     float angle = (float)i / (float)amountRain * 360.0f;
-    //     float displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
-    //     float x = sin(angle) * radius + displacement;
-    //     displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
-    //     float y = abs(displacement * 0.8f); // keep height of asteroid field smaller compared to width of x and z
-    //     teardrop_y_location[i] = y;
-    //     displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
-    //     float z = cos(angle) * radius + displacement;
-    //     model = glm::translate(model, glm::vec3(x, y, z));
-    //
-    //     // 2. scale: Scale between 0.05 and 0.13f
-    //     float scale = (rand() % 5) / 100.0f + 0.08;
-    //     model = glm::scale(model, glm::vec3(scale));
-    //
-    //     // 4. now add to list of matrices
-    //     teardrop_instance_matrix[i] = model;
-    // }
-    // createVAOVBOInstance(teardrop_vertices, sizeof(teardrop_vertices), teardrop_instance_matrix, &vao_particles, &vbo_particles);
-
     RainParticles rain(500);
-    unsigned int vao_rain, vbo_rain;
-    createVAOVBOInstance(teardrop_vertices, sizeof(teardrop_vertices), rain.getTransitionMatrix(), &vao_rain, &vbo_rain);
+    unsigned int vao_rain, vbo_rain, vbo_rain_aplha;
+    createVAOVBOInstance(teardrop_vertices, sizeof(teardrop_vertices), rain.getTransitionMatrix(), rain.getAlpha(), &vao_rain, &vbo_rain, &vbo_rain_aplha);
 
     SmokeParticles smoke(amountSmoke, vec3(0.85f, -0.2f, -0.2f), 0.01f);
-    unsigned int vao_smoke, vbo_smoke;
-    createVAOVBOInstance(smoke_vertices, sizeof(smoke_vertices), smoke.getTransitionMatrix(), &vao_smoke, &vbo_smoke);
+    unsigned int vao_smoke, vbo_smoke, vbo_smoke_aplha;
+    createVAOVBOInstance(smoke_vertices, sizeof(smoke_vertices), smoke.getTransitionMatrix(), smoke.getAlpha(),  &vao_smoke, &vbo_smoke, &vbo_smoke_aplha);
 
     glEnable(GL_DEPTH_TEST);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     float lastFrame = 0.0f;
     float deltaTime = 0.0f;
@@ -829,20 +895,33 @@ int main(int argc, char** argv) {
         particle_shader.setVec3("viewPos", camera->Position);
         particle_shader.setMat4("view", camera->GetViewMatrix());
         particle_shader.setMat4("projection", projection);
+        particle_shader.setVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
+        particle_shader.setVec3("lightPos", camera->Position);
 
+        particle_shader.setVec3("material.ambient",glm::vec3(0.25f,	0.20725f,	0.20725f));
+        particle_shader.setVec3("material.diffuse",glm::vec3(1.0f,	0.829f,	0.829f));
+        particle_shader.setVec3("material.specular", glm::vec3(0.296648f,	0.296648f,	0.296648f));
+        particle_shader.setFloat("material.shininess",0.48125f);
         glBindVertexArray(vao_rain);
-        glDrawArraysInstanced(GL_TRIANGLE_FAN, 0, 9, amountRain);
-        glDrawArraysInstanced(GL_TRIANGLE_FAN, 9, 9, amountRain);
+        glDrawArraysInstanced(GL_TRIANGLES, 0, 36, amountRain);
         rain.updateParticles();
         glBindBuffer(GL_ARRAY_BUFFER, vbo_rain);
         glBufferData(GL_ARRAY_BUFFER, sizeof(glm::mat4) * amountRain, rain.getTransitionMatrix(), GL_STATIC_DRAW);
+        // glBindBuffer(GL_ARRAY_BUFFER, vbo_rain_aplha);
+        // glBufferData(GL_ARRAY_BUFFER, sizeof(float) * amountRain, rain.getAlpha(), GL_STATIC_DRAW);
 
+        particle_shader.setVec3("material.ambient",glm::vec3(0.05375f,	0.05f,	0.06625f));
+        particle_shader.setVec3("material.diffuse",glm::vec3(0.18275f,	0.17f,	0.22525f));
+        particle_shader.setVec3("material.specular", glm::vec3(0.332741f,	0.328634f,	0.346435f));
+        particle_shader.setFloat("material.shininess",0.3f);
         glBindVertexArray(vao_smoke);
-        glDrawArraysInstanced(GL_TRIANGLE_FAN, 0, 9, amountSmoke);
-        glDrawArraysInstanced(GL_TRIANGLE_FAN, 9, 9, amountSmoke);
+        glDrawArraysInstanced(GL_TRIANGLES, 0, 36, amountSmoke);
+        // glDrawArraysInstanced(GL_TRIANGLE_FAN, 9, 9, amountSmoke);
         smoke.updateParticles();
         glBindBuffer(GL_ARRAY_BUFFER, vbo_smoke);
         glBufferData(GL_ARRAY_BUFFER, sizeof(glm::mat4) * amountSmoke, smoke.getTransitionMatrix(), GL_STATIC_DRAW);
+        glBindBuffer(GL_ARRAY_BUFFER, vbo_smoke_aplha);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(float) * amountRain, smoke.getAlpha(), GL_STATIC_DRAW);
 
         for(int i=0; i<rain.getNumParticles(); i++){
           if(rain.isCollide(i, vec3(0.0f, -0.4f, 0.0f)) && !isSplash[i]){
@@ -855,10 +934,10 @@ int main(int argc, char** argv) {
             SplashParticles * splash = new SplashParticles(amountSplash, vec3(x, y, z), 0.01f);
             splash->id = i;
             // printf("asasa\n");
-            unsigned int vao_splash, vbo_splash;
+            unsigned int vao_splash, vbo_splash, vbo_splash_alpha;
             // printf("asasa\n");
             // printf("Init %d %d", &(*vao_splash), &(*vbo_splash));
-            createVAOVBOInstance(splash_vertices, sizeof(splash_vertices), splash->getTransitionMatrix(), &vao_splash, &vbo_splash);
+            createVAOVBOInstance(splash_vertices, sizeof(splash_vertices), splash->getTransitionMatrix(), splash->getAlpha(), &vao_splash, &vbo_splash, &vbo_splash_alpha);
             // printf("asasa\n");
             splash->vao = &vao_splash;
             splash->vbo = &vbo_splash;

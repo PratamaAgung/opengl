@@ -20,6 +20,7 @@ class SplashParticles {
         vec3* movement;
         mat4* transitionMatrix;
         void initParticle(int);
+        float* alpha;
     public:
         int id;
         int timeOut;
@@ -30,6 +31,7 @@ class SplashParticles {
         int getMatrixSize();
         unsigned int* vao;
         unsigned int* vbo;
+        float* getAlpha();
 };
 
 SplashParticles::SplashParticles(int numParticles, vec3 initPosition, float offset){
@@ -48,6 +50,7 @@ SplashParticles::SplashParticles(int numParticles, vec3 initPosition, float offs
     this->lifespan = new float[numParticles];
     this->movement = new vec3[numParticles];
     this->transitionMatrix = new mat4[numParticles];
+    this->alpha = new float[numParticles];
     srand(time(NULL));
     for (int i = 0; i < numParticles; i++){
         initParticle(i);
@@ -63,6 +66,7 @@ SplashParticles::~SplashParticles(){
     delete [] this->lifespan;
     delete [] this->movement;
     delete [] this->transitionMatrix;
+    delete [] this-> alpha;
 }
 
 void SplashParticles::updateParticles(){
@@ -104,9 +108,13 @@ void SplashParticles::initParticle(int i) {
     this->scaleFactor[i] = (rand() % 8) / 1000.0f + 0.005;
     this->age[i] = 0.0f;
     this->lifespan[i] = (((rand()%10+1)))/10.0f;
+    this->alpha[i] = 1.0f;
     this->movement[i].x = (((((((2) * rand()%11) + 1)) * rand()%11) + 1) * 0.000035) - (((((((2) * rand()%11) + 1)) * rand()%11) + 1) * 0.000035);
     this->movement[i].y = ((((((5) * rand()%11) + 3)) * rand()%11) + 7) * 0.00005;
     this->movement[i].z = (((((((2) * rand()%11) + 1)) * rand()%11) + 1) * 0.000015) - (((((((2) * rand()%11) + 1)) * rand()%11) + 1) * 0.000015);
 }
 
+float* SplashParticles::getAlpha(){
+    return alpha;
+}
 #endif
