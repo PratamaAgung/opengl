@@ -12,7 +12,6 @@ class RainParticles {
         int numParticles;
         vec3 initPosition;
         float offsetInit;
-        vec3* position;
         float* direction;
         float* scaleFactor;
         float* age;
@@ -22,14 +21,16 @@ class RainParticles {
         mat4* transitionMatrix;
         float radius;
         float offset;
+
     public:
+        vec3* position;
         RainParticles(int);
         void updateParticles();
         mat4* getTransitionMatrix();
         int getMatrixSize();
         void initParticle(int);
         bool isCollide(int, vec3);
-        void updateCollider(vec3);
+        int getNumParticles();
 };
 
 RainParticles::RainParticles(int numParticles){
@@ -62,7 +63,7 @@ void RainParticles::updateParticles(){
         position[i].y += movement[i].y + globalPull.y;
         position[i].z += movement[i].z + globalPull.z;
         if (age[i] > lifespan[i]){
-          this->initParticle(i);
+            this->initParticle(i);
         }
     }
 }
@@ -90,9 +91,40 @@ void RainParticles::initParticle(int i){
     float y = 20.0f + abs(displacement * 10.0f);
     displacement = (rand() % (int)(2 * this->offset * 100)) / 100.0f - this->offset;
     float z = cos(angle) * this->radius + displacement;
+
     this->position[i].x = x + (rand()%20 - 10) / 10.0f * 0.1;
     this->position[i].y = y + (rand()%20 - 10) / 10.0f * 0.1;
-    this->position[i].z = z +  (rand()%20 - 10) / 10.0f * 0.1;;
+    this->position[i].z = z +  (rand()%20 - 10) / 10.0f * 0.1;
+    
+    y = -0.40941000000000005f;
+    // this->splashVertices[i * 6 * 3] = x;
+    // this->splashVertices[i * 6 * 3 + 1] = y;
+    // this->splashVertices[i * 6 * 3 + 2] = z;
+
+    // this->splashVertices[i * 6 * 3 + 3] = x + 0.5f;
+    // this->splashVertices[i * 6 * 3 + 4] = y;
+    // this->splashVertices[i * 6 * 3 + 5] = z + 0.5f;
+
+    // this->splashVertices[i * 6 * 3 + 6] = x - 0.5f;
+    // this->splashVertices[i * 6 * 3 + 7] = y;
+    // this->splashVertices[i * 6 * 3 + 8] = z + 0.5f;
+
+    // this->splashVertices[i * 6 * 3 + 9] = x - 0.5f;
+    // this->splashVertices[i * 6 * 3 + 10] = y;
+    // this->splashVertices[i * 6 * 3 + 11] = z - 0.5f;
+    
+    // this->splashVertices[i * 6 * 3 + 12] = x + 0.5f;
+    // this->splashVertices[i * 6 * 3 + 13] = y;
+    // this->splashVertices[i * 6 * 3 + 14] = z - 0.5f;
+
+    // this->splashVertices[i * 6 * 3 + 15] = x + 0.5f;
+    // this->splashVertices[i * 6 * 3 + 16] = y;
+    // this->splashVertices[i * 6 * 3 + 17] = z + 0.5f;
+
+    // this->splashVertices[i * 6 * 3 + 18] = x;
+    // this->splashVertices[i * 6 * 3 + 19] = y;
+    // this->splashVertices[i * 6 * 3 + 20] = z;
+
     this->direction[i] = 0.0f;
     this->scaleFactor[i] = 0.0f;
     this->age[i] = 0.0f;
@@ -107,12 +139,9 @@ bool RainParticles::isCollide(int i, vec3 plane){
     return false;
 }
 
-void RainParticles::updateCollider(vec3 plane){
-    for(int i = 0; i < this->numParticles; i++){
-        if(this->isCollide(i, plane)){
-          printf("%s\n", "Collide");
-        }
-    }
+
+int RainParticles::getNumParticles(){
+    return this->numParticles;
 }
 
 #endif
