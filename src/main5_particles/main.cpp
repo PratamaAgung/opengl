@@ -11,6 +11,8 @@
 #include "stb_image.h"
 #include "smoke_particles.hpp"
 #include "rain_particles.hpp"
+#include "splash_particles.hpp"
+#include <queue>
 
 using namespace glm;
 bool firstMouse;
@@ -20,6 +22,7 @@ int amountRain = 500;
 int amountSmoke = 500;
 SmokeParticles smoke(amountSmoke, vec3(0.85f, -0.2f, -0.2f), 0.01f);    
 RainParticles rain(500);
+int amountSplash = 50;
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
     glViewport(0, 0, width, height);
@@ -330,6 +333,16 @@ int main(int argc, char** argv) {
         fprintf(stderr, "Failed to initialize GLEW\n");
         return -1;
     }
+
+    float ground_vertices[] = {
+      // 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 
+      100.0f, -0.40941000000000005f, 100.0f, 0.0f, 0.0f, 0.0f, 100.0f, 100.0f, 0.0f, 1.0f, 0.0f,
+      -100.0f, -0.40941000000000005f, 100.0f, 0.0f, 0.0f, 0.0f, 0.0f, 100.0f, 0.0f, 1.0f, 0.0f,
+      -100.0f, -0.40941000000000005f, -100.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+      100.0f, -0.40941000000000005f, -100.0f, 0.0f, 0.0f, 0.0f, 100.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+      100.0f, -0.40941000000000005f, 100.0f, 0.0f, 0.0f, 0.0f, 100.0f, 100.0f, 0.0f, 1.0f, 0.0f,      
+      // 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f,   
+    };
 
     float car_vertices[] = {
         // left
@@ -673,12 +686,64 @@ int main(int argc, char** argv) {
       0.0f, 1.0f, 1.0f, -0.4f, 0.6f, -0.6f,
     };
 
-    unsigned int texture_wood, texture_tire, texture_logo, texture_window, texture_rear_logo;
+
+    float splash_vertices[] = {
+      0.0f, 0.0f, 0.0f, -0.4f, -0.6f, -0.6f,
+      0.0f, 1.0f, 1.0f, -0.4f, -0.6f, -0.6f,
+      -0.6f, 0.6f, 1.0f, -0.4f, -0.6f, -0.6f,
+
+      0.0f, 0.0f, 0.0f, -1.2f, 0.0f, -0.72f, 
+      -0.6f, 0.6f, 1.0f, -1.2f, 0.0f, -0.72f, 
+      -0.6f, -0.6f, 1.0f, -1.2f, 0.0f, -0.72f, 
+
+      0.0f, 0.0f, 0.0f, -0.4f, 0.6f, -0.6f, 
+      -0.6f, -0.6f, 1.0f, -0.4f, 0.6f, -0.6f, 
+      0.0f, -1.0f, 1.0f, -0.4f, 0.6f, -0.6f, 
+
+      0.0f, 0.0f, 0.0f, 0.4f, 0.6f, -0.6f,
+      0.0f, -1.0f, 1.0f, 0.4f, 0.6f, -0.6f,
+      0.6f, -0.6f, 1.0f, 0.4f, 0.6f, -0.6f,
+
+      0.0f, 0.0f, 0.0f, 1.2f, 0.0f, -0.72f,
+      0.6f, -0.6f, 1.0f, 1.2f, 0.0f, -0.72f,
+      0.6f, 0.6f, 1.0f, 1.2f, 0.0f, -0.72f,
+
+      0.0f, 0.0f, 0.0f, 0.4f, -0.6f, -0.6f, 
+      0.6f, 0.6f, 1.0f, 0.4f, -0.6f, -0.6f, 
+      0.0f, 1.0f, 1.0f, 0.4f, -0.6f, -0.6f, 
+
+      0.0f, 0.0f, 2.0f, 0.4f, 0.6f, -0.6f, 
+      0.0f, 1.0f, 1.0f, 0.4f, 0.6f, -0.6f, 
+      -0.6f, 0.6f, 1.0f, 0.4f, 0.6f, -0.6f, 
+
+      0.0f, 0.0f, 2.0f, 1.2f, 0.0f, -0.72f,
+      -0.6f, 0.6f, 1.0f, 1.2f, 0.0f, -0.72f,
+      -0.6f, -0.6f, 1.0f, 1.2f, 0.0f, -0.72f,
+
+      0.0f, 0.0f, 2.0f, 0.4f, -0.6f, -0.6f,
+      -0.6f, -0.6f, 1.0f, 0.4f, -0.6f, -0.6f,
+      0.0f, -1.0f, 1.0f, 0.4f, -0.6f, -0.6f,
+
+      0.0f, 0.0f, 2.0f, -0.4f, -0.6f, -0.6f,
+      0.0f, -1.0f, 1.0f, -0.4f, -0.6f, -0.6f,
+      0.6f, -0.6f, 1.0f, -0.4f, -0.6f, -0.6f,
+
+      0.0f, 0.0f, 2.0f, -1.2f, -0.0f, -0.72f,
+      0.6f, -0.6f, 1.0f, -1.2f, -0.0f, -0.72f,
+      0.6f, 0.6f, 1.0f, -1.2f, -0.0f, -0.72f,
+ 
+      0.0f, 0.0f, 2.0f, -0.4f, 0.6f, -0.6f,
+      0.6f, 0.6f, 1.0f, -0.4f, 0.6f, -0.6f,
+      0.0f, 1.0f, 1.0f, -0.4f, 0.6f, -0.6f,
+    };
+
+    unsigned int texture_wood, texture_tire, texture_logo, texture_window, texture_rear_logo, texture_road;
     buildTexture(&texture_wood, "./src/main5_particles/ferraribody.jpg");
     buildTexture(&texture_tire, "./src/main5_particles/roda2.jpg");
     buildTexture(&texture_logo, "./src/main5_particles/ferrarilogomerah.jpg");
     buildTexture(&texture_window, "./src/main5_particles/window.jpg");
     buildTexture(&texture_rear_logo, "./src/main5_particles/Ferrari.jpg");
+    buildTexture(&texture_road, "./src/main5_particles/road.jpg");
 
     std::string vertex_shader_source_code = loadShader("./src/main5_particles/vertex.vs");
     std::string fragment_shader_source_code = loadShader("./src/main5_particles/fragment.fs");
@@ -705,6 +770,8 @@ int main(int argc, char** argv) {
     for(int i=0; i<4; i++){
       createVAOVBO(tires[i], sizeof(tires[i]),&vbo_tires[i],&vao_tires[i]);
     }
+    unsigned int vao_ground, vbo_ground;
+    createVAOVBO(ground_vertices, sizeof(ground_vertices), &vbo_ground, &vao_ground);
 
     // RainParticles rain(500);
     unsigned int vao_rain, vbo_rain, vbo_rain_aplha;
@@ -727,6 +794,13 @@ int main(int argc, char** argv) {
 
     double lastTime = glfwGetTime();
     int nbFrames = 0;
+
+    std::vector<SplashParticles*> splash_vec;
+    bool * isSplash;
+    isSplash = new bool[amountRain];
+    for(int i=0; i<amountRain; i++){
+      isSplash[i] = 0;
+    }
 
     while(!glfwWindowShouldClose(window)) {
         double currentTime = glfwGetTime();
@@ -758,6 +832,13 @@ int main(int argc, char** argv) {
         car_shader.setVec3("material.diffuse",glm::vec3(0.5f, 0.4f, 0.4f));
         car_shader.setVec3("material.specular", glm::vec3(0.7f, 0.04f, 0.04f));
         car_shader.setFloat("material.shininess",0.078125f);
+
+        // road
+        glBindTexture(GL_TEXTURE_2D, texture_road);
+        glBindVertexArray(vao_ground);
+        glDrawArrays(GL_TRIANGLE_FAN, 0, 5);      
+
+        // car
         glBindTexture(GL_TEXTURE_2D, texture_wood);
         glBindVertexArray(vao);
         glDrawArrays(GL_TRIANGLE_FAN, 0, 16);
@@ -847,6 +928,47 @@ int main(int argc, char** argv) {
         glBindBuffer(GL_ARRAY_BUFFER, vbo_smoke_aplha);
         glBufferData(GL_ARRAY_BUFFER, sizeof(float) * amountRain, smoke.getAlpha(), GL_STATIC_DRAW);
 
+        for(int i=0; i<rain.getNumParticles(); i++){
+          if(rain.isCollide(i, vec3(0.0f, -0.4f, 0.0f)) && !isSplash[i]){
+            isSplash[i] = 1;
+            float x = rain.position[i].x;
+            float y = rain.position[i].y;
+            float z = rain.position[i].z;
+            // printf("Collide : %f %f %f\n", x, y, z);
+            rain.initParticle(i);
+            SplashParticles * splash = new SplashParticles(amountSplash, vec3(x, y, z), 0.01f);
+            splash->id = i;
+            // printf("asasa\n");
+            unsigned int vao_splash, vbo_splash, vbo_splash_alpha;
+            // printf("asasa\n");
+            // printf("Init %d %d", &(*vao_splash), &(*vbo_splash));
+            createVAOVBOInstance(splash_vertices, sizeof(splash_vertices), splash->getTransitionMatrix(), splash->getAlpha(), &vao_splash, &vbo_splash, &vbo_splash_alpha);
+            // printf("asasa\n");
+            splash->vao = &vao_splash;
+            splash->vbo = &vbo_splash;
+            splash_vec.push_back(splash);
+            // printf("Init %d %d", vao_splash, vbo_splash);
+          }
+        }
+        if(!splash_vec.empty() && splash_vec.front()->timeOut <= 0){
+          glDeleteBuffers(1, splash_vec.front()->vbo);
+          glDeleteVertexArrays(1, splash_vec.front()->vao);
+          isSplash[splash_vec.front()->id] = 0;
+          delete splash_vec.front();
+          splash_vec.erase(splash_vec.begin());
+        }
+        for(int i = 0; i < splash_vec.size(); i++){
+            unsigned int vao = *(splash_vec[i]->vao);
+            unsigned int vbo = *(splash_vec[i]->vbo);
+            // printf("%d %d\n", vao, vbo);
+            glBindVertexArray(vao);
+            glDrawArraysInstanced(GL_TRIANGLES, 0, 36, amountSplash);
+            // glDrawArraysInstanced(GL_TRIANGLE_FAN, 9, 9, amountSplash);
+            splash_vec[i]->updateParticles();
+            // printf("Time : %d ", splash_vec[i]->timeOut);
+            glBindBuffer(GL_ARRAY_BUFFER, vbo);
+            glBufferData(GL_ARRAY_BUFFER, sizeof(glm::mat4) * amountSplash, splash_vec[i]->getTransitionMatrix(), GL_STATIC_DRAW);
+        }
 
         glfwSwapBuffers(window);
         glfwPollEvents();
