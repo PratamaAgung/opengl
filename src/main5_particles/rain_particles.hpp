@@ -32,6 +32,8 @@ class RainParticles {
         bool isCollide(int, vec3);
         void updateCollider(vec3);
         float* getAlpha();
+        void incGlobalPullX();
+        void decGlobalPullX();
 };
 
 RainParticles::RainParticles(int numParticles){
@@ -121,6 +123,14 @@ void RainParticles::updateCollider(vec3 plane){
 
 float* RainParticles::getAlpha(){
     return alpha;
+}
+
+void RainParticles::incGlobalPullX() {
+    this->globalPull.x += 0.00005f;
+}
+
+void RainParticles::decGlobalPullX() {
+    this->globalPull.x -= 0.00005f;
 }
 
 #endif
